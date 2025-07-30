@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Editar Meta - Finansave</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-header p {
+            color: #6c757d;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+        .form-floating > .form-control {
+            padding-left: 2.5rem;
+        }
+        .form-floating > .form-label {
+            padding-left: 2.5rem;
+        }
+        .icon-input {
+            position: absolute;
+            left: 1rem;
+            top: 1.25rem;
+            color: #6c757d;
+            z-index: 4;
+        }
+        .goal-info {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .goal-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .goal-info p:last-child {
+            margin-bottom: 0;
+        }
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Editar Meta</h1>
+                <p>Atualize os dados da sua meta</p>
+            </div>
+
+            <!-- Informações da Meta -->
+            <div class="goal-info">
+                <p><strong>ID da Meta:</strong> <%= meta.meta_id %></p>
+                <p><strong>Progresso Atual:</strong></p>
+                <div class="progress">
+                    <% const progresso = (meta.valor_atual / meta.valor_alvo) * 100; %>
+                    <div class="progress-bar <%= progresso >= 100 ? 'bg-success' : 'bg-primary' %>" 
+                         role="progressbar" style="width: <%= Math.min(progresso, 100) %>%" 
+                         aria-valuenow="<%= progresso %>" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+                <p>
+                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_atual) %>
+                    de
+                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_alvo) %>
+                    (<%= progresso.toFixed(1) %>%)
+                </p>
+                <% if(meta.concluida) { %>
+                    <p class="text-success"><i class="fas fa-check-circle"></i> Meta concluída!</p>
+                <% } %>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/metas/editar/<%= meta.meta_id %>" method="POST" id="formMeta">
+                <!-- Nome da Meta -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-bullseye icon-input"></i>
+                    <input type="text" class="form-control" id="nome" name="nome" 
+                           value="<%= meta.nome %>" placeholder="Nome da meta" required>
+                    <label for="nome">Nome da meta</label>
+                </div>
+
+                <!-- Descrição -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-align-left icon-input"></i>
+                    <textarea class="form-control" id="descricao" name="descricao" 
+                              placeholder="Descrição" style="height: 100px"><%= meta.descricao || '' %></textarea>
+                    <label for="descricao">Descrição (opcional)</label>
+                </div>
+
+                <!-- Valor Atual -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-dollar-sign icon-input"></i>
+                    <input type="number" class="form-control" id="valor_atual" name="valor_atual" 
+                           value="<%= meta.valor_atual %>" step="0.01" placeholder="0.00" required>
+                    <label for="valor_atual">Valor atual</label>
+                </div>
+
+                <!-- Valor Alvo -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-bullseye icon-input"></i>
+                    <input type="number" class="form-control" id="valor_alvo" name="valor_alvo" 
+                           value="<%= meta.valor_alvo %>" step="0.01" placeholder="0.00" required>
+                    <label for="valor_alvo">Valor alvo</label>
+                </div>
+
+                <!-- Data de Início -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-calendar-alt icon-input"></i>
+                    <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                           value="<%= new Date(meta.data_inicio).toISOString().split('T')[0] %>" required>
+                    <label for="data_inicio">Data de início</label>
+                </div>
+
+                <!-- Data Limite -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-calendar-check icon-input"></i>
+                    <input type="date" class="form-control" id="data_limite" name="data_limite" 
+                           value="<%= new Date(meta.data_limite).toISOString().split('T')[0] %>" required>
+                    <label for="data_limite">Data limite</label>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                    <a href="/metas" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formMeta');
+            const valorAlvoInput = document.getElementById('valor_alvo');
+            const dataInicioInput = document.getElementById('data_inicio');
+            const dataLimiteInput = document.getElementById('data_limite');
+            const valorAtual = <%= meta.valor_atual %>;
+
+            // Formata o campo de valor alvo para exibir sempre duas casas decimais
+            valorAlvoInput.addEventListener('change', function() {
+                if (this.value) {
+                    this.value = parseFloat(this.value).toFixed(2);
+                }
+            });
+
+            // Atualiza a data limite mínima quando a data de início é alterada
+            dataInicioInput.addEventListener('change', function() {
+                dataLimiteInput.min = this.value;
+                if (dataLimiteInput.value && dataLimiteInput.value < this.value) {
+                    dataLimiteInput.value = this.value;
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                const nome = document.getElementById('nome').value.trim();
+                const valorAlvo = parseFloat(valorAlvoInput.value);
+                const dataInicio = new Date(dataInicioInput.value);
+                const dataLimite = new Date(dataLimiteInput.value);
+                
+                if (nome.length < 2) {
+                    event.preventDefault();
+                    alert('O nome da meta deve ter pelo menos 2 caracteres!');
+                    return;
+                }
+
+                if (isNaN(valorAlvo) || valorAlvo <= 0) {
+                    event.preventDefault();
+                    alert('O valor alvo deve ser maior que zero!');
+                    return;
+                }
+
+                if (valorAlvo < valorAtual) {
+                    event.preventDefault();
+                    alert('O valor alvo não pode ser menor que o valor atual!');
+                    return;
+                }
+
+                if (dataLimite <= dataInicio) {
+                    event.preventDefault();
+                    alert('A data limite deve ser posterior à data de início!');
+                    return;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

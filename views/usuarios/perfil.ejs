@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Perfil - Finansave</title>
+    <style>
+        .profile-container {
+            max-width: 700px;
+            margin: 2rem auto;
+        }
+        .profile-header {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+        }
+        .profile-info {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .form-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <h1 class="h3 mb-2"><%= usuario.nome %></h1>
+            <p class="text-muted mb-0">
+                Membro desde <%= new Date(usuario.data_cadastro).toLocaleDateString('pt-BR') %>
+            </p>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <div class="profile-info">
+            <form action="/usuarios/perfil" method="POST">
+                <!-- Informações Básicas -->
+                <div class="form-section">
+                    <h2 class="h4 mb-4">Informações Básicas</h2>
+                    
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome completo</label>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               value="<%= usuario.nome %>" required minlength="2">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               value="<%= usuario.email %>" required>
+                    </div>
+                </div>
+
+                <!-- Alterar Senha -->
+                <div class="form-section">
+                    <h2 class="h4 mb-4">Alterar Senha</h2>
+                    <p class="text-muted mb-4">Preencha apenas se desejar alterar sua senha atual</p>
+
+                    <div class="mb-3">
+                        <label for="senha_atual" class="form-label">Senha atual</label>
+                        <input type="password" class="form-control" id="senha_atual" name="senha_atual">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nova_senha" class="form-label">Nova senha</label>
+                        <input type="password" class="form-control" id="nova_senha" name="nova_senha" 
+                               minlength="6">
+                        <div class="form-text">
+                            A senha deve conter no mínimo 6 caracteres, incluindo uma letra maiúscula e um número.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmar_nova_senha" class="form-label">Confirmar nova senha</label>
+                        <input type="password" class="form-control" id="confirmar_nova_senha" 
+                               name="confirmar_nova_senha">
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const novaSenha = document.getElementById('nova_senha');
+            const confirmarNovaSenha = document.getElementById('confirmar_nova_senha');
+            const senhaAtual = document.getElementById('senha_atual');
+
+            form.addEventListener('submit', function(event) {
+                // Verifica se está tentando alterar a senha
+                if (novaSenha.value || confirmarNovaSenha.value || senhaAtual.value) {
+                    // Verifica se todos os campos de senha estão preenchidos
+                    if (!novaSenha.value || !confirmarNovaSenha.value || !senhaAtual.value) {
+                        event.preventDefault();
+                        alert('Para alterar a senha, preencha todos os campos de senha!');
+                        return;
+                    }
+
+                    // Verifica se as senhas conferem
+                    if (novaSenha.value !== confirmarNovaSenha.value) {
+                        event.preventDefault();
+                        alert('As novas senhas não conferem!');
+                        confirmarNovaSenha.value = '';
+                        confirmarNovaSenha.focus();
+                        return;
+                    }
+
+                    // Validação de senha forte
+                    const senhaRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+                    if (!senhaRegex.test(novaSenha.value)) {
+                        event.preventDefault();
+                        alert('A nova senha deve conter pelo menos 6 caracteres, uma letra maiúscula e um número!');
+                        novaSenha.focus();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

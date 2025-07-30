@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Meus Parcelamentos - Finansave</title>
+    <style>
+        .installment-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+        .installment-card:hover {
+            transform: translateY(-5px);
+        }
+        .installment-progress {
+            height: 8px;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        .installment-amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .installment-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .installment-description {
+            margin-top: 0.5rem;
+            color: #495057;
+        }
+        .installment-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .installment-card:hover .installment-actions {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">Meus Parcelamentos</h1>
+            <a href="/parcelamentos/criar" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Parcelamento
+            </a>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <% if (parcelamentos && parcelamentos.length > 0) { %>
+            <div class="row">
+                <% parcelamentos.forEach(function(parcelamento) { %>
+                    <div class="col-12">
+                        <div class="card installment-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="card-title mb-1"><%= parcelamento.descricao %></h5>
+                                        <div class="installment-info">
+                                            Parcela <%= parcelamento.parcela_atual %>/<%= parcelamento.total_parcelas %>
+                                            • Valor da Parcela: <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(parcelamento.valor_parcela) %>
+                                        </div>
+                                    </div>
+                                    <div class="installment-actions">
+                                        <a href="/parcelamentos/atualizar-progresso/<%= parcelamento.parcelamento_id %>" class="btn btn-sm btn-outline-success me-2">
+                                            <i class="fas fa-check"></i> Pagar Parcela
+                                        </a>
+                                        <a href="/parcelamentos/editar/<%= parcelamento.parcelamento_id %>" class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <form action="/parcelamentos/excluir/<%= parcelamento.parcelamento_id %>" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir este parcelamento?')">
+                                                <i class="fas fa-trash-alt"></i> Excluir
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <div class="progress installment-progress mt-3">
+                                    <div class="progress-bar <%= parseFloat(parcelamento.progresso) === 100 ? 'bg-success' : 'bg-primary' %>" 
+                                         role="progressbar" 
+                                         style="width: <%= parcelamento.progresso %>%" 
+                                         aria-valuenow="<%= parcelamento.progresso %>" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-4">
+                                        <div class="installment-info">
+                                            <strong>Valor Total:</strong><br>
+                                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(parcelamento.valor_total) %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="installment-info">
+                                            <strong>Valor Pago:</strong><br>
+                                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(parcelamento.valor_pago) %>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="installment-info">
+                                            <strong>Valor Restante:</strong><br>
+                                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(parcelamento.valor_restante) %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="installment-info mt-3">
+                                    <i class="far fa-calendar-alt"></i> Início: <%= new Date(parcelamento.data_inicio).toLocaleDateString('pt-BR') %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> Você ainda não possui parcelamentos registrados.
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

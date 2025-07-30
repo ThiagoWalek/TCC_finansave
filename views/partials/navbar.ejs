@@ -1,0 +1,60 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">Finansave</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <% if (user) { %>
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contas"><i class="fas fa-wallet"></i> Contas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/metas"><i class="fas fa-bullseye"></i> Metas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/orcamentos"><i class="fas fa-chart-pie"></i> Orçamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/transferencias"><i class="fas fa-exchange-alt"></i> Transferências</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/parcelamentos"><i class="fas fa-clock"></i> Parcelamentos</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> <%= user.nome %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/usuarios/perfil"><i class="fas fa-user-cog"></i> Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="/usuarios/logout" method="GET" class="d-inline">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt"></i> Sair
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            <% } else { %>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/login"><i class="fas fa-sign-in-alt"></i> Entrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/registro"><i class="fas fa-user-plus"></i> Registrar</a>
+                    </li>
+                </ul>
+            <% } %>
+        </div>
+    </div>
+</nav>

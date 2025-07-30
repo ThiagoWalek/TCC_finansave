@@ -1,0 +1,51 @@
+<footer class="footer mt-auto py-3 bg-light">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-12">
+                <p class="mb-0 text-muted">
+                    &copy; <%= new Date().getFullYear() %> Finansave - Sistema de Gerenciamento Financeiro Pessoal
+                </p>
+                <small class="text-muted">
+                    Desenvolvido como Trabalho de Conclusão de Curso
+                </small>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Script para auto-fechar alertas após 5 segundos -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Seleciona todos os alertas
+        const alerts = document.querySelectorAll('.alert');
+        
+        // Para cada alerta, configura um timer para fechá-lo após 5 segundos
+        alerts.forEach(function(alert) {
+            setTimeout(function() {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        });
+    });
+</script>
+
+<!-- Script para confirmar ações de exclusão -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const confirmarExclusao = function(event) {
+            if (!confirm('Tem certeza que deseja excluir este item?')) {
+                event.preventDefault();
+            }
+        };
+
+        // Adiciona confirmação a todos os formulários de exclusão
+        document.querySelectorAll('form[action*="excluir"]').forEach(function(form) {
+            form.addEventListener('submit', confirmarExclusao);
+        });
+
+        // Adiciona confirmação a todos os links de exclusão
+        document.querySelectorAll('a[href*="excluir"]').forEach(function(link) {
+            link.addEventListener('click', confirmarExclusao);
+        });
+    });
+</script>

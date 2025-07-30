@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Login - Finansave</title>
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .login-header p {
+            color: #6c757d;
+        }
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Finansave</h1>
+                <p>Faça login para acessar sua conta</p>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/usuarios/login" method="POST">
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="nome@exemplo.com" required>
+                    <label for="email">Email</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Senha" required>
+                    <label for="senha">Senha</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+            </form>
+
+            <div class="register-link">
+                <p class="mb-0">Ainda não tem uma conta? 
+                    <a href="/usuarios/registro" class="text-primary">Registre-se aqui</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

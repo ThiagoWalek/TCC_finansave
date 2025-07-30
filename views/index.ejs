@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('partials/head') %>
+    <title>Dashboard - Finansave</title>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="container mt-4">
+        <%- include('partials/messages') %>
+
+        <h1 class="mb-4">Dashboard</h1>
+
+        <div class="row">
+            <!-- Resumo de Contas -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Resumo de Contas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <% if (typeof contas !== 'undefined' && contas.length > 0) { %>
+                                <% contas.forEach(conta => { %>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <%= conta.nome %>
+                                        <span class="badge bg-<%= conta.saldo_atual >= 0 ? 'success' : 'danger' %> rounded-pill">
+                                            R$ <%= conta.saldo_atual.toFixed(2) %>
+                                        </span>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="text-muted">Nenhuma conta cadastrada.</p>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="/contas" class="btn btn-primary btn-sm">Ver Todas</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metas em Andamento -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Metas em Andamento</h5>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof metas !== 'undefined' && metas.length > 0) { %>
+                            <% metas.forEach(meta => { %>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1"><%= meta.nome %></h6>
+                                        <small><%= Math.round((meta.valor_atual / meta.valor_alvo) * 100) %>%</small>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: <%= (meta.valor_atual / meta.valor_alvo) * 100 %>%"
+                                             aria-valuenow="<%= (meta.valor_atual / meta.valor_alvo) * 100 %>"
+                                             aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="text-muted">Nenhuma meta cadastrada.</p>
+                        <% } %>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="/metas" class="btn btn-primary btn-sm">Ver Todas</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orçamento do Mês -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Orçamento do Mês</h5>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof orcamentos !== 'undefined' && orcamentos.length > 0) { %>
+                            <div class="mb-3">
+                                <h6>Receitas</h6>
+                                <p class="text-success">R$ <%= orcamentos.receitas.realizado.toFixed(2) %> / <%= orcamentos.receitas.previsto.toFixed(2) %></p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Despesas</h6>
+                                <p class="text-danger">R$ <%= orcamentos.despesas.realizado.toFixed(2) %> / <%= orcamentos.despesas.previsto.toFixed(2) %></p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Saldo</h6>
+                                <p class="<%= (orcamentos.receitas.realizado - orcamentos.despesas.realizado) >= 0 ? 'text-success' : 'text-danger' %>">
+                                    R$ <%= (orcamentos.receitas.realizado - orcamentos.despesas.realizado).toFixed(2) %>
+                                </p>
+                            </div>
+                        <% } else { %>
+                            <p class="text-muted">Nenhum orçamento cadastrado para o mês atual.</p>
+                        <% } %>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="/orcamentos" class="btn btn-primary btn-sm">Ver Todos</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parcelamentos Ativos -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Parcelamentos Ativos</h5>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof parcelamentos !== 'undefined' && parcelamentos.length > 0) { %>
+                            <div class="list-group list-group-flush">
+                                <% parcelamentos.forEach(parcelamento => { %>
+                                    <div class="list-group-item">
+                                        <h6 class="mb-1"><%= parcelamento.descricao %></h6>
+                                        <small class="text-muted">
+                                            Parcela <%= parcelamento.parcela_atual %>/<%= parcelamento.total_parcelas %>
+                                            - R$ <%= parcelamento.valor_parcela.toFixed(2) %>
+                                        </small>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-muted">Nenhum parcelamento ativo.</p>
+                        <% } %>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="/parcelamentos" class="btn btn-primary btn-sm">Ver Todos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

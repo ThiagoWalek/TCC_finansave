@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Atualizar Progresso - Finansave</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-header p {
+            color: #6c757d;
+        }
+        .goal-info {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .goal-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #0d6efd;
+        }
+        .goal-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .goal-progress {
+            height: 8px;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .goal-values {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .goal-value {
+            text-align: center;
+        }
+        .goal-value-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+        .goal-value-amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .goal-dates {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+        .form-floating > .form-control {
+            padding-left: 2.5rem;
+        }
+        .form-floating > .form-label {
+            padding-left: 2.5rem;
+        }
+        .icon-input {
+            position: absolute;
+            left: 1rem;
+            top: 1.25rem;
+            color: #6c757d;
+            z-index: 4;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Atualizar Progresso</h1>
+                <p>Atualize o progresso da sua meta</p>
+            </div>
+
+            <!-- Informações da Meta -->
+            <div class="goal-info">
+                <h2 class="goal-name"><%= meta.nome %></h2>
+                
+                <% if(meta.descricao) { %>
+                    <p class="goal-description"><%= meta.descricao %></p>
+                <% } %>
+
+                <!-- Progresso Atual -->
+                <% const progresso = (meta.valor_atual / meta.valor_alvo) * 100; %>
+                <div class="progress goal-progress">
+                    <div class="progress-bar <%= progresso >= 100 ? 'bg-success' : 'bg-primary' %>" 
+                         role="progressbar" style="width: <%= Math.min(progresso, 100) %>%" 
+                         aria-valuenow="<%= progresso %>" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+
+                <!-- Valores -->
+                <div class="goal-values">
+                    <div class="goal-value">
+                        <div class="goal-value-label">Valor Atual</div>
+                        <div class="goal-value-amount <%= meta.valor_atual >= meta.valor_alvo ? 'text-success' : '' %>">
+                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_atual) %>
+                        </div>
+                    </div>
+                    <div class="goal-value">
+                        <div class="goal-value-label">Valor Alvo</div>
+                        <div class="goal-value-amount">
+                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_alvo) %>
+                        </div>
+                    </div>
+                    <div class="goal-value">
+                        <div class="goal-value-label">Progresso</div>
+                        <div class="goal-value-amount <%= progresso >= 100 ? 'text-success' : '' %>">
+                            <%= progresso.toFixed(1) %>%
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datas -->
+                <div class="goal-dates">
+                    <p class="mb-1">
+                        <i class="fas fa-calendar-alt"></i> 
+                        Início: <%= new Date(meta.data_inicio).toLocaleDateString('pt-BR') %>
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-flag-checkered"></i> 
+                        Limite: <%= new Date(meta.data_limite).toLocaleDateString('pt-BR') %>
+                        <% 
+                            const diasRestantes = Math.ceil((new Date(meta.data_limite) - new Date()) / (1000 * 60 * 60 * 24));
+                            if(diasRestantes > 0) { 
+                        %>
+                            <span class="text-muted">(<%= diasRestantes %> dias restantes)</span>
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/metas/atualizar-progresso/<%= meta.meta_id %>" method="POST" id="formProgresso">
+                <!-- Novo Valor -->
+                <div class="form-floating mb-4 position-relative">
+                    <i class="fas fa-dollar-sign icon-input"></i>
+                    <input type="number" class="form-control" id="valor_atual" name="valor_atual" 
+                           value="<%= meta.valor_atual %>" step="0.01" placeholder="0.00" required>
+                    <label for="valor_atual">Novo valor atual</label>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Atualizar Progresso
+                    </button>
+                    <a href="/metas" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formProgresso');
+            const valorAtualInput = document.getElementById('valor_atual');
+            const valorAlvo = <%= meta.valor_alvo %>;
+
+            // Formata o campo de valor para exibir sempre duas casas decimais
+            valorAtualInput.addEventListener('change', function() {
+                if (this.value) {
+                    this.value = parseFloat(this.value).toFixed(2);
+                }
+            });
+
+            form.addEventListener('submit', function(event) {
+                const novoValor = parseFloat(valorAtualInput.value);
+                
+                if (isNaN(novoValor) || novoValor < 0) {
+                    event.preventDefault();
+                    alert('O valor atual não pode ser negativo!');
+                    return;
+                }
+
+                // Confirma se o usuário quer realmente diminuir o valor
+                if (novoValor < <%= meta.valor_atual %>) {
+                    if (!confirm('O novo valor é menor que o valor atual. Deseja realmente diminuir o progresso da meta?')) {
+                        event.preventDefault();
+                        return;
+                    }
+                }
+
+                // Avisa se a meta será concluída
+                if (novoValor >= valorAlvo && <%= meta.valor_atual %> < valorAlvo) {
+                    alert('Parabéns! Com este valor você alcançará sua meta!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Minhas Contas - Finansave</title>
+    <style>
+        .accounts-header {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .total-balance {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #198754;
+        }
+        .negative {
+            color: #dc3545;
+        }
+        .account-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .account-card:hover {
+            transform: translateY(-5px);
+        }
+        .account-type {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .account-balance {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .account-institution {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .account-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        .account-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .account-card:hover .account-actions {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <!-- Cabeçalho com Saldo Total -->
+        <div class="accounts-header text-center">
+            <h1 class="h3 mb-4">Minhas Contas</h1>
+            <p class="mb-2">Saldo Total</p>
+            <div class="total-balance <%= saldoTotal < 0 ? 'negative' : '' %>">
+                <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldoTotal) %>
+            </div>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <!-- Botão Adicionar Conta -->
+        <div class="mb-4 text-end">
+            <a href="/contas/criar" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nova Conta
+            </a>
+        </div>
+
+        <!-- Lista de Contas -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <% contas.forEach(function(conta) { %>
+                <div class="col">
+                    <div class="card account-card h-100">
+                        <!-- Status da Conta -->
+                        <div class="account-status">
+                            <% if(conta.ativa) { %>
+                                <span class="badge bg-success">Ativa</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary">Inativa</span>
+                            <% } %>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Nome e Tipo da Conta -->
+                            <h5 class="card-title mb-1"><%= conta.nome %></h5>
+                            <p class="account-type mb-3">
+                                <i class="fas fa-wallet"></i> <%= conta.tipo %>
+                            </p>
+
+                            <!-- Saldo -->
+                            <p class="account-balance mb-2 <%= conta.saldo_atual < 0 ? 'text-danger' : 'text-success' %>">
+                                <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(conta.saldo_atual) %>
+                            </p>
+
+                            <!-- Instituição -->
+                            <% if(conta.instituicao) { %>
+                                <p class="account-institution mb-3">
+                                    <i class="fas fa-university"></i> <%= conta.instituicao %>
+                                </p>
+                            <% } %>
+
+                            <!-- Data de Criação -->
+                            <p class="text-muted mb-3" style="font-size: 0.875rem;">
+                                <i class="fas fa-calendar-alt"></i> 
+                                Criada em <%= new Date(conta.data_criacao).toLocaleDateString('pt-BR') %>
+                            </p>
+
+                            <!-- Ações -->
+                            <div class="account-actions d-flex gap-2">
+                                <a href="/contas/editar/<%= conta.conta_id %>" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form action="/contas/excluir/<%= conta.conta_id %>" method="POST" class="flex-grow-1" 
+                                      onsubmit="return confirm('Tem certeza que deseja excluir esta conta?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                        <i class="fas fa-trash-alt"></i> Excluir
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+
+            <% if(contas.length === 0) { %>
+                <div class="col-12 text-center">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i> Você ainda não possui nenhuma conta cadastrada.
+                        <br>
+                        <a href="/contas/criar" class="alert-link">Clique aqui</a> para criar sua primeira conta.
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Editar Orçamento - Finansave</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-header p {
+            color: #6c757d;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+        .form-floating > .form-control {
+            padding-left: 2.5rem;
+        }
+        .form-floating > .form-label {
+            padding-left: 2.5rem;
+        }
+        .icon-input {
+            position: absolute;
+            left: 1rem;
+            top: 1.25rem;
+            color: #6c757d;
+            z-index: 4;
+        }
+        .tipo-toggle {
+            margin-bottom: 1.5rem;
+        }
+        .tipo-toggle .btn {
+            width: 50%;
+            padding: 1rem;
+        }
+        .tipo-toggle .btn-outline-success:hover,
+        .tipo-toggle .btn-outline-success:focus,
+        .tipo-toggle .btn-outline-success:active,
+        .tipo-toggle .btn-outline-success.active {
+            background-color: #198754;
+            color: #fff;
+        }
+        .tipo-toggle .btn-outline-danger:hover,
+        .tipo-toggle .btn-outline-danger:focus,
+        .tipo-toggle .btn-outline-danger:active,
+        .tipo-toggle .btn-outline-danger.active {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .budget-info {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .budget-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .budget-info p:last-child {
+            margin-bottom: 0;
+        }
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Editar Orçamento</h1>
+                <p>Atualize os dados do seu orçamento</p>
+            </div>
+
+            <!-- Informações do Orçamento -->
+            <div class="budget-info">
+                <p><strong>ID do Orçamento:</strong> <%= orcamento.id_orcamento %></p>
+                <p><strong>Status:</strong>
+                    <% if(orcamento.status_orcamento === 'Dentro') { %>
+                        <span class="badge bg-success">Dentro do orçamento</span>
+                    <% } else if(orcamento.status_orcamento === 'Acima') { %>
+                        <span class="badge bg-danger">Acima do orçamento</span>
+                    <% } else { %>
+                        <span class="badge bg-info">Abaixo do orçamento</span>
+                    <% } %>
+                </p>
+                <p><strong>Progresso:</strong></p>
+                <div class="progress">
+                    <% const progresso = (orcamento.valor_real / orcamento.valor_previsto) * 100; %>
+                    <div class="progress-bar <%= progresso > 100 ? 'bg-danger' : (progresso < 80 ? 'bg-info' : 'bg-success') %>" 
+                         role="progressbar" style="width: <%= Math.min(progresso, 100) %>%" 
+                         aria-valuenow="<%= progresso %>" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+                <p>
+                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orcamento.valor_real) %>
+                    de
+                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orcamento.valor_previsto) %>
+                    (<%= progresso.toFixed(1) %>%)
+                </p>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/orcamentos/editar/<%= orcamento.id_orcamento %>" method="POST" id="formOrcamento">
+                <!-- Tipo de Orçamento (Receita/Despesa) -->
+                <div class="btn-group tipo-toggle w-100" role="group">
+                    <input type="radio" class="btn-check" name="tipo" id="tipoReceita" 
+                           value="Receita" <%= orcamento.tipo === 'Receita' ? 'checked' : '' %> required>
+                    <label class="btn btn-outline-success" for="tipoReceita">
+                        <i class="fas fa-arrow-up"></i> Receita
+                    </label>
+
+                    <input type="radio" class="btn-check" name="tipo" id="tipoDespesa" 
+                           value="Despesa" <%= orcamento.tipo === 'Despesa' ? 'checked' : '' %>>
+                    <label class="btn btn-outline-danger" for="tipoDespesa">
+                        <i class="fas fa-arrow-down"></i> Despesa
+                    </label>
+                </div>
+
+                <!-- Nome do Orçamento -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-file-signature icon-input"></i>
+                    <input type="text" class="form-control" id="nome" name="nome" 
+                           value="<%= orcamento.nome %>" placeholder="Nome do orçamento" required>
+                    <label for="nome">Nome do orçamento</label>
+                </div>
+
+                <!-- Categoria -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-tag icon-input"></i>
+                    <select class="form-select" id="categoria" name="categoria" required>
+                        <!-- Categorias de Receita -->
+                        <optgroup label="Receitas" class="categoria-receita <%= orcamento.tipo !== 'Receita' ? 'd-none' : '' %>">
+                            <option value="Salário" <%= orcamento.categoria === 'Salário' ? 'selected' : '' %>>Salário</option>
+                            <option value="Investimentos" <%= orcamento.categoria === 'Investimentos' ? 'selected' : '' %>>Investimentos</option>
+                            <option value="Freelance" <%= orcamento.categoria === 'Freelance' ? 'selected' : '' %>>Freelance</option>
+                            <option value="Vendas" <%= orcamento.categoria === 'Vendas' ? 'selected' : '' %>>Vendas</option>
+                            <option value="Outras Receitas" <%= orcamento.categoria === 'Outras Receitas' ? 'selected' : '' %>>Outras Receitas</option>
+                        </optgroup>
+                        <!-- Categorias de Despesa -->
+                        <optgroup label="Despesas" class="categoria-despesa <%= orcamento.tipo !== 'Despesa' ? 'd-none' : '' %>">
+                            <option value="Moradia" <%= orcamento.categoria === 'Moradia' ? 'selected' : '' %>>Moradia</option>
+                            <option value="Alimentação" <%= orcamento.categoria === 'Alimentação' ? 'selected' : '' %>>Alimentação</option>
+                            <option value="Transporte" <%= orcamento.categoria === 'Transporte' ? 'selected' : '' %>>Transporte</option>
+                            <option value="Saúde" <%= orcamento.categoria === 'Saúde' ? 'selected' : '' %>>Saúde</option>
+                            <option value="Educação" <%= orcamento.categoria === 'Educação' ? 'selected' : '' %>>Educação</option>
+                            <option value="Lazer" <%= orcamento.categoria === 'Lazer' ? 'selected' : '' %>>Lazer</option>
+                            <option value="Vestuário" <%= orcamento.categoria === 'Vestuário' ? 'selected' : '' %>>Vestuário</option>
+                            <option value="Utilidades" <%= orcamento.categoria === 'Utilidades' ? 'selected' : '' %>>Utilidades</option>
+                            <option value="Outras Despesas" <%= orcamento.categoria === 'Outras Despesas' ? 'selected' : '' %>>Outras Despesas</option>
+                        </optgroup>
+                    </select>
+                    <label for="categoria">Categoria</label>
+                </div>
+
+                <!-- Mês/Ano -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-calendar-alt icon-input"></i>
+                    <input type="month" class="form-control" id="mes_ano" name="mes_ano" 
+                           value="<%= orcamento.mes_ano %>" required>
+                    <label for="mes_ano">Mês/Ano</label>
+                </div>
+
+                <!-- Valor Previsto -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-dollar-sign icon-input"></i>
+                    <input type="number" class="form-control" id="valor_previsto" name="valor_previsto" 
+                           value="<%= orcamento.valor_previsto %>" step="0.01" placeholder="0.00" required>
+                    <label for="valor_previsto">Valor previsto</label>
+                </div>
+
+                <!-- Valor Real -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-coins icon-input"></i>
+                    <input type="number" class="form-control" id="valor_real" name="valor_real" 
+                           value="<%= orcamento.valor_real %>" step="0.01" placeholder="0.00" required>
+                    <label for="valor_real">Valor real</label>
+                </div>
+
+                <!-- Descrição -->
+                <div class="form-floating mb-4 position-relative">
+                    <i class="fas fa-align-left icon-input"></i>
+                    <textarea class="form-control" id="descricao" name="descricao" 
+                              placeholder="Descrição" style="height: 100px"><%= orcamento.descricao || '' %></textarea>
+                    <label for="descricao">Descrição (opcional)</label>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                    <a href="/orcamentos" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formOrcamento');
+            const tipoReceita = document.getElementById('tipoReceita');
+            const tipoDespesa = document.getElementById('tipoDespesa');
+            const categoria = document.getElementById('categoria');
+            const categoriasReceita = document.querySelector('.categoria-receita');
+            const categoriasDespesa = document.querySelector('.categoria-despesa');
+            const valorPrevistoInput = document.getElementById('valor_previsto');
+            const valorRealInput = document.getElementById('valor_real');
+
+            // Atualiza as categorias com base no tipo selecionado
+            function atualizarCategorias() {
+                const categoriaAtual = categoria.value;
+                if (tipoReceita.checked) {
+                    categoriasReceita.classList.remove('d-none');
+                    categoriasDespesa.classList.add('d-none');
+                    if (!categoriaAtual || categoriasDespesa.querySelector(`option[value="${categoriaAtual}"]`)) {
+                        categoria.value = '';
+                    }
+                } else if (tipoDespesa.checked) {
+                    categoriasReceita.classList.add('d-none');
+                    categoriasDespesa.classList.remove('d-none');
+                    if (!categoriaAtual || categoriasReceita.querySelector(`option[value="${categoriaAtual}"]`)) {
+                        categoria.value = '';
+                    }
+                }
+            }
+
+            // Formata os campos de valor para exibir sempre duas casas decimais
+            [valorPrevistoInput, valorRealInput].forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value) {
+                        this.value = parseFloat(this.value).toFixed(2);
+                    }
+                });
+            });
+
+            // Atualiza categorias quando o tipo é alterado
+            tipoReceita.addEventListener('change', atualizarCategorias);
+            tipoDespesa.addEventListener('change', atualizarCategorias);
+
+            form.addEventListener('submit', function(event) {
+                const nome = document.getElementById('nome').value.trim();
+                const valorPrevisto = parseFloat(valorPrevistoInput.value);
+                const valorReal = parseFloat(valorRealInput.value);
+                
+                if (nome.length < 2) {
+                    event.preventDefault();
+                    alert('O nome do orçamento deve ter pelo menos 2 caracteres!');
+                    return;
+                }
+
+                if (!tipoReceita.checked && !tipoDespesa.checked) {
+                    event.preventDefault();
+                    alert('Selecione o tipo do orçamento (Receita ou Despesa)!');
+                    return;
+                }
+
+                if (!categoria.value) {
+                    event.preventDefault();
+                    alert('Selecione uma categoria!');
+                    return;
+                }
+
+                if (isNaN(valorPrevisto) || valorPrevisto <= 0) {
+                    event.preventDefault();
+                    alert('O valor previsto deve ser maior que zero!');
+                    return;
+                }
+
+                if (isNaN(valorReal) || valorReal < 0) {
+                    event.preventDefault();
+                    alert('O valor real não pode ser negativo!');
+                    return;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

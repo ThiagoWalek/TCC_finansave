@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Minhas Transferências - Finansave</title>
+    <style>
+        .transfer-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+        .transfer-card:hover {
+            transform: translateY(-5px);
+        }
+        .transfer-amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .transfer-date {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .transfer-description {
+            margin-top: 0.5rem;
+            color: #495057;
+        }
+        .transfer-accounts {
+            font-size: 0.9rem;
+            color: #495057;
+            margin-top: 0.5rem;
+        }
+        .transfer-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .transfer-card:hover .transfer-actions {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">Minhas Transferências</h1>
+            <a href="/transferencias/criar" class="btn btn-primary">
+                <i class="fas fa-exchange-alt"></i> Nova Transferência
+            </a>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <% if (transferencias && transferencias.length > 0) { %>
+            <div class="row">
+                <% transferencias.forEach(function(transferencia) { %>
+                    <div class="col-12">
+                        <div class="card transfer-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <span class="transfer-amount">
+                                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(transferencia.valor) %>
+                                        </span>
+                                        <div class="transfer-date">
+                                            <%= new Date(transferencia.data_transferencia).toLocaleDateString('pt-BR') %>
+                                        </div>
+                                    </div>
+                                    <div class="transfer-actions">
+                                        <a href="/transferencias/editar/<%= transferencia.transferencia_id %>" class="btn btn-sm btn-outline-primary me-2">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </a>
+                                        <form action="/transferencias/excluir/<%= transferencia.transferencia_id %>" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir esta transferência?')">
+                                                <i class="fas fa-trash-alt"></i> Excluir
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="transfer-accounts">
+                                    <i class="fas fa-arrow-right text-muted"></i>
+                                    De: <strong><%= transferencia.contaOrigem.nome %></strong>
+                                    Para: <strong><%= transferencia.contaDestino.nome %></strong>
+                                </div>
+                                <% if (transferencia.descricao) { %>
+                                    <div class="transfer-description">
+                                        <%= transferencia.descricao %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle"></i> Você ainda não possui transferências registradas.
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

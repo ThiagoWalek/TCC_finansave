@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Novo Orçamento - Finansave</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-header p {
+            color: #6c757d;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+        .form-floating > .form-control {
+            padding-left: 2.5rem;
+        }
+        .form-floating > .form-label {
+            padding-left: 2.5rem;
+        }
+        .icon-input {
+            position: absolute;
+            left: 1rem;
+            top: 1.25rem;
+            color: #6c757d;
+            z-index: 4;
+        }
+        .tipo-toggle {
+            margin-bottom: 1.5rem;
+        }
+        .tipo-toggle .btn {
+            width: 50%;
+            padding: 1rem;
+        }
+        .tipo-toggle .btn-outline-success:hover,
+        .tipo-toggle .btn-outline-success:focus,
+        .tipo-toggle .btn-outline-success:active,
+        .tipo-toggle .btn-outline-success.active {
+            background-color: #198754;
+            color: #fff;
+        }
+        .tipo-toggle .btn-outline-danger:hover,
+        .tipo-toggle .btn-outline-danger:focus,
+        .tipo-toggle .btn-outline-danger:active,
+        .tipo-toggle .btn-outline-danger.active {
+            background-color: #dc3545;
+            color: #fff;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Novo Orçamento</h1>
+                <p>Defina seu novo orçamento mensal</p>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/orcamentos/criar" method="POST" id="formOrcamento">
+                <!-- Tipo de Orçamento (Receita/Despesa) -->
+                <div class="btn-group tipo-toggle w-100" role="group">
+                    <input type="radio" class="btn-check" name="tipo" id="tipoReceita" value="Receita" required>
+                    <label class="btn btn-outline-success" for="tipoReceita">
+                        <i class="fas fa-arrow-up"></i> Receita
+                    </label>
+
+                    <input type="radio" class="btn-check" name="tipo" id="tipoDespesa" value="Despesa">
+                    <label class="btn btn-outline-danger" for="tipoDespesa">
+                        <i class="fas fa-arrow-down"></i> Despesa
+                    </label>
+                </div>
+
+                <!-- Nome do Orçamento -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-file-signature icon-input"></i>
+                    <input type="text" class="form-control" id="nome" name="nome" 
+                           placeholder="Nome do orçamento" required>
+                    <label for="nome">Nome do orçamento</label>
+                </div>
+
+                <!-- Categoria -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-tag icon-input"></i>
+                    <select class="form-select" id="categoria" name="categoria" required>
+                        <option value="" disabled selected>Selecione uma categoria</option>
+                        <!-- Categorias de Receita -->
+                        <optgroup label="Receitas" class="categoria-receita d-none">
+                            <option value="Salário">Salário</option>
+                            <option value="Investimentos">Investimentos</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Vendas">Vendas</option>
+                            <option value="Outras Receitas">Outras Receitas</option>
+                        </optgroup>
+                        <!-- Categorias de Despesa -->
+                        <optgroup label="Despesas" class="categoria-despesa d-none">
+                            <option value="Moradia">Moradia</option>
+                            <option value="Alimentação">Alimentação</option>
+                            <option value="Transporte">Transporte</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Educação">Educação</option>
+                            <option value="Lazer">Lazer</option>
+                            <option value="Vestuário">Vestuário</option>
+                            <option value="Utilidades">Utilidades</option>
+                            <option value="Outras Despesas">Outras Despesas</option>
+                        </optgroup>
+                    </select>
+                    <label for="categoria">Categoria</label>
+                </div>
+
+                <!-- Mês/Ano -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-calendar-alt icon-input"></i>
+                    <input type="month" class="form-control" id="mes_ano" name="mes_ano" required>
+                    <label for="mes_ano">Mês/Ano</label>
+                </div>
+
+                <!-- Valor Previsto -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-dollar-sign icon-input"></i>
+                    <input type="number" class="form-control" id="valor_previsto" name="valor_previsto" 
+                           step="0.01" placeholder="0.00" required>
+                    <label for="valor_previsto">Valor previsto</label>
+                </div>
+
+                <!-- Valor Real -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-coins icon-input"></i>
+                    <input type="number" class="form-control" id="valor_real" name="valor_real" 
+                           step="0.01" placeholder="0.00" value="0" required>
+                    <label for="valor_real">Valor real inicial</label>
+                </div>
+
+                <!-- Descrição -->
+                <div class="form-floating mb-4 position-relative">
+                    <i class="fas fa-align-left icon-input"></i>
+                    <textarea class="form-control" id="descricao" name="descricao" 
+                              placeholder="Descrição" style="height: 100px"></textarea>
+                    <label for="descricao">Descrição (opcional)</label>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Criar Orçamento
+                    </button>
+                    <a href="/orcamentos" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formOrcamento');
+            const tipoReceita = document.getElementById('tipoReceita');
+            const tipoDespesa = document.getElementById('tipoDespesa');
+            const categoria = document.getElementById('categoria');
+            const categoriasReceita = document.querySelector('.categoria-receita');
+            const categoriasDespesa = document.querySelector('.categoria-despesa');
+            const valorPrevistoInput = document.getElementById('valor_previsto');
+            const valorRealInput = document.getElementById('valor_real');
+            const mesAnoInput = document.getElementById('mes_ano');
+
+            // Define o mês atual como valor padrão
+            const hoje = new Date();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const ano = hoje.getFullYear();
+            mesAnoInput.value = `${ano}-${mes}`;
+
+            // Atualiza as categorias com base no tipo selecionado
+            function atualizarCategorias() {
+                categoria.value = ''; // Limpa a seleção atual
+                if (tipoReceita.checked) {
+                    categoriasReceita.classList.remove('d-none');
+                    categoriasDespesa.classList.add('d-none');
+                } else if (tipoDespesa.checked) {
+                    categoriasReceita.classList.add('d-none');
+                    categoriasDespesa.classList.remove('d-none');
+                }
+            }
+
+            // Formata os campos de valor para exibir sempre duas casas decimais
+            [valorPrevistoInput, valorRealInput].forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value) {
+                        this.value = parseFloat(this.value).toFixed(2);
+                    }
+                });
+            });
+
+            // Atualiza categorias quando o tipo é alterado
+            tipoReceita.addEventListener('change', atualizarCategorias);
+            tipoDespesa.addEventListener('change', atualizarCategorias);
+
+            form.addEventListener('submit', function(event) {
+                const nome = document.getElementById('nome').value.trim();
+                const valorPrevisto = parseFloat(valorPrevistoInput.value);
+                const valorReal = parseFloat(valorRealInput.value);
+                
+                if (nome.length < 2) {
+                    event.preventDefault();
+                    alert('O nome do orçamento deve ter pelo menos 2 caracteres!');
+                    return;
+                }
+
+                if (!tipoReceita.checked && !tipoDespesa.checked) {
+                    event.preventDefault();
+                    alert('Selecione o tipo do orçamento (Receita ou Despesa)!');
+                    return;
+                }
+
+                if (!categoria.value) {
+                    event.preventDefault();
+                    alert('Selecione uma categoria!');
+                    return;
+                }
+
+                if (isNaN(valorPrevisto) || valorPrevisto <= 0) {
+                    event.preventDefault();
+                    alert('O valor previsto deve ser maior que zero!');
+                    return;
+                }
+
+                if (isNaN(valorReal) || valorReal < 0) {
+                    event.preventDefault();
+                    alert('O valor real não pode ser negativo!');
+                    return;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

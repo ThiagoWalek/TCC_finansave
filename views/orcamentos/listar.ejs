@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Meus Orçamentos - Finansave</title>
+    <style>
+        .budgets-header {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .summary-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+        .budget-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+        .budget-card:hover {
+            transform: translateY(-5px);
+        }
+        .budget-progress {
+            height: 8px;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        .budget-amount {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .budget-category {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .budget-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+        .budget-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .budget-card:hover .budget-actions {
+            opacity: 1;
+        }
+        .filter-section {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <!-- Cabeçalho com Resumo -->
+        <div class="budgets-header text-center">
+            <h1 class="h3 mb-4">Meus Orçamentos</h1>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+                <!-- Receitas Previstas vs Realizadas -->
+                <div class="col">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Receitas</h6>
+                            <p class="card-text mb-1">
+                                <span class="h5 text-success">
+                                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totais.receitas.realizado) %>
+                                </span>
+                                <small class="text-muted">/ <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totais.receitas.previsto) %></small>
+                            </p>
+                            <div class="progress budget-progress">
+                                <% const progressoReceitas = (totais.receitas.realizado / totais.receitas.previsto) * 100 || 0; %>
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: <%= Math.min(progressoReceitas, 100) %>%" 
+                                     aria-valuenow="<%= progressoReceitas %>" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Despesas Previstas vs Realizadas -->
+                <div class="col">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Despesas</h6>
+                            <p class="card-text mb-1">
+                                <span class="h5 text-danger">
+                                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totais.despesas.realizado) %>
+                                </span>
+                                <small class="text-muted">/ <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totais.despesas.previsto) %></small>
+                            </p>
+                            <div class="progress budget-progress">
+                                <% const progressoDespesas = (totais.despesas.realizado / totais.despesas.previsto) * 100 || 0; %>
+                                <div class="progress-bar bg-danger" role="progressbar" 
+                                     style="width: <%= Math.min(progressoDespesas, 100) %>%" 
+                                     aria-valuenow="<%= progressoDespesas %>" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saldo Previsto -->
+                <div class="col">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Saldo Previsto</h6>
+                            <p class="card-text">
+                                <span class="h5 <%= (totais.receitas.previsto - totais.despesas.previsto) >= 0 ? 'text-success' : 'text-danger' %>">
+                                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totais.receitas.previsto - totais.despesas.previsto) %>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saldo Real -->
+                <div class="col">
+                    <div class="card summary-card h-100">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Saldo Real</h6>
+                            <p class="card-text">
+                                <span class="h5 <%= (totais.receitas.realizado - totais.despesas.realizado) >= 0 ? 'text-success' : 'text-danger' %>">
+                                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totais.receitas.realizado - totais.despesas.realizado) %>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <!-- Filtros -->
+        <div class="filter-section">
+            <form action="/orcamentos" method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="mes_ano" class="form-label">Mês/Ano</label>
+                    <input type="month" class="form-control" id="mes_ano" name="mes_ano" 
+                           value="<%= anoAtual ? `${anoAtual}-${mesAtual.padStart(2, '0')}` : '' %>">
+                </div>
+                <div class="col-md-3">
+                    <label for="tipo" class="form-label">Tipo</label>
+                    <select class="form-select" id="tipo" name="tipo">
+                        <option value="">Todos</option>
+                        <option value="Receita" <%= filtros.tipo === 'Receita' ? 'selected' : '' %>>Receitas</option>
+                        <option value="Despesa" <%= filtros.tipo === 'Despesa' ? 'selected' : '' %>>Despesas</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Todos</option>
+                        <option value="Dentro" <%= filtros.status === 'Dentro' ? 'selected' : '' %>>Dentro do orçamento</option>
+                        <option value="Acima" <%= filtros.status === 'Acima' ? 'selected' : '' %>>Acima do orçamento</option>
+                        <option value="Abaixo" <%= filtros.status === 'Abaixo' ? 'selected' : '' %>>Abaixo do orçamento</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Botão Adicionar Orçamento -->
+        <div class="mb-4 text-end">
+            <a href="/orcamentos/criar" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Orçamento
+            </a>
+        </div>
+
+        <!-- Lista de Orçamentos -->
+        <div class="row">
+            <% orcamentos.forEach(function(orcamento) { 
+                const progresso = (orcamento.valor_real / orcamento.valor_previsto) * 100;
+                let statusClass, statusText;
+                if (progresso > 100) {
+                    statusClass = 'bg-danger';
+                    statusText = 'Acima do orçamento';
+                } else if (progresso < 80) {
+                    statusClass = 'bg-info';
+                    statusText = 'Abaixo do orçamento';
+                } else {
+                    statusClass = 'bg-success';
+                    statusText = 'Dentro do orçamento';
+                }
+            %>
+                <div class="col-12">
+                    <div class="card budget-card">
+                        <!-- Status do Orçamento -->
+                        <div class="budget-status">
+                            <span class="badge <%= statusClass %>"><%= statusText %></span>
+                            <% if (progresso > 0) { %>
+                                <span class="badge bg-secondary ms-1"><%= progresso.toFixed(1) %>%</span>
+                            <% } %>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <!-- Nome e Categoria -->
+                                <div class="col-md-3">
+                                    <h5 class="card-title mb-1"><%= orcamento.nome %></h5>
+                                    <p class="budget-category mb-2">
+                                        <i class="fas fa-tag"></i> <%= orcamento.categoria %>
+                                    </p>
+                                </div>
+
+                                <!-- Tipo e Mês/Ano -->
+                                <div class="col-md-2">
+                                    <p class="mb-1">
+                                        <i class="fas <%= orcamento.tipo === 'Receita' ? 'fa-arrow-up text-success' : 'fa-arrow-down text-danger' %>"></i>
+                                        <%= orcamento.tipo %>
+                                    </p>
+                                    <p class="budget-category mb-0">
+                                        <i class="fas fa-calendar"></i> <%= orcamento.mes_ano %>
+                                    </p>
+                                </div>
+
+                                <!-- Valores e Progresso -->
+                                <div class="col-md-5">
+                                    <div class="progress budget-progress">
+                                        <div class="progress-bar <%= statusClass %>" role="progressbar" 
+                                             style="width: <%= Math.min(progresso, 100) %>%" 
+                                             aria-valuenow="<%= progresso %>" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="budget-category">Realizado</span>
+                                        <span class="budget-category">Previsto</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="budget-amount <%= orcamento.tipo === 'Receita' ? 'text-success' : 'text-danger' %>">
+                                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orcamento.valor_real) %>
+                                        </span>
+                                        <span class="budget-amount text-muted">
+                                            <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orcamento.valor_previsto) %>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Ações -->
+                                <div class="col-md-2">
+                                    <div class="budget-actions d-flex gap-2 justify-content-end">
+                                        <a href="/orcamentos/editar/<%= orcamento.id_orcamento %>" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="/orcamentos/excluir/<%= orcamento.id_orcamento %>" 
+                                              method="POST" class="d-inline" 
+                                              onsubmit="return confirm('Tem certeza que deseja excluir este orçamento?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Descrição (se existir) -->
+                            <% if(orcamento.descricao) { %>
+                                <p class="card-text mt-3 mb-0 budget-category">
+                                    <i class="fas fa-info-circle"></i> <%= orcamento.descricao %>
+                                </p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+
+            <% if(orcamentos.length === 0) { %>
+                <div class="col-12 text-center">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle"></i> Nenhum orçamento encontrado para os filtros selecionados.
+                        <br>
+                        <a href="/orcamentos/criar" class="alert-link">Clique aqui</a> para criar um novo orçamento.
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Define o mês/ano atual como valor padrão se não houver filtro
+            const mesAnoInput = document.getElementById('mes_ano');
+            if (!mesAnoInput.value) {
+                const hoje = new Date();
+                const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+                const ano = hoje.getFullYear();
+                mesAnoInput.value = `${ano}-${mes}`;
+            }
+        });
+    </script>
+</body>
+</html>

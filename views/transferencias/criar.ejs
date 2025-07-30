@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Nova Transferência - Finansave</title>
+    <style>
+        .form-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        .form-title {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        .account-balance {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container">
+                    <h2 class="form-title text-center">Nova Transferência</h2>
+
+                    <%- include('../partials/messages') %>
+
+                    <form action="/transferencias/criar" method="POST" class="needs-validation" novalidate>
+                        <!-- Conta de Origem -->
+                        <div class="mb-3">
+                            <label for="conta_origem_id" class="form-label">Conta de Origem</label>
+                            <select class="form-select" id="conta_origem_id" name="conta_origem_id" required>
+                                <option value="">Selecione a conta de origem</option>
+                                <% contas.forEach(function(conta) { %>
+                                    <option value="<%= conta.conta_id %>" data-saldo="<%= conta.saldo_atual %>">
+                                        <%= conta.nome %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="account-balance" id="saldo-origem"></div>
+                            <div class="invalid-feedback">Por favor, selecione a conta de origem.</div>
+                        </div>
+
+                        <!-- Conta de Destino -->
+                        <div class="mb-3">
+                            <label for="conta_destino_id" class="form-label">Conta de Destino</label>
+                            <select class="form-select" id="conta_destino_id" name="conta_destino_id" required>
+                                <option value="">Selecione a conta de destino</option>
+                                <% contas.forEach(function(conta) { %>
+                                    <option value="<%= conta.conta_id %>" data-saldo="<%= conta.saldo_atual %>">
+                                        <%= conta.nome %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                            <div class="account-balance" id="saldo-destino"></div>
+                            <div class="invalid-feedback">Por favor, selecione a conta de destino.</div>
+                        </div>
+
+                        <!-- Valor -->
+                        <div class="mb-3">
+                            <label for="valor" class="form-label">Valor da Transferência</label>
+                            <div class="input-group">
+                                <span class="input-group-text">R$</span>
+                                <input type="number" class="form-control" id="valor" name="valor" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="invalid-feedback">Por favor, insira um valor válido.</div>
+                        </div>
+
+                        <!-- Data -->
+                        <div class="mb-3">
+                            <label for="data_transferencia" class="form-label">Data da Transferência</label>
+                            <input type="date" class="form-control" id="data_transferencia" name="data_transferencia" required>
+                            <div class="invalid-feedback">Por favor, selecione a data da transferência.</div>
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição (opcional)</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="2"></textarea>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/transferencias" class="btn btn-outline-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Criar Transferência</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        // Validação do formulário
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.needs-validation');
+            const contaOrigemSelect = document.getElementById('conta_origem_id');
+            const contaDestinoSelect = document.getElementById('conta_destino_id');
+            const valorInput = document.getElementById('valor');
+            const saldoOrigemDiv = document.getElementById('saldo-origem');
+            const saldoDestinoDiv = document.getElementById('saldo-destino');
+
+            // Atualiza o saldo exibido quando a conta é selecionada
+            function atualizarSaldoExibido(select, saldoDiv) {
+                const option = select.options[select.selectedIndex];
+                if (option.value) {
+                    const saldo = parseFloat(option.dataset.saldo);
+                    saldoDiv.textContent = `Saldo disponível: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo)}`;
+                } else {
+                    saldoDiv.textContent = '';
+                }
+            }
+
+            contaOrigemSelect.addEventListener('change', () => {
+                atualizarSaldoExibido(contaOrigemSelect, saldoOrigemDiv);
+            });
+
+            contaDestinoSelect.addEventListener('change', () => {
+                atualizarSaldoExibido(contaDestinoSelect, saldoDestinoDiv);
+            });
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    // Validações adicionais
+                    const contaOrigem = contaOrigemSelect.value;
+                    const contaDestino = contaDestinoSelect.value;
+                    const valor = parseFloat(valorInput.value);
+                    const saldoOrigem = parseFloat(contaOrigemSelect.options[contaOrigemSelect.selectedIndex].dataset.saldo);
+
+                    if (contaOrigem === contaDestino) {
+                        alert('A conta de origem e destino não podem ser a mesma.');
+                        event.preventDefault();
+                        return;
+                    }
+
+                    if (valor > saldoOrigem) {
+                        alert('O valor da transferência não pode ser maior que o saldo disponível na conta de origem.');
+                        event.preventDefault();
+                        return;
+                    }
+                }
+
+                form.classList.add('was-validated');
+            });
+
+            // Define a data atual como padrão
+            const dataInput = document.getElementById('data_transferencia');
+            const hoje = new Date().toISOString().split('T')[0];
+            dataInput.value = hoje;
+            dataInput.max = hoje;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Atualizar Progresso do Orçamento - Finansave</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-header p {
+            color: #6c757d;
+        }
+        .budget-details {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .budget-details h2 {
+            color: #0d6efd;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .budget-info {
+            margin-bottom: 1rem;
+        }
+        .budget-info p {
+            margin-bottom: 0.5rem;
+            color: #6c757d;
+        }
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .icon-input {
+            position: absolute;
+            left: 1rem;
+            top: 1.25rem;
+            color: #6c757d;
+            z-index: 4;
+        }
+        .form-floating > .form-control {
+            padding-left: 2.5rem;
+        }
+        .form-floating > .form-label {
+            padding-left: 2.5rem;
+        }
+        .alert-warning {
+            display: none;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Atualizar Progresso</h1>
+                <p>Atualize o valor real do seu orçamento</p>
+            </div>
+
+            <div class="budget-details">
+                <h2><%= orcamento.nome %></h2>
+                <div class="budget-info">
+                    <p><strong>Tipo:</strong> 
+                        <span class="badge <%= orcamento.tipo === 'Receita' ? 'bg-success' : 'bg-danger' %>">
+                            <%= orcamento.tipo %>
+                        </span>
+                    </p>
+                    <p><strong>Categoria:</strong> <%= orcamento.categoria %></p>
+                    <p><strong>Mês/Ano:</strong> <%= new Date(orcamento.mes_ano + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) %></p>
+                    <p><strong>Descrição:</strong> <%= orcamento.descricao || 'Não informada' %></p>
+                </div>
+
+                <div class="progress-info">
+                    <p><strong>Progresso Atual:</strong></p>
+                    <div class="progress">
+                        <% const progresso = (orcamento.valor_real / orcamento.valor_previsto) * 100; %>
+                        <div class="progress-bar <%= progresso > 100 ? 'bg-danger' : (progresso < 80 ? 'bg-info' : 'bg-success') %>" 
+                             role="progressbar" style="width: <%= Math.min(progresso, 100) %>%" 
+                             aria-valuenow="<%= progresso %>" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                    <p>
+                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orcamento.valor_real) %>
+                        de
+                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(orcamento.valor_previsto) %>
+                        (<%= progresso.toFixed(1) %>%)
+                    </p>
+                    <p><strong>Status:</strong>
+                        <% if(orcamento.status_orcamento === 'Dentro') { %>
+                            <span class="badge bg-success">Dentro do orçamento</span>
+                        <% } else if(orcamento.status_orcamento === 'Acima') { %>
+                            <span class="badge bg-danger">Acima do orçamento</span>
+                        <% } else { %>
+                            <span class="badge bg-info">Abaixo do orçamento</span>
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/orcamentos/atualizar-progresso/<%= orcamento.id_orcamento %>" method="POST" id="formProgresso">
+                <!-- Valor Real -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-coins icon-input"></i>
+                    <input type="number" class="form-control" id="valor_real" name="valor_real" 
+                           value="<%= orcamento.valor_real %>" step="0.01" placeholder="0.00" required>
+                    <label for="valor_real">Valor real</label>
+                </div>
+
+                <!-- Alerta de Diminuição -->
+                <div class="alert alert-warning" id="alertaDiminuicao" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Você está diminuindo o valor real do orçamento. Tem certeza que deseja continuar?
+                </div>
+
+                <!-- Alerta de Conclusão -->
+                <div class="alert alert-success" id="alertaConclusao" role="alert" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    Este valor atingirá ou ultrapassará o valor previsto do orçamento!
+                </div>
+
+                <!-- Botões -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Atualizar Progresso
+                    </button>
+                    <a href="/orcamentos" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formProgresso');
+            const valorRealInput = document.getElementById('valor_real');
+            const alertaDiminuicao = document.getElementById('alertaDiminuicao');
+            const alertaConclusao = document.getElementById('alertaConclusao');
+            const valorPrevisto = <%= orcamento.valor_previsto %>;
+            const valorRealAtual = <%= orcamento.valor_real %>;
+
+            // Formata o valor real para sempre exibir duas casas decimais
+            valorRealInput.addEventListener('change', function() {
+                if (this.value) {
+                    this.value = parseFloat(this.value).toFixed(2);
+                }
+            });
+
+            // Monitora mudanças no valor real
+            valorRealInput.addEventListener('input', function() {
+                const novoValor = parseFloat(this.value);
+                
+                // Verifica se o novo valor é menor que o valor atual
+                if (!isNaN(novoValor) && novoValor < valorRealAtual) {
+                    alertaDiminuicao.style.display = 'block';
+                } else {
+                    alertaDiminuicao.style.display = 'none';
+                }
+
+                // Verifica se o novo valor atingirá ou ultrapassará o valor previsto
+                if (!isNaN(novoValor) && novoValor >= valorPrevisto) {
+                    alertaConclusao.style.display = 'block';
+                } else {
+                    alertaConclusao.style.display = 'none';
+                }
+            });
+
+            // Validação do formulário
+            form.addEventListener('submit', function(event) {
+                const novoValor = parseFloat(valorRealInput.value);
+
+                if (isNaN(novoValor) || novoValor < 0) {
+                    event.preventDefault();
+                    alert('O valor real não pode ser negativo!');
+                    return;
+                }
+
+                // Confirma se o usuário realmente quer diminuir o valor
+                if (novoValor < valorRealAtual) {
+                    if (!confirm('Você tem certeza que deseja diminuir o valor real do orçamento?')) {
+                        event.preventDefault();
+                        return;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Registro - Finansave</title>
+    <style>
+        .register-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .register-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .register-header p {
+            color: #6c757d;
+        }
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        .btn-register {
+            width: 100%;
+            padding: 0.75rem;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .password-requirements {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+        .password-requirements ul {
+            padding-left: 1.2rem;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="register-container">
+            <div class="register-header">
+                <h1>Criar Conta</h1>
+                <p>Preencha os dados para se registrar</p>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/usuarios/registro" method="POST" id="formRegistro">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="nome" name="nome" 
+                           placeholder="Seu nome" required minlength="2">
+                    <label for="nome">Nome completo</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" name="email" 
+                           placeholder="nome@exemplo.com" required>
+                    <label for="email">Email</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="senha" name="senha" 
+                           placeholder="Senha" required minlength="6">
+                    <label for="senha">Senha</label>
+                    <div class="password-requirements">
+                        <p class="mb-1">A senha deve conter:</p>
+                        <ul>
+                            <li>Mínimo de 6 caracteres</li>
+                            <li>Pelo menos uma letra maiúscula</li>
+                            <li>Pelo menos um número</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" 
+                           placeholder="Confirmar senha" required>
+                    <label for="confirmar_senha">Confirmar senha</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-register">
+                    <i class="fas fa-user-plus"></i> Registrar
+                </button>
+            </form>
+
+            <div class="login-link">
+                <p class="mb-0">Já tem uma conta? 
+                    <a href="/usuarios/login" class="text-primary">Faça login aqui</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formRegistro');
+            const senha = document.getElementById('senha');
+            const confirmarSenha = document.getElementById('confirmar_senha');
+
+            form.addEventListener('submit', function(event) {
+                if (senha.value !== confirmarSenha.value) {
+                    event.preventDefault();
+                    alert('As senhas não conferem!');
+                    confirmarSenha.value = '';
+                    confirmarSenha.focus();
+                }
+
+                // Validação de senha forte
+                const senhaRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+                if (!senhaRegex.test(senha.value)) {
+                    event.preventDefault();
+                    alert('A senha deve conter pelo menos 6 caracteres, uma letra maiúscula e um número!');
+                    senha.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
