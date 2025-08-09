@@ -43,6 +43,7 @@ router.get('/', transferenciaController.listar);
 router.get('/criar', transferenciaController.renderCriar);
 router.post('/criar', validacoesTransferencia, transferenciaController.criar);
 router.get('/detalhes/:id', transferenciaController.detalhes);
+// Não incluímos rota de edição pois transferências não devem ser editadas após criadas
 router.post('/excluir/:id', transferenciaController.excluir);
 
 module.exports = router;

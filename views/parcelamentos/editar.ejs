@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Editar Parcelamento - Finansave</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-header h1 {
+            color: #0d6efd;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-header p {
+            color: #6c757d;
+        }
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+        .form-floating > .form-control {
+            padding-left: 2.5rem;
+        }
+        .form-floating > .form-label {
+            padding-left: 2.5rem;
+        }
+        .icon-input {
+            position: absolute;
+            left: 1rem;
+            top: 1.25rem;
+            color: #6c757d;
+            z-index: 4;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Editar Parcelamento</h1>
+                <p>Atualize as informações do seu parcelamento</p>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/parcelamentos/editar/<%= parcelamento.id_parcelamento %>" method="POST" id="formParcelamento">
+                <!-- Descrição do Parcelamento -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-file-signature icon-input"></i>
+                    <input type="text" class="form-control" id="descricao" name="descricao" 
+                           placeholder="Descrição do parcelamento" value="<%= parcelamento.descricao %>" required>
+                    <label for="descricao">Descrição do parcelamento</label>
+                </div>
+
+                <!-- Total de Parcelas -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-list-ol icon-input"></i>
+                    <input type="number" class="form-control" id="total_parcelas" name="total_parcelas" 
+                           placeholder="Total de parcelas" min="1" value="<%= parcelamento.total_parcelas %>" required>
+                    <label for="total_parcelas">Total de parcelas</label>
+                </div>
+
+                <!-- Parcela Atual -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-tasks icon-input"></i>
+                    <input type="number" class="form-control" id="parcela_atual" name="parcela_atual" 
+                           placeholder="Parcela atual" min="1" max="<%= parcelamento.total_parcelas %>" value="<%= parcelamento.parcela_atual %>" required>
+                    <label for="parcela_atual">Parcela atual</label>
+                </div>
+
+                <!-- Valor Total -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-dollar-sign icon-input"></i>
+                    <input type="number" class="form-control" id="valor_total" name="valor_total" 
+                           placeholder="Valor total" min="0.01" step="0.01" value="<%= parcelamento.valor_total %>" required>
+                    <label for="valor_total">Valor total (R$)</label>
+                </div>
+
+                <!-- Data de Início -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-calendar-alt icon-input"></i>
+                    <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                           value="<%= new Date(parcelamento.data_inicio).toISOString().split('T')[0] %>" required>
+                    <label for="data_inicio">Data de início</label>
+                </div>
+
+                <!-- Informações Calculadas -->
+                <div class="alert alert-info mb-3">
+                    <div id="valor_parcela_calculado">Valor por parcela: R$ <%= parseFloat(parcelamento.valor_parcela).toFixed(2) %></div>
+                    <div>Valor pago: R$ <%= (parcelamento.parcela_atual * parcelamento.valor_parcela).toFixed(2) %></div>
+                    <div>Valor restante: R$ <%= ((parcelamento.total_parcelas - parcelamento.parcela_atual) * parcelamento.valor_parcela).toFixed(2) %></div>
+                    <div>Progresso: <%= ((parcelamento.parcela_atual / parcelamento.total_parcelas) * 100).toFixed(2) %>%</div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="/parcelamentos" class="btn btn-outline-secondary me-md-2">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calcula o valor da parcela quando o usuário preenche os campos
+            const totalParcelasInput = document.getElementById('total_parcelas');
+            const valorTotalInput = document.getElementById('valor_total');
+            const parcelaAtualInput = document.getElementById('parcela_atual');
+            
+            function calcularValorParcela() {
+                const totalParcelas = parseFloat(totalParcelasInput.value);
+                const valorTotal = parseFloat(valorTotalInput.value);
+                const parcelaAtual = parseFloat(parcelaAtualInput.value);
+                
+                if (totalParcelas > 0 && valorTotal > 0) {
+                    const valorParcela = (valorTotal / totalParcelas).toFixed(2);
+                    document.getElementById('valor_parcela_calculado').textContent = `Valor por parcela: R$ ${valorParcela}`;
+                    
+                    if (parcelaAtual > 0 && parcelaAtual <= totalParcelas) {
+                        const valorPago = (parcelaAtual * valorParcela).toFixed(2);
+                        const valorRestante = ((totalParcelas - parcelaAtual) * valorParcela).toFixed(2);
+                        const progresso = ((parcelaAtual / totalParcelas) * 100).toFixed(2);
+                        
+                        document.querySelector('.alert-info').innerHTML = `
+                            <div id="valor_parcela_calculado">Valor por parcela: R$ ${valorParcela}</div>
+                            <div>Valor pago: R$ ${valorPago}</div>
+                            <div>Valor restante: R$ ${valorRestante}</div>
+                            <div>Progresso: ${progresso}%</div>
+                        `;
+                    }
+                }
+                
+                // Atualiza o valor máximo do campo parcela_atual
+                parcelaAtualInput.max = totalParcelas;
+                if (parseInt(parcelaAtualInput.value) > parseInt(totalParcelas)) {
+                    parcelaAtualInput.value = totalParcelas;
+                }
+            }
+            
+            totalParcelasInput.addEventListener('input', calcularValorParcela);
+            valorTotalInput.addEventListener('input', calcularValorParcela);
+            parcelaAtualInput.addEventListener('input', calcularValorParcela);
+        });
+    </script>
+</body>
+</html>

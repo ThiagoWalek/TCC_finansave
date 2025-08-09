@@ -69,9 +69,6 @@
                                         </div>
                                     </div>
                                     <div class="transfer-actions">
-                                        <a href="/transferencias/editar/<%= transferencia.transferencia_id %>" class="btn btn-sm btn-outline-primary me-2">
-                                            <i class="fas fa-edit"></i> Editar
-                                        </a>
                                         <form action="/transferencias/excluir/<%= transferencia.transferencia_id %>" method="POST" class="d-inline">
                                             <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir esta transferência?')">
                                                 <i class="fas fa-trash-alt"></i> Excluir

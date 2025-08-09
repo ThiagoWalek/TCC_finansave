@@ -53,12 +53,12 @@
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between">
                                         <h6 class="mb-1"><%= meta.nome %></h6>
-                                        <small><%= Math.round((meta.valor_atual / meta.valor_alvo) * 100) %>%</small>
+                                        <small><%= Math.round((parseFloat(meta.valor_atual) / parseFloat(meta.valor_alvo)) * 100) %>%</small>
                                     </div>
                                     <div class="progress">
-                                        <div class="progress-bar" role="progressbar" 
-                                             style="width: <%= (meta.valor_atual / meta.valor_alvo) * 100 %>%"
-                                             aria-valuenow="<%= (meta.valor_atual / meta.valor_alvo) * 100 %>"
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: <%= (parseFloat(meta.valor_atual) / parseFloat(meta.valor_alvo)) * 100 %>%"
+                                             aria-valuenow="<%= (parseFloat(meta.valor_atual) / parseFloat(meta.valor_alvo)) * 100 %>"
                                              aria-valuemin="0" aria-valuemax="100">
                                         </div>
                                     </div>
@@ -81,18 +81,38 @@
                         <h5 class="card-title mb-0">Orçamento do Mês</h5>
                     </div>
                     <div class="card-body">
-                        <% if (typeof orcamentos !== 'undefined' && orcamentos.length > 0) { %>
+                        <% if (typeof orcamentos !== 'undefined' && orcamentos !== null) { %>
                             <div class="mb-3">
                                 <h6>Receitas</h6>
-                                <p class="text-success">R$ <%= orcamentos.receitas.realizado.toFixed(2) %> / <%= orcamentos.receitas.previsto.toFixed(2) %></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="text-success mb-1">R$ <%= orcamentos.receitas.realizado.toFixed(2) %> / <%= orcamentos.receitas.previsto.toFixed(2) %></p>
+                                    <small><%= Math.round((orcamentos.receitas.realizado / (orcamentos.receitas.previsto || 1)) * 100) %>%</small>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: <%= Math.min((orcamentos.receitas.realizado / (orcamentos.receitas.previsto || 1)) * 100, 100) %>%"
+                                         aria-valuenow="<%= Math.min((orcamentos.receitas.realizado / (orcamentos.receitas.previsto || 1)) * 100, 100) %>"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <h6>Despesas</h6>
-                                <p class="text-danger">R$ <%= orcamentos.despesas.realizado.toFixed(2) %> / <%= orcamentos.despesas.previsto.toFixed(2) %></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="text-danger mb-1">R$ <%= orcamentos.despesas.realizado.toFixed(2) %> / <%= orcamentos.despesas.previsto.toFixed(2) %></p>
+                                    <small><%= Math.round((orcamentos.despesas.realizado / (orcamentos.despesas.previsto || 1)) * 100) %>%</small>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar bg-danger" role="progressbar" 
+                                         style="width: <%= Math.min((orcamentos.despesas.realizado / (orcamentos.despesas.previsto || 1)) * 100, 100) %>%"
+                                         aria-valuenow="<%= Math.min((orcamentos.despesas.realizado / (orcamentos.despesas.previsto || 1)) * 100, 100) %>"
+                                         aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <h6>Saldo</h6>
-                                <p class="<%= (orcamentos.receitas.realizado - orcamentos.despesas.realizado) >= 0 ? 'text-success' : 'text-danger' %>">
+                                <p class="<%= (orcamentos.receitas.realizado - orcamentos.despesas.realizado) >= 0 ? 'text-success' : 'text-danger' %> fw-bold">
                                     R$ <%= (orcamentos.receitas.realizado - orcamentos.despesas.realizado).toFixed(2) %>
                                 </p>
                             </div>
@@ -118,10 +138,20 @@
                                 <% parcelamentos.forEach(parcelamento => { %>
                                     <div class="list-group-item">
                                         <h6 class="mb-1"><%= parcelamento.descricao %></h6>
-                                        <small class="text-muted">
-                                            Parcela <%= parcelamento.parcela_atual %>/<%= parcelamento.total_parcelas %>
-                                            - R$ <%= parcelamento.valor_parcela.toFixed(2) %>
-                                        </small>
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">
+                                                Parcela <%= parcelamento.parcela_atual %>/<%= parcelamento.total_parcelas %>
+                                                - R$ <%= parseFloat(parcelamento.valor_parcela).toFixed(2) %>
+                                            </small>
+                                            <small><%= Math.round((parcelamento.parcela_atual / parcelamento.total_parcelas) * 100) %>%</small>
+                                        </div>
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar bg-info" role="progressbar" 
+                                                style="width: <%= (parcelamento.parcela_atual / parcelamento.total_parcelas) * 100 %>%"
+                                                aria-valuenow="<%= (parcelamento.parcela_atual / parcelamento.total_parcelas) * 100 %>"
+                                                aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
                                     </div>
                                 <% }) %>
                             </div>

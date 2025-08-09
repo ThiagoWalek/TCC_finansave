@@ -1,6 +1,7 @@
 const Orcamento = require('../models/Orcamento');
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize');
+const sequelize = require('../config/database');
 
 const orcamentoController = {
     // Lista todos os orçamentos do usuário
@@ -21,30 +22,55 @@ const orcamentoController = {
 
             // Filtra por status se fornecido
             if (status) {
-                where = {
-                    ...where,
-                    [Op.and]: sequelize.literal(
-                        status === 'Dentro' ? 'valor_real <= valor_previsto' :
-                        status === 'Acima' ? 'valor_real > valor_previsto' :
-                        status === 'Abaixo' ? 'valor_real < valor_previsto * 0.8' : '1=1'
-                    )
-                };
+                if (status === 'Dentro') {
+                    where = {
+                        ...where,
+                        valor_real: {
+                            [Op.not]: null,
+                            [Op.lte]: sequelize.literal('valor_previsto'),
+                            [Op.gte]: sequelize.literal('valor_previsto * 0.8')
+                        }
+                    };
+                } else if (status === 'Acima') {
+                    where = {
+                        ...where,
+                        valor_real: {
+                            [Op.not]: null,
+                            [Op.gt]: sequelize.literal('valor_previsto')
+                        }
+                    };
+                } else if (status === 'Abaixo') {
+                    where = {
+                        ...where,
+                        valor_real: {
+                            [Op.not]: null,
+                            [Op.lt]: sequelize.literal('valor_previsto * 0.8')
+                        }
+                    };
+                }
             }
 
             // Filtra por mês/ano se fornecidos
             if (mes && ano) {
-                const dataInicio = new Date(ano, mes - 1, 1);
-                const dataFim = new Date(ano, mes, 0, 23, 59, 59, 999);
-                where.mes_ano = {
-                    [Op.between]: [dataInicio, dataFim]
+                // Extrai o mês e o ano da coluna mes_ano
+                where = {
+                    ...where,
+                    [Op.and]: [
+                        sequelize.where(sequelize.fn('MONTH', sequelize.col('mes_ano')), mes),
+                        sequelize.where(sequelize.fn('YEAR', sequelize.col('mes_ano')), ano)
+                    ]
                 };
             } else {
                 // Se não houver filtro de data, mostra o mês atual por padrão
                 const hoje = new Date();
-                const dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-                const dataFim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0, 23, 59, 59, 999);
-                where.mes_ano = {
-                    [Op.between]: [dataInicio, dataFim]
+                const mesAtual = hoje.getMonth() + 1;
+                const anoAtual = hoje.getFullYear();
+                where = {
+                    ...where,
+                    [Op.and]: [
+                        sequelize.where(sequelize.fn('MONTH', sequelize.col('mes_ano')), mesAtual),
+                        sequelize.where(sequelize.fn('YEAR', sequelize.col('mes_ano')), anoAtual)
+                    ]
                 };
             }
 

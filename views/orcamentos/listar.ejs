@@ -153,7 +153,7 @@
                 <div class="col-md-4">
                     <label for="mes_ano" class="form-label">Mês/Ano</label>
                     <input type="month" class="form-control" id="mes_ano" name="mes_ano" 
-                           value="<%= anoAtual ? `${anoAtual}-${mesAtual.padStart(2, '0')}` : '' %>">
+                           value="<%= filtros.mes_ano || (anoAtual ? `${anoAtual}-${mesAtual.padStart(2, '0')}` : '') %>">
                 </div>
                 <div class="col-md-3">
                     <label for="tipo" class="form-label">Tipo</label>
@@ -308,6 +308,19 @@
                 const mes = String(hoje.getMonth() + 1).padStart(2, '0');
                 const ano = hoje.getFullYear();
                 mesAnoInput.value = `${ano}-${mes}`;
+            }
+            
+            // Garante que o formulário mantenha os valores dos filtros após o submit
+            const urlParams = new URLSearchParams(window.location.search);
+            const tipoSelect = document.getElementById('tipo');
+            const statusSelect = document.getElementById('status');
+            
+            if (urlParams.has('tipo') && urlParams.get('tipo')) {
+                tipoSelect.value = urlParams.get('tipo');
+            }
+            
+            if (urlParams.has('status') && urlParams.get('status')) {
+                statusSelect.value = urlParams.get('status');
             }
         });
     </script>

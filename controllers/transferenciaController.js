@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const sequelize = require('../config/database');
 
 const transferenciaController = {
+    // Transferências não podem ser editadas após criadas, apenas criadas ou excluídas
     // Lista todas as transferências do usuário
     listar: async (req, res) => {
         try {
