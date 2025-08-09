@@ -1,7 +1,10 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">Finansave</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+        <a class="navbar-brand d-flex align-items-center" href="/">
+            <img src="/img/logo.svg" alt="Finansave Logo" width="40" height="40" class="me-2">
+            <span>Finansave</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -27,18 +30,26 @@
                         <a class="nav-link" href="/parcelamentos"><i class="fas fa-clock"></i> Parcelamentos</a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2">
+                        <button id="theme-toggle" class="btn btn-sm btn-outline-light rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alternar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user"></i> <%= user.nome %>
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar-circle me-2">
+                                <span class="avatar-initials"><%= user.nome.charAt(0).toUpperCase() %></span>
+                            </div>
+                            <span><%= user.nome %></span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/usuarios/perfil"><i class="fas fa-user-cog"></i> Perfil</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/usuarios/perfil"><i class="fas fa-user-cog me-2"></i> Perfil</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="/usuarios/logout" method="GET" class="d-inline">
+                                <form action="/usuarios/logout" method="GET" class="d-inline w-100">
                                     <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt"></i> Sair
+                                        <i class="fas fa-sign-out-alt me-2"></i> Sair
                                     </button>
                                 </form>
                             </li>
@@ -46,15 +57,39 @@
                     </li>
                 </ul>
             <% } else { %>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/usuarios/login"><i class="fas fa-sign-in-alt"></i> Entrar</a>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2">
+                        <button id="theme-toggle" class="btn btn-sm btn-outline-light rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alternar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/usuarios/registro"><i class="fas fa-user-plus"></i> Registrar</a>
+                        <a class="nav-link" href="/usuarios/login"><i class="fas fa-sign-in-alt me-1"></i> Entrar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/registro"><i class="fas fa-user-plus me-1"></i> Registrar</a>
                     </li>
                 </ul>
             <% } %>
         </div>
     </div>
 </nav>
+
+<style>
+    .avatar-circle {
+        width: 32px;
+        height: 32px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .avatar-initials {
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1;
+    }
+</style>

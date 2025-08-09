@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a7bd5" />
+      <stop offset="100%" stop-color="#00d2ff" />
+    </linearGradient>
+    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6c5ce7" />
+      <stop offset="100%" stop-color="#a29bfe" />
+    </linearGradient>
+    <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00b894" />
+      <stop offset="100%" stop-color="#55efc4" />
+    </linearGradient>
+    <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdcb6e" />
+      <stop offset="100%" stop-color="#ffeaa7" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="rgba(0,0,0,0.2)" />
+    </filter>
+  </defs>
+  
+  <!-- Fundo decorativo -->
+  <circle cx="400" cy="300" r="250" fill="rgba(255,255,255,0.1)" />
+  <circle cx="400" cy="300" r="200" fill="rgba(255,255,255,0.05)" />
+  <circle cx="400" cy="300" r="150" fill="rgba(255,255,255,0.03)" />
+  
+  <!-- Gráfico de barras -->
+  <g transform="translate(250, 350)">
+    <rect x="0" y="-120" width="30" height="120" rx="5" fill="url(#gradient1)" filter="url(#shadow)" />
+    <rect x="40" y="-80" width="30" height="80" rx="5" fill="url(#gradient2)" filter="url(#shadow)" />
+    <rect x="80" y="-150" width="30" height="150" rx="5" fill="url(#gradient3)" filter="url(#shadow)" />
+    <rect x="120" y="-100" width="30" height="100" rx="5" fill="url(#gradient4)" filter="url(#shadow)" />
+    <rect x="160" y="-130" width="30" height="130" rx="5" fill="url(#gradient1)" filter="url(#shadow)" />
+    <rect x="200" y="-90" width="30" height="90" rx="5" fill="url(#gradient2)" filter="url(#shadow)" />
+    
+    <!-- Linha de base -->
+    <line x1="-10" y1="0" x2="240" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="2" />
+    
+    <!-- Linhas horizontais -->
+    <line x1="-10" y1="-50" x2="240" y2="-50" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="5,5" />
+    <line x1="-10" y1="-100" x2="240" y2="-100" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="5,5" />
+    <line x1="-10" y1="-150" x2="240" y2="-150" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="5,5" />
+  </g>
+  
+  <!-- Gráfico de pizza -->
+  <g transform="translate(550, 200)">
+    <circle cx="0" cy="0" r="80" fill="white" filter="url(#shadow)" />
+    
+    <!-- Fatias do gráfico -->
+    <path d="M 0 0 L 80 0 A 80 80 0 0 1 56.56 56.56 Z" fill="url(#gradient1)" />
+    <path d="M 0 0 L 56.56 56.56 A 80 80 0 0 1 0 80 Z" fill="url(#gradient2)" />
+    <path d="M 0 0 L 0 80 A 80 80 0 0 1 -80 0 Z" fill="url(#gradient3)" />
+    <path d="M 0 0 L -80 0 A 80 80 0 0 1 0 -80 Z" fill="url(#gradient4)" />
+    <path d="M 0 0 L 0 -80 A 80 80 0 0 1 80 0 Z" fill="url(#gradient1)" opacity="0.7" />
+    
+    <!-- Círculo central -->
+    <circle cx="0" cy="0" r="30" fill="white" />
+  </g>
+  
+  <!-- Cartão flutuante 1 -->
+  <g transform="translate(150, 150)">
+    <rect x="0" y="0" width="150" height="100" rx="10" fill="white" filter="url(#shadow)" />
+    
+    <!-- Conteúdo do cartão -->
+    <rect x="20" y="20" width="50" height="10" rx="5" fill="url(#gradient1)" opacity="0.7" />
+    <rect x="20" y="40" width="110" height="10" rx="5" fill="#f0f0f0" />
+    <rect x="20" y="60" width="80" height="10" rx="5" fill="#f0f0f0" />
+    
+    <!-- Ícone -->
+    <circle cx="120" cy="25" r="15" fill="url(#gradient1)" />
+    <path d="M 115 25 L 120 20 L 125 25 L 120 30 Z" fill="white" />
+  </g>
+  
+  <!-- Cartão flutuante 2 -->
+  <g transform="translate(650, 350)">
+    <rect x="0" y="0" width="120" height="80" rx="10" fill="white" filter="url(#shadow)" />
+    
+    <!-- Conteúdo do cartão -->
+    <rect x="15" y="15" width="40" height="8" rx="4" fill="url(#gradient3)" opacity="0.7" />
+    <rect x="15" y="30" width="90" height="8" rx="4" fill="#f0f0f0" />
+    <rect x="15" y="45" width="60" height="8" rx="4" fill="#f0f0f0" />
+    
+    <!-- Ícone -->
+    <circle cx="95" cy="20" r="12" fill="url(#gradient3)" />
+    <path d="M 90 20 L 95 15 L 100 20 L 95 25 Z" fill="white" />
+  </g>
+  
+  <!-- Linhas de conexão decorativas -->
+  <path d="M 300 200 C 350 180, 400 220, 450 200" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-dasharray="5,5" />
+  <path d="M 200 250 C 300 280, 400 250, 500 300" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-dasharray="5,5" />
+  <path d="M 550 280 C 600 320, 650 300, 700 320" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none" stroke-dasharray="5,5" />
+  
+  <!-- Pontos decorativos -->
+  <circle cx="200" cy="100" r="5" fill="url(#gradient1)" />
+  <circle cx="220" cy="120" r="3" fill="url(#gradient2)" />
+  <circle cx="180" cy="130" r="4" fill="url(#gradient3)" />
+  
+  <circle cx="600" cy="150" r="5" fill="url(#gradient1)" />
+  <circle cx="620" cy="170" r="3" fill="url(#gradient2)" />
+  <circle cx="580" cy="180" r="4" fill="url(#gradient3)" />
+  
+  <circle cx="400" cy="450" r="5" fill="url(#gradient1)" />
+  <circle cx="420" cy="470" r="3" fill="url(#gradient2)" />
+  <circle cx="380" cy="480" r="4" fill="url(#gradient3)" />
+</svg>
