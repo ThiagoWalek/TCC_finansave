@@ -68,11 +68,21 @@
                                         </div>
                                     </div>
                                     <div class="installment-actions">
-                                        <form action="/parcelamentos/atualizar-parcela/<%= parcelamento.id_parcelamento %>" method="POST" class="d-inline">
-                                            <button type="submit" class="btn btn-sm btn-outline-success me-2" <%= parcelamento.parcela_atual >= parcelamento.total_parcelas ? 'disabled' : '' %>>
-                                                <i class="fas fa-check"></i> Pagar Parcela
+                                        <% if (parcelamento.conta_status === 'ativa' && parcelamento.parcela_atual < parcelamento.total_parcelas) { %>
+                                            <form action="/parcelamentos/atualizar-parcela/<%= parcelamento.id_parcelamento %>" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-success me-2">
+                                                    <i class="fas fa-check"></i> Pagar Parcela
+                                                </button>
+                                            </form>
+                                        <% } else if (parcelamento.conta_status !== 'ativa') { %>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-2" disabled title="Conta inativa ou inexistente">
+                                                <i class="fas fa-ban"></i> Conta Inativa
                                             </button>
-                                        </form>
+                                        <% } else { %>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary me-2" disabled>
+                                                <i class="fas fa-check-circle"></i> Finalizado
+                                            </button>
+                                        <% } %>
                                         <a href="/parcelamentos/editar/<%= parcelamento.id_parcelamento %>" class="btn btn-sm btn-outline-primary me-2">
                                             <i class="fas fa-edit"></i> Editar
                                         </a>
@@ -120,7 +130,20 @@
                                 </div>
                                 
                                 <div class="installment-info mt-2">
-                                    <i class="fas fa-university"></i> Conta: <%= parcelamento.Conta ? parcelamento.Conta.nome : 'Conta não encontrada' %>
+                                    <i class="fas fa-university"></i> Conta: 
+                                    <% if (parcelamento.conta_status === 'inexistente') { %>
+                                        <span class="text-danger">
+                                            <i class="fas fa-exclamation-triangle"></i> Conta não encontrada
+                                        </span>
+                                    <% } else if (parcelamento.conta_status === 'inativa') { %>
+                                        <span class="text-warning">
+                                            <i class="fas fa-pause-circle"></i> <%= parcelamento.conta_nome %> (Inativa)
+                                        </span>
+                                    <% } else { %>
+                                        <span class="text-success">
+                                            <%= parcelamento.conta_nome %>
+                                        </span>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>

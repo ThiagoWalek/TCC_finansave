@@ -10,19 +10,36 @@ const parcelamentoController = {
                 where: { usuario_id: req.session.user.id },
                 include: [{ 
                     model: Conta, 
-                    attributes: ['nome', 'tipo', 'saldo_atual'],
-                    required: true
+                    attributes: ['nome', 'tipo', 'saldo_atual', 'ativa'],
+                    required: false // Permite parcelamentos com contas inativas
                 }],
                 order: [['data_inicio', 'DESC']]
             });
 
             // Calcula informações adicionais para cada parcelamento
-            const parcelamentosInfo = parcelamentos.map(parcelamento => ({
-                ...parcelamento.toJSON(),
-                progresso: ((parcelamento.parcela_atual / parcelamento.total_parcelas) * 100).toFixed(2),
-                valor_pago: (parcelamento.parcela_atual * parcelamento.valor_parcela).toFixed(2),
-                valor_restante: ((parcelamento.total_parcelas - parcelamento.parcela_atual) * parcelamento.valor_parcela).toFixed(2)
-            }));
+            const parcelamentosInfo = parcelamentos.map(parcelamento => {
+                const info = {
+                    ...parcelamento.toJSON(),
+                    progresso: ((parcelamento.parcela_atual / parcelamento.total_parcelas) * 100).toFixed(2),
+                    valor_pago: (parcelamento.parcela_atual * parcelamento.valor_parcela).toFixed(2),
+                    valor_restante: ((parcelamento.total_parcelas - parcelamento.parcela_atual) * parcelamento.valor_parcela).toFixed(2),
+                    conta_inativa: !parcelamento.Conta || !parcelamento.Conta.ativa
+                };
+                
+                // Se a conta não existe ou está inativa, adiciona informação
+                if (!parcelamento.Conta) {
+                    info.conta_nome = 'Conta não encontrada';
+                    info.conta_status = 'inexistente';
+                } else if (!parcelamento.Conta.ativa) {
+                    info.conta_nome = parcelamento.Conta.nome;
+                    info.conta_status = 'inativa';
+                } else {
+                    info.conta_nome = parcelamento.Conta.nome;
+                    info.conta_status = 'ativa';
+                }
+                
+                return info;
+            });
 
             res.render('parcelamentos/listar', { parcelamentos: parcelamentosInfo });
         } catch (error) {
@@ -205,12 +222,27 @@ const parcelamentoController = {
                 },
                 include: [{
                     model: Conta,
-                    attributes: ['conta_id', 'nome', 'saldo_atual']
+                    attributes: ['conta_id', 'nome', 'saldo_atual', 'ativa'],
+                    required: false // Permite carregar parcelamento mesmo com conta inativa
                 }]
             });
 
             if (!parcelamento) {
                 req.session.error = 'Parcelamento não encontrado.';
+                return res.redirect('/parcelamentos');
+            }
+
+            // Verificar se a conta existe
+            if (!parcelamento.Conta) {
+                console.error('Conta não encontrada para o parcelamento:', parcelamento.id_parcelamento);
+                req.session.error = 'Conta associada ao parcelamento não foi localizada no sistema. Verifique os dados informados e tente novamente.';
+                return res.redirect('/parcelamentos');
+            }
+
+            // Verificar se a conta está ativa
+            if (!parcelamento.Conta.ativa) {
+                console.error('Conta inativa para o parcelamento:', parcelamento.id_parcelamento);
+                req.session.error = `A conta "${parcelamento.Conta.nome}" está inativa. Reative a conta para continuar com o parcelamento.`;
                 return res.redirect('/parcelamentos');
             }
 
@@ -222,14 +254,32 @@ const parcelamentoController = {
 
             // Verificar se a conta tem saldo suficiente
             const conta = parcelamento.Conta;
-            if (conta.saldo_atual < parcelamento.valor_parcela) {
-                req.session.error = 'Saldo insuficiente na conta para pagar esta parcela.';
+            
+            // Verificação adicional de segurança para saldo_atual
+            if (typeof conta.saldo_atual === 'undefined' || conta.saldo_atual === null) {
+                console.error('Saldo atual da conta não definido:', conta);
+                req.session.error = 'Erro nos dados da conta. Verifique se a conta está configurada corretamente.';
+                return res.redirect('/parcelamentos');
+            }
+
+            const saldoAtual = parseFloat(conta.saldo_atual);
+            const valorParcela = parseFloat(parcelamento.valor_parcela);
+
+            if (isNaN(saldoAtual) || isNaN(valorParcela)) {
+                console.error('Valores inválidos - Saldo:', saldoAtual, 'Valor parcela:', valorParcela);
+                req.session.error = 'Erro nos valores da conta ou parcela.';
+                return res.redirect('/parcelamentos');
+            }
+
+            if (saldoAtual < valorParcela) {
+                req.session.error = `Saldo insuficiente na conta ${conta.nome}. Saldo atual: R$ ${saldoAtual.toFixed(2)}, Valor da parcela: R$ ${valorParcela.toFixed(2)}.`;
                 return res.redirect('/parcelamentos');
             }
 
             // Descontar o valor da parcela da conta
+            const novoSaldo = saldoAtual - valorParcela;
             await conta.update({
-                saldo_atual: parseFloat(conta.saldo_atual) - parseFloat(parcelamento.valor_parcela)
+                saldo_atual: novoSaldo
             });
 
             await parcelamento.update({
@@ -237,7 +287,7 @@ const parcelamentoController = {
                 ativo: novaParcela < parcelamento.total_parcelas
             });
 
-            req.session.success = `Parcela ${novaParcela}/${parcelamento.total_parcelas} paga com sucesso! Valor de R$ ${parseFloat(parcelamento.valor_parcela).toFixed(2)} descontado da conta ${conta.nome}.`;
+            req.session.success = `Parcela ${novaParcela}/${parcelamento.total_parcelas} paga com sucesso! Valor de R$ ${valorParcela.toFixed(2)} descontado da conta ${conta.nome}. Novo saldo: R$ ${novoSaldo.toFixed(2)}.`;
             res.redirect('/parcelamentos');
         } catch (error) {
             console.error('Erro ao atualizar parcela:', error);
