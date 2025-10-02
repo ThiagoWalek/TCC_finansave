@@ -55,35 +55,59 @@
             <%- include('../partials/messages') %>
 
             <form action="/parcelamentos/criar" method="POST" id="formParcelamento">
+                <!-- Conta -->
+                <div class="mb-3">
+                    <p class="form-question">🏦 Qual conta será debitada?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-university icon-input"></i>
+                        <select class="form-select" id="conta_id" name="conta_id" required>
+                            <option value="" disabled selected>Selecione a conta</option>
+                            <% contas.forEach(function(conta) { %>
+                                <option value="<%= conta.conta_id %>">
+                                    <%= conta.nome %> - Saldo: R$ <%= parseFloat(conta.saldo_atual).toFixed(2).replace('.', ',') %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Descrição do Parcelamento -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-file-signature icon-input"></i>
-                    <input type="text" class="form-control" id="descricao" name="descricao" 
-                           placeholder="Descrição do parcelamento" required>
-                    <label for="descricao">Descrição do parcelamento</label>
+                <div class="mb-3">
+                    <p class="form-question">📝 Qual é a descrição do parcelamento?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-file-signature icon-input"></i>
+                        <input type="text" class="form-control" id="descricao" name="descricao" 
+                               placeholder="Descrição do parcelamento" required>
+                    </div>
                 </div>
 
                 <!-- Total de Parcelas -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-list-ol icon-input"></i>
-                    <input type="number" class="form-control" id="total_parcelas" name="total_parcelas" 
-                           placeholder="Total de parcelas" min="1" required>
-                    <label for="total_parcelas">Total de parcelas</label>
+                <div class="mb-3">
+                    <p class="form-question">🔢 Quantas parcelas?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-list-ol icon-input"></i>
+                        <input type="number" class="form-control" id="total_parcelas" name="total_parcelas" 
+                               placeholder="Total de parcelas" min="1" required>
+                    </div>
                 </div>
 
                 <!-- Valor Total -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-dollar-sign icon-input"></i>
-                    <input type="number" class="form-control" id="valor_total" name="valor_total" 
-                           placeholder="Valor total" min="0.01" step="0.01" required>
-                    <label for="valor_total">Valor total (R$)</label>
+                <div class="mb-3">
+                    <p class="form-question">💰 Qual o valor total?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-dollar-sign icon-input"></i>
+                        <input type="number" class="form-control" id="valor_total" name="valor_total" 
+                               placeholder="Valor total" min="0.01" step="0.01" required>
+                    </div>
                 </div>
 
                 <!-- Data de Início -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-alt icon-input"></i>
-                    <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
-                    <label for="data_inicio">Data de início</label>
+                <div class="mb-3">
+                    <p class="form-question">📅 Quando inicia o parcelamento?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-calendar-alt icon-input"></i>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+                    </div>
                 </div>
 
                 <!-- Botões de Ação -->

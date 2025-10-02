@@ -26,16 +26,20 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/transferencias"><i class="fas fa-exchange-alt"></i> Transferências</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="gastosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-receipt"></i> Gastos
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="gastosDropdown">
+                            <li><a class="dropdown-item" href="/gastos/criar"><i class="fas fa-plus me-2"></i> Registrar Gasto</a></li>
+                            <li><a class="dropdown-item" href="/gastos/extrato"><i class="fas fa-list me-2"></i> Extrato</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/parcelamentos"><i class="fas fa-clock"></i> Parcelamentos</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-2">
-                        <button id="theme-toggle" class="btn btn-sm btn-outline-light rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alternar tema">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="avatar-circle me-2">
@@ -58,11 +62,6 @@
                 </ul>
             <% } else { %>
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-2">
-                        <button id="theme-toggle" class="btn btn-sm btn-outline-light rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alternar tema">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/usuarios/login"><i class="fas fa-sign-in-alt me-1"></i> Entrar</a>
                     </li>

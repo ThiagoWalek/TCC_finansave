@@ -55,6 +55,20 @@
             <%- include('../partials/messages') %>
 
             <form action="/parcelamentos/editar/<%= parcelamento.id_parcelamento %>" method="POST" id="formParcelamento">
+                <!-- Conta -->
+                <div class="form-floating mb-3 position-relative">
+                    <i class="fas fa-university icon-input"></i>
+                    <select class="form-select" id="conta_id" name="conta_id" required>
+                        <option value="" disabled>Selecione a conta</option>
+                        <% contas.forEach(function(conta) { %>
+                            <option value="<%= conta.conta_id %>" <%= conta.conta_id === parcelamento.conta_id ? 'selected' : '' %>>
+                                <%= conta.nome %> - Saldo: R$ <%= parseFloat(conta.saldo_atual).toFixed(2).replace('.', ',') %>
+                            </option>
+                        <% }); %>
+                    </select>
+                    <label for="conta_id">Conta para débito das parcelas</label>
+                </div>
+
                 <!-- Descrição do Parcelamento -->
                 <div class="form-floating mb-3 position-relative">
                     <i class="fas fa-file-signature icon-input"></i>

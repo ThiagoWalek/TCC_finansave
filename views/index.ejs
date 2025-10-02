@@ -24,352 +24,193 @@
     <div class="container dashboard-container">
         <%- include('partials/messages') %>
 
-        <div class="row">
-            <!-- Resumo de Contas -->
-            <div class="col-md-6 mb-4">
-                <div class="card card-hover animate__animated animate__fadeInUp h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-wallet me-2"></i>Resumo de Contas
-                        </h5>
-                        <a href="/contas" class="btn btn-sm btn-outline-primary rounded-circle" title="Ver todas as contas">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <div class="accounts-summary">
-                            <% if (typeof contas !== 'undefined' && contas.length > 0) { %>
-                                <% contas.forEach(conta => { %>
-                                    <div class="account-item d-flex justify-content-between align-items-center mb-2">
-                                        <div class="account-info d-flex align-items-center">
-                                            <div class="account-icon me-2">
-                                                <% if (conta.nome.toLowerCase().includes('poupança')) { %>
-                                                    <i class="fas fa-piggy-bank"></i>
-                                                <% } else if (conta.nome.toLowerCase().includes('corrente')) { %>
-                                                    <i class="fas fa-landmark"></i>
-                                                <% } else if (conta.nome.toLowerCase().includes('investimento')) { %>
-                                                    <i class="fas fa-chart-line"></i>
-                                                <% } else { %>
-                                                    <i class="fas fa-money-bill-wave"></i>
-                                                <% } %>
-                                            </div>
-                                            <div>
-                                                <h6 class="mb-0"><%= conta.nome %></h6>
-                                            </div>
-                                        </div>
-                                        <span class="badge bg-<%= conta.saldo_atual >= 0 ? 'success' : 'danger' %> rounded-pill">
-                                            R$ <%= conta.saldo_atual.toFixed(2) %>
-                                        </span>
-                                    </div>
-                                <% }) %>
-                            <% } else { %>
-                                <div class="empty-state text-center py-4">
-                                    <i class="fas fa-wallet fa-3x mb-3 text-muted"></i>
-                                    <p class="text-muted">Nenhuma conta cadastrada.</p>
-                                    <a href="/contas/criar" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-plus me-1"></i>Adicionar Conta
-                                    </a>
-                                </div>
-                            <% } %>
+        <!-- Painel de Resumo Financeiro -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card card-hover animate__animated animate__fadeInUp h-100 bg-gradient-success">
+                    <div class="card-body text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-1">
+                                    <i class="fas fa-arrow-up me-2"></i>Receitas
+                                </h6>
+                                <h3 class="mb-0" id="totalReceitas">R$ 0,00</h3>
+                            </div>
+                            <div class="icon-circle bg-white bg-opacity-25">
+                                <i class="fas fa-plus fa-2x"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="card-footer text-end">
-                        <a href="/contas" class="btn btn-primary btn-sm">Ver Todas</a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card card-hover animate__animated animate__fadeInUp animate__delay-1s h-100 bg-gradient-danger">
+                    <div class="card-body text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-1">
+                                    <i class="fas fa-arrow-down me-2"></i>Despesas
+                                </h6>
+                                <h3 class="mb-0" id="totalDespesas">R$ 0,00</h3>
+                            </div>
+                            <div class="icon-circle bg-white bg-opacity-25">
+                                <i class="fas fa-minus fa-2x"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Metas em Andamento -->
-            <div class="col-md-6 mb-4">
-                <div class="card card-hover animate__animated animate__fadeInUp animate__delay-1s h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-bullseye me-2"></i>Metas em Andamento
-                        </h5>
-                        <a href="/metas" class="btn btn-sm btn-outline-primary rounded-circle" title="Ver todas as metas">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <% if (typeof metas !== 'undefined' && metas.length > 0) { %>
-                            <div class="goals-container">
-                                <% metas.forEach(meta => { %>
-                                    <div class="goal-card mb-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">
-                                                <% if (meta.nome.toLowerCase().includes('casa')) { %>
-                                                    <i class="fas fa-home me-2 text-primary"></i>
-                                                <% } else if (meta.nome.toLowerCase().includes('carro') || meta.nome.toLowerCase().includes('veículo')) { %>
-                                                    <i class="fas fa-car me-2 text-success"></i>
-                                                <% } else if (meta.nome.toLowerCase().includes('viagem') || meta.nome.toLowerCase().includes('férias')) { %>
-                                                    <i class="fas fa-plane me-2 text-info"></i>
-                                                <% } else if (meta.nome.toLowerCase().includes('educação') || meta.nome.toLowerCase().includes('curso')) { %>
-                                                    <i class="fas fa-graduation-cap me-2 text-warning"></i>
-                                                <% } else if (meta.nome.toLowerCase().includes('emergência') || meta.nome.toLowerCase().includes('reserva')) { %>
-                                                    <i class="fas fa-shield-alt me-2 text-danger"></i>
-                                                <% } else { %>
-                                                    <i class="fas fa-star me-2 text-primary"></i>
-                                                <% } %>
-                                                <%= meta.nome %>
-                                            </h6>
-                                            <% const progresso = (parseFloat(meta.valor_atual) / parseFloat(meta.valor_alvo)) * 100; %>
-                                            <span class="badge <%= progresso < 30 ? 'bg-danger' : (progresso < 70 ? 'bg-warning' : 'bg-success') %> rounded-pill">
-                                                <%= Math.round(progresso) %>%
-                                            </span>
-                                        </div>
-                                        <div class="progress mb-2 progress-sm">
-                                            <div class="progress-bar progress-bar-striped progress-bar-animated <%= progresso < 30 ? 'bg-danger' : (progresso < 70 ? 'bg-warning' : 'bg-success') %>" 
-                                                role="progressbar" 
-                                                style="width: <%= progresso %>%" 
-                                                aria-valuenow="<%= progresso %>" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <small class="text-muted">Atual</small>
-                                                <div class="fw-bold">R$ <%= parseFloat(meta.valor_atual).toFixed(2).replace('.', ',') %></div>
-                                            </div>
-                                            <div class="text-end">
-                                                <small class="text-muted">Meta</small>
-                                                <div class="fw-bold">R$ <%= parseFloat(meta.valor_alvo).toFixed(2).replace('.', ',') %></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% }) %>
+            <div class="col-md-4 mb-3">
+                <div class="card card-hover animate__animated animate__fadeInUp animate__delay-2s h-100 bg-gradient-primary">
+                    <div class="card-body text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title mb-1">
+                                    <i class="fas fa-balance-scale me-2"></i>Saldo Atual
+                                </h6>
+                                <h3 class="mb-0" id="saldoAtual">R$ 0,00</h3>
                             </div>
-                        <% } else { %>
-                            <div class="empty-state text-center py-4">
-                                <i class="fas fa-bullseye fa-3x mb-3 text-muted"></i>
-                                <p class="text-muted">Nenhuma meta cadastrada.</p>
-                                <a href="/metas/criar" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus me-1"></i>Adicionar Meta
-                                </a>
+                            <div class="icon-circle bg-white bg-opacity-25">
+                                <i class="fas fa-wallet fa-2x"></i>
                             </div>
-                        <% } %>
-                    </div>
-                    <div class="card-footer text-end">
-                        <a href="/metas" class="btn btn-primary btn-sm">Ver Todas</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Orçamento do Mês -->
-            <div class="col-md-6 mb-4">
-                <div class="card card-hover animate__animated animate__fadeInUp animate__delay-2s h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-chart-pie me-2"></i>Orçamento do Mês
-                        </h5>
-                        <a href="/orcamentos" class="btn btn-sm btn-outline-primary rounded-circle" title="Ver todos os orçamentos">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <% if (typeof orcamentos !== 'undefined' && orcamentos !== null) { %>
-                            <div class="mb-3">
-                                <h6><i class="fas fa-arrow-up text-success me-1"></i>Receitas</h6>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p class="text-success mb-1">R$ <%= orcamentos.receitas.realizado.toFixed(2) %> / <%= orcamentos.receitas.previsto.toFixed(2) %></p>
-                                    <small><%= Math.round((orcamentos.receitas.realizado / (orcamentos.receitas.previsto || 1)) * 100) %>%</small>
-                                </div>
-                                <div class="progress progress-sm mb-2" style="height: 10px;">
-                                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" 
-                                         style="width: <%= Math.min((orcamentos.receitas.realizado / (orcamentos.receitas.previsto || 1)) * 100, 100) %>%"
-                                         aria-valuenow="<%= Math.min((orcamentos.receitas.realizado / (orcamentos.receitas.previsto || 1)) * 100, 100) %>"
-                                         aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <h6><i class="fas fa-arrow-down text-danger me-1"></i>Despesas</h6>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <p class="text-danger mb-1">R$ <%= orcamentos.despesas.realizado.toFixed(2) %> / <%= orcamentos.despesas.previsto.toFixed(2) %></p>
-                                    <small><%= Math.round((orcamentos.despesas.realizado / (orcamentos.despesas.previsto || 1)) * 100) %>%</small>
-                                </div>
-                                <div class="progress progress-sm mb-2" style="height: 10px;">
-                                    <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" 
-                                         style="width: <%= Math.min((orcamentos.despesas.realizado / (orcamentos.despesas.previsto || 1)) * 100, 100) %>%"
-                                         aria-valuenow="<%= Math.min((orcamentos.despesas.realizado / (orcamentos.despesas.previsto || 1)) * 100, 100) %>"
-                                         aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <h6><i class="fas fa-balance-scale me-1"></i>Saldo</h6>
-                                <p class="<%= (orcamentos.receitas.realizado - orcamentos.despesas.realizado) >= 0 ? 'text-success' : 'text-danger' %> fw-bold">
-                                    R$ <%= (orcamentos.receitas.realizado - orcamentos.despesas.realizado).toFixed(2) %>
-                                    <% if ((orcamentos.receitas.realizado - orcamentos.despesas.realizado) >= 0) { %>
-                                        <i class="fas fa-smile ms-1"></i>
-                                    <% } else { %>
-                                        <i class="fas fa-frown ms-1"></i>
-                                    <% } %>
-                                </p>
-                            </div>
-                        <% } else { %>
-                            <div class="empty-state text-center py-4">
-                                <i class="fas fa-chart-pie fa-3x mb-3 text-muted"></i>
-                                <p class="text-muted">Nenhum orçamento cadastrado para o mês atual.</p>
-                                <a href="/orcamentos/criar" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus me-1"></i>Adicionar Orçamento
-                                </a>
-                            </div>
-                        <% } %>
-                    </div>
-                    <div class="card-footer text-end">
-                        <a href="/orcamentos" class="btn btn-primary btn-sm">Ver Todos</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Parcelamentos Ativos -->
-            <div class="col-md-6 mb-4">
-                <div class="card card-hover animate__animated animate__fadeInUp animate__delay-3s h-100">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-credit-card me-2"></i>Parcelamentos Ativos
-                        </h5>
-                        <a href="/parcelamentos" class="btn btn-sm btn-outline-primary rounded-circle" title="Ver todos os parcelamentos">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <% if (typeof parcelamentos !== 'undefined' && parcelamentos.length > 0) { %>
-                            <div class="installments-container">
-                                <% parcelamentos.forEach(parcelamento => { %>
-                                    <div class="installment-card mb-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <h6 class="mb-0">
-                                                <% if (parcelamento.descricao.toLowerCase().includes('cartão')) { %>
-                                                    <i class="fas fa-credit-card me-2 text-info"></i>
-                                                <% } else if (parcelamento.descricao.toLowerCase().includes('empréstimo')) { %>
-                                                    <i class="fas fa-hand-holding-usd me-2 text-warning"></i>
-                                                <% } else if (parcelamento.descricao.toLowerCase().includes('financiamento')) { %>
-                                                    <i class="fas fa-home me-2 text-primary"></i>
-                                                <% } else if (parcelamento.descricao.toLowerCase().includes('carro') || parcelamento.descricao.toLowerCase().includes('veículo')) { %>
-                                                    <i class="fas fa-car me-2 text-success"></i>
-                                                <% } else { %>
-                                                    <i class="fas fa-receipt me-2 text-secondary"></i>
-                                                <% } %>
-                                                <%= parcelamento.descricao %>
-                                            </h6>
-                                            <span class="badge bg-info rounded-pill">
-                                                <%= parcelamento.parcela_atual %>/<%= parcelamento.total_parcelas %>
-                                            </span>
-                                        </div>
-                                        <div class="progress mb-2 progress-sm">
-                                            <% const progressoParcelamento = (parcelamento.parcela_atual / parcelamento.total_parcelas) * 100; %>
-                                            <div class="progress-bar bg-info progress-bar-striped" 
-                                                role="progressbar" 
-                                                style="width: <%= progressoParcelamento %>%" 
-                                                aria-valuenow="<%= progressoParcelamento %>" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <small class="text-muted">Valor da Parcela</small>
-                                                <div class="fw-bold">R$ <%= parseFloat(parcelamento.valor_parcela).toFixed(2).replace('.', ',') %></div>
-                                            </div>
-                                            <% if (parcelamento.data_proxima_parcela) { %>
-                                                <div class="text-end">
-                                                    <small class="text-muted">Próximo Pagamento</small>
-                                                    <div class="fw-bold">
-                                                        <i class="far fa-calendar-alt me-1"></i>
-                                                        <%= new Date(parcelamento.data_proxima_parcela).toLocaleDateString('pt-BR') %>
-                                                    </div>
-                                                </div>
-                                            <% } %>
-                                        </div>
-                                        <% 
-                                        if (parcelamento.data_proxima_parcela) {
-                                            const hoje = new Date();
-                                            const dataProxima = new Date(parcelamento.data_proxima_parcela);
-                                            const diffDias = Math.ceil((dataProxima - hoje) / (1000 * 60 * 60 * 24));
-                                        %>
-                                            <% if (diffDias <= 3 && diffDias >= 0) { %>
-                                                <div class="mt-2 text-warning small">
-                                                    <i class="fas fa-exclamation-circle me-1"></i>
-                                                    Pagamento em <%= diffDias %> dia<%= diffDias !== 1 ? 's' : '' %>
-                                                </div>
-                                            <% } else if (diffDias < 0) { %>
-                                                <div class="mt-2 text-danger small">
-                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                    Pagamento atrasado em <%= Math.abs(diffDias) %> dia<%= Math.abs(diffDias) !== 1 ? 's' : '' %>
-                                                </div>
-                                            <% } %>
-                                        <% } %>
-                                    </div>
-                                <% }) %>
-                            </div>
-                        <% } else { %>
-                            <div class="empty-state text-center py-4">
-                                <i class="fas fa-credit-card fa-3x mb-3 text-muted"></i>
-                                <p class="text-muted">Nenhum parcelamento ativo.</p>
-                                <a href="/parcelamentos/criar" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-plus me-1"></i>Adicionar Parcelamento
-                                </a>
-                            </div>
-                        <% } %>
-                    </div>
-                    <div class="card-footer text-end">
-                        <a href="/parcelamentos" class="btn btn-primary btn-sm">Ver Todos</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Resumo Financeiro -->
-        <div class="financial-summary-section mt-4 mb-5 animate__animated animate__fadeInUp animate__delay-4s">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card card-hover">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-chart-line me-2"></i>Resumo Financeiro
-                            </h5>
+        <!-- Gráficos Interativos -->
+        <div class="row mb-4">
+            <div class="col-lg-8 mb-4">
+                <div class="dashboard-card animate__animated animate__fadeInUp">
+                    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line"></i>Evolução do Saldo
+                        </h5>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <input type="radio" class="btn-check" name="periodoSaldo" id="periodo7d" value="7" checked>
+                            <label class="btn btn-outline-primary" for="periodo7d">7D</label>
+                            <input type="radio" class="btn-check" name="periodoSaldo" id="periodo30d" value="30">
+                            <label class="btn btn-outline-primary" for="periodo30d">30D</label>
+                            <input type="radio" class="btn-check" name="periodoSaldo" id="periodo90d" value="90">
+                            <label class="btn btn-outline-primary" for="periodo90d">90D</label>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
-                                    <div class="stat-card text-center p-3">
-                                        <div class="stat-icon mb-2">
-                                            <i class="fas fa-wallet fa-2x text-primary"></i>
-                                        </div>
-                                        <h3 class="stat-value">R$ <%= typeof totalSaldo !== 'undefined' ? totalSaldo.toFixed(2).replace('.', ',') : '0,00' %></h3>
-                                        <p class="stat-label mb-0">Saldo Total</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
-                                    <div class="stat-card text-center p-3">
-                                        <div class="stat-icon mb-2">
-                                            <i class="fas fa-arrow-up fa-2x text-success"></i>
-                                        </div>
-                                        <h3 class="stat-value">R$ <%= typeof orcamentos !== 'undefined' && orcamentos !== null ? orcamentos.receitas.realizado.toFixed(2).replace('.', ',') : '0,00' %></h3>
-                                        <p class="stat-label mb-0">Receitas do Mês</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6 mb-3 mb-md-0">
-                                    <div class="stat-card text-center p-3">
-                                        <div class="stat-icon mb-2">
-                                            <i class="fas fa-arrow-down fa-2x text-danger"></i>
-                                        </div>
-                                        <h3 class="stat-value">R$ <%= typeof orcamentos !== 'undefined' && orcamentos !== null ? orcamentos.despesas.realizado.toFixed(2).replace('.', ',') : '0,00' %></h3>
-                                        <p class="stat-label mb-0">Despesas do Mês</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-sm-6">
-                                    <div class="stat-card text-center p-3">
-                                        <div class="stat-icon mb-2">
-                                            <i class="fas fa-bullseye fa-2x text-info"></i>
-                                        </div>
-                                        <h3 class="stat-value"><%= typeof metas !== 'undefined' ? metas.length : '0' %></h3>
-                                        <p class="stat-label mb-0">Metas Ativas</p>
-                                    </div>
-                                </div>
+                    </div>
+                    <div class="mt-3">
+                        <canvas id="saldoChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4">
+                <div class="dashboard-card animate__animated animate__fadeInUp animate__delay-1s h-100">
+                    <div class="dashboard-card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-pie"></i>Gastos por Categoria
+                        </h5>
+                    </div>
+                    <div class="mt-3">
+                        <canvas id="categoriaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="dashboard-card animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="dashboard-card-header d-flex justify-content-between align-items-center flex-wrap">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar"></i>Comparativo Mensal
+                        </h5>
+                        
+                        <!-- Controles de Filtro -->
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <!-- Seletor de Período -->
+                            <div class="btn-group btn-group-sm" role="group">
+                                <input type="radio" class="btn-check" name="periodoComparativo" id="periodo3m" value="3">
+                                <label class="btn btn-outline-primary" for="periodo3m">3M</label>
+                                <input type="radio" class="btn-check" name="periodoComparativo" id="periodo6m" value="6" checked>
+                                <label class="btn btn-outline-primary" for="periodo6m">6M</label>
+                                <input type="radio" class="btn-check" name="periodoComparativo" id="periodo12m" value="12">
+                                <label class="btn btn-outline-primary" for="periodo12m">12M</label>
                             </div>
+                            
+                            <!-- Filtro por Categoria -->
+                            <select class="form-select form-select-sm" id="filtroCategoria" style="width: auto; min-width: 120px;">
+                                <option value="">Todas as categorias</option>
+                            </select>
+                            
+                            <!-- Filtro por Conta -->
+                            <select class="form-select form-select-sm" id="filtroConta" style="width: auto; min-width: 120px;">
+                                <option value="">Todas as contas</option>
+                            </select>
+                            
+                            <!-- Tipo de Visualização -->
+                            <div class="btn-group btn-group-sm" role="group">
+                                <input type="radio" class="btn-check" name="tipoComparativo" id="receitasDespesas" value="both" checked>
+                                <label class="btn btn-outline-success" for="receitasDespesas">Receitas vs Despesas</label>
+                                <input type="radio" class="btn-check" name="tipoComparativo" id="gastosReais" value="gastos-reais">
+                                <label class="btn btn-outline-warning" for="gastosReais">Orçado vs Real</label>
+                                <input type="radio" class="btn-check" name="tipoComparativo" id="saldoMensal" value="saldo">
+                                <label class="btn btn-outline-info" for="saldoMensal">Saldo Mensal</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Indicadores Resumo -->
+                    <div class="row mt-3 mb-3">
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <small class="text-muted d-block">Média Receitas</small>
+                                <strong class="text-success" id="mediaReceitas">R$ 0,00</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <small class="text-muted d-block">Média Despesas</small>
+                                <strong class="text-danger" id="mediaDespesas">R$ 0,00</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <small class="text-muted d-block">Melhor Mês</small>
+                                <strong class="text-primary" id="melhorMes">-</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-2 bg-light rounded">
+                                <small class="text-muted d-block">Variação</small>
+                                <strong id="variacao">0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico -->
+                    <div class="mt-3">
+                        <canvas id="comparativoChart" height="80"></canvas>
+                    </div>
+                    
+                    <!-- Tabela de Dados -->
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">Dados Detalhados</h6>
+                            <button class="btn btn-sm btn-outline-primary" id="toggleTabela">
+                                <i class="fas fa-table"></i> Mostrar Tabela
+                            </button>
+                        </div>
+                        <div id="tabelaComparativo" class="table-responsive" style="display: none;">
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr id="tabelaHeader">
+                                        <th>Mês</th>
+                                        <th>Receitas</th>
+                                        <th>Despesas</th>
+                                        <th>Saldo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaBody">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -378,6 +219,9 @@
     </div>
 
     <%- include('partials/footer') %>
+
+    <!-- Dashboard Charts Script -->
+    <script src="/js/dashboard-charts.js"></script>
 
     <script>
         // Inicializar tooltips

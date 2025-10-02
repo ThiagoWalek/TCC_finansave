@@ -3,66 +3,37 @@
 <head>
     <%- include('../partials/head') %>
     <title>Minhas Metas - Finansave</title>
-    <style>
-        .goals-header {
-            background-color: #f8f9fa;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-        }
-        .goal-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-        .goal-card:hover {
-            transform: translateY(-5px);
-        }
-        .goal-progress {
-            height: 8px;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-        .goal-amount {
-            font-size: 1.25rem;
-            font-weight: bold;
-        }
-        .goal-target {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
-        .goal-date {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
-        .goal-status {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-        }
-        .goal-actions {
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .goal-card:hover .goal-actions {
-            opacity: 1;
-        }
-        .goal-description {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-    </style>
 </head>
-<body class="bg-light">
+<body>
     <%- include('../partials/navbar') %>
 
     <div class="container py-4">
         <!-- Cabeçalho -->
-        <div class="goals-header text-center">
-            <h1 class="h3 mb-4">Minhas Metas</h1>
-            <p class="text-muted mb-0">Acompanhe o progresso das suas metas financeiras</p>
+        <div class="goals-header">
+            <h1 class="h3 mb-4">Minhas Metas Financeiras</h1>
+            <p class="mb-2">Acompanhe o progresso das suas metas</p>
+            <div class="goals-summary">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="summary-item">
+                            <h4 class="text-primary"><%= metas.length %></h4>
+                            <p class="text-muted">Total de Metas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-item">
+                            <h4 class="text-success"><%= metas.filter(m => m.status === 'Concluída').length %></h4>
+                            <p class="text-muted">Concluídas</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="summary-item">
+                            <h4 class="text-warning"><%= metas.filter(m => m.status === 'Em Progresso').length %></h4>
+                            <p class="text-muted">Em Progresso</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <%- include('../partials/messages') %>
@@ -76,81 +47,79 @@
 
         <!-- Lista de Metas -->
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <% metas.forEach(function(meta) { 
-                const progresso = (meta.valor_atual / meta.valor_alvo) * 100;
-                const diasRestantes = Math.ceil((new Date(meta.data_limite) - new Date()) / (1000 * 60 * 60 * 24));
-            %>
+            <% metas.forEach(function(meta) { %>
                 <div class="col">
                     <div class="card goal-card h-100">
                         <!-- Status da Meta -->
                         <div class="goal-status">
-                            <% if(meta.concluida) { %>
+                            <% if(meta.status === 'Concluída') { %>
                                 <span class="badge bg-success">Concluída</span>
-                            <% } else if(diasRestantes < 0) { %>
-                                <span class="badge bg-danger">Vencida</span>
+                            <% } else if(meta.status === 'Em Progresso') { %>
+                                <span class="badge bg-warning">Em Progresso</span>
                             <% } else { %>
-                                <span class="badge bg-primary">Em andamento</span>
+                                <span class="badge bg-secondary">Pausada</span>
                             <% } %>
                         </div>
 
                         <div class="card-body">
                             <!-- Nome da Meta -->
-                            <h5 class="card-title mb-2"><%= meta.nome %></h5>
-
-                            <!-- Descrição -->
-                            <% if(meta.descricao) { %>
-                                <p class="goal-description"><%= meta.descricao %></p>
-                            <% } %>
+                            <h5 class="card-title mb-3"><%= meta.nome %></h5>
 
                             <!-- Progresso -->
-                            <div class="progress goal-progress">
-                                <div class="progress-bar <%= progresso >= 100 ? 'bg-success' : 'bg-primary' %>"
-                                     role="progressbar" style="width: <%= Math.min(progresso, 100) %>%"
-                                     aria-valuenow="<%= progresso %>" aria-valuemin="0" aria-valuemax="100">
+                            <div class="goal-progress mb-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="goal-amount">
+                                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_atual || 0) %>
+                                    </span>
+                                    <span class="goal-target">
+                                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_objetivo) %>
+                                    </span>
+                                </div>
+                                <div class="progress">
+                                    <% 
+                                        const progresso = Math.min(((meta.valor_atual || 0) / meta.valor_objetivo) * 100, 100);
+                                        let progressClass = 'bg-danger';
+                                        if (progresso >= 75) progressClass = 'bg-success';
+                                        else if (progresso >= 50) progressClass = 'bg-warning';
+                                        else if (progresso >= 25) progressClass = 'bg-info';
+                                    %>
+                                    <div class="progress-bar <%= progressClass %>" 
+                                         role="progressbar" 
+                                         style="width: <%= progresso %>%" 
+                                         aria-valuenow="<%= progresso %>" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        <%= Math.round(progresso) %>%
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Valores -->
-                            <p class="goal-amount mb-1">
-                                <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_atual) %>
-                                <span class="goal-target">
-                                    de <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_alvo) %>
-                                </span>
-                            </p>
+                            <!-- Data Limite -->
+                            <% if(meta.data_limite) { %>
+                                <p class="goal-date mb-3">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Prazo: <%= new Date(meta.data_limite).toLocaleDateString('pt-BR') %>
+                                </p>
+                            <% } %>
 
-                            <!-- Datas -->
-                            <p class="goal-date mb-3">
-                                <i class="fas fa-calendar-alt"></i> 
-                                Início: <%= new Date(meta.data_inicio).toLocaleDateString('pt-BR') %>
-                                <br>
-                                <i class="fas fa-flag-checkered"></i> 
-                                Limite: <%= new Date(meta.data_limite).toLocaleDateString('pt-BR') %>
-                                <% if(!meta.concluida && diasRestantes > 0) { %>
-                                    <br>
-                                    <i class="fas fa-hourglass-half"></i>
-                                    <%= diasRestantes %> dias restantes
-                                <% } %>
-                            </p>
+                            <!-- Descrição -->
+                            <% if(meta.descricao) { %>
+                                <p class="text-muted small mb-3"><%= meta.descricao %></p>
+                            <% } %>
 
                             <!-- Ações -->
-                            <div class="goal-actions d-flex gap-2">
-                                <% if(!meta.concluida) { %>
-                                    <a href="/metas/atualizar-progresso/<%= meta.meta_id %>" 
-                                       class="btn btn-sm btn-outline-success flex-grow-1">
-                                        <i class="fas fa-chart-line"></i> Atualizar Progresso
+                            <div class="goal-actions">
+                                <div class="btn-group w-100" role="group">
+                                    <a href="/metas/editar/<%= meta.meta_id %>" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-edit"></i> Editar
                                     </a>
-                                <% } %>
-                                <a href="/metas/editar/<%= meta.meta_id %>" 
-                                   class="btn btn-sm btn-outline-primary flex-grow-1">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <form action="/metas/excluir/<%= meta.meta_id %>" method="POST" 
-                                      class="flex-grow-1" 
-                                      onsubmit="return confirm('Tem certeza que deseja excluir esta meta?')">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-                                        <i class="fas fa-trash-alt"></i> Excluir
+                                    <button type="button" class="btn btn-outline-success btn-sm" onclick="adicionarValor('<%= meta.meta_id %>', '<%= meta.nome %>')">
+                                        <i class="fas fa-plus"></i> Adicionar
                                     </button>
-                                </form>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmarExclusao('<%= meta.meta_id %>', '<%= meta.nome %>')">
+                                        <i class="fas fa-trash"></i> Excluir
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -158,11 +127,14 @@
             <% }); %>
 
             <% if(metas.length === 0) { %>
-                <div class="col-12 text-center">
-                    <div class="alert alert-info" role="alert">
-                        <i class="fas fa-info-circle"></i> Você ainda não possui nenhuma meta cadastrada.
-                        <br>
-                        <a href="/metas/criar" class="alert-link">Clique aqui</a> para criar sua primeira meta.
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-bullseye fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Nenhuma meta cadastrada</h4>
+                        <p class="text-muted">Comece definindo suas metas financeiras.</p>
+                        <a href="/metas/criar" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Criar Primeira Meta
+                        </a>
                     </div>
                 </div>
             <% } %>
@@ -170,5 +142,58 @@
     </div>
 
     <%- include('../partials/footer') %>
+
+    <!-- Modal para adicionar valor -->
+    <div class="modal fade" id="modalAdicionarValor" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Adicionar Valor à Meta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formAdicionarValor" method="POST">
+                    <div class="modal-body">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="valorAdicionar" name="valor" step="0.01" min="0.01" required>
+                            <label for="valorAdicionar">Valor a adicionar (R$)</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="observacoes" name="observacoes" style="height: 100px"></textarea>
+                            <label for="observacoes">Observações (opcional)</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Adicionar Valor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function adicionarValor(metaId, nomeMeta) {
+            document.getElementById('formAdicionarValor').action = `/metas/${metaId}/adicionar-valor`;
+            document.querySelector('#modalAdicionarValor .modal-title').textContent = `Adicionar Valor - ${nomeMeta}`;
+            new bootstrap.Modal(document.getElementById('modalAdicionarValor')).show();
+        }
+
+        function confirmarExclusao(metaId, nomeMeta) {
+            if (confirm(`Tem certeza que deseja excluir a meta "${nomeMeta}"? Esta ação não pode ser desfeita.`)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/metas/excluir/${metaId}`;
+                
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+                form.appendChild(methodInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
 </body>
 </html>

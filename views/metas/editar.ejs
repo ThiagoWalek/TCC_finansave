@@ -97,51 +97,63 @@
 
             <form action="/metas/editar/<%= meta.meta_id %>" method="POST" id="formMeta">
                 <!-- Nome da Meta -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-bullseye icon-input"></i>
-                    <input type="text" class="form-control" id="nome" name="nome" 
-                           value="<%= meta.nome %>" placeholder="Nome da meta" required>
-                    <label for="nome">Nome da meta</label>
+                <div class="mb-3">
+                    <p class="form-question">🎯 Qual é o seu objetivo?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-bullseye icon-input"></i>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               value="<%= meta.nome %>" placeholder="Nome da meta" required>
+                    </div>
                 </div>
 
                 <!-- Descrição -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-align-left icon-input"></i>
-                    <textarea class="form-control" id="descricao" name="descricao" 
-                              placeholder="Descrição" style="height: 100px"><%= meta.descricao || '' %></textarea>
-                    <label for="descricao">Descrição (opcional)</label>
+                <div class="mb-3">
+                    <p class="form-question">📝 Descrição detalhada (opcional)</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-align-left icon-input"></i>
+                        <textarea class="form-control" id="descricao" name="descricao" 
+                                  placeholder="Descrição" style="height: 100px"><%= meta.descricao || '' %></textarea>
+                    </div>
                 </div>
 
                 <!-- Valor Atual -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-dollar-sign icon-input"></i>
-                    <input type="number" class="form-control" id="valor_atual" name="valor_atual" 
-                           value="<%= meta.valor_atual %>" step="0.01" placeholder="0.00" required>
-                    <label for="valor_atual">Valor atual</label>
+                <div class="mb-3">
+                    <p class="form-question">💰 Valor atual</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-dollar-sign icon-input"></i>
+                        <input type="number" class="form-control" id="valor_atual" name="valor_atual" 
+                               value="<%= meta.valor_atual %>" step="0.01" placeholder="0.00" required>
+                    </div>
                 </div>
 
                 <!-- Valor Alvo -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-bullseye icon-input"></i>
-                    <input type="number" class="form-control" id="valor_alvo" name="valor_alvo" 
-                           value="<%= meta.valor_alvo %>" step="0.01" placeholder="0.00" required>
-                    <label for="valor_alvo">Valor alvo</label>
+                <div class="mb-3">
+                    <p class="form-question">🎯 Valor alvo</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-bullseye icon-input"></i>
+                        <input type="number" class="form-control" id="valor_alvo" name="valor_alvo" 
+                               value="<%= meta.valor_alvo %>" step="0.01" placeholder="0.00" required>
+                    </div>
                 </div>
 
                 <!-- Data de Início -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-alt icon-input"></i>
-                    <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
-                           value="<%= new Date(meta.data_inicio).toISOString().split('T')[0] %>" required>
-                    <label for="data_inicio">Data de início</label>
+                <div class="mb-3">
+                    <p class="form-question">📅 Data de início</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-calendar-alt icon-input"></i>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                               value="<%= new Date(meta.data_inicio).toISOString().split('T')[0] %>" required>
+                    </div>
                 </div>
 
                 <!-- Data Limite -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-check icon-input"></i>
-                    <input type="date" class="form-control" id="data_limite" name="data_limite" 
-                           value="<%= new Date(meta.data_limite).toISOString().split('T')[0] %>" required>
-                    <label for="data_limite">Data limite</label>
+                <div class="mb-3">
+                    <p class="form-question">⏰ Data limite</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-calendar-check icon-input"></i>
+                        <input type="date" class="form-control" id="data_limite" name="data_limite" 
+                               value="<%= new Date(meta.data_limite).toISOString().split('T')[0] %>" required>
+                    </div>
                 </div>
 
                 <!-- Botões -->

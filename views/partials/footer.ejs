@@ -1,7 +1,7 @@
 <footer class="footer mt-auto py-4">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-4 mb-3 mb-md-0">
+            <div class="col-md-6 mb-3 mb-md-0">
                 <div class="d-flex align-items-center">
                     <img src="/img/logo.svg" alt="Finansave Logo" width="40" height="40" class="me-2">
                     <div>
@@ -10,29 +10,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-3 mb-md-0 text-center">
+            <div class="col-md-6 text-md-end">
                 <p class="mb-0 text-muted">
                     &copy; <%= new Date().getFullYear() %> Finansave
                 </p>
                 <small class="text-muted">
                     Desenvolvido como Trabalho de Conclusão de Curso
                 </small>
-            </div>
-            <div class="col-md-4 text-md-end">
-                <div class="social-links">
-                    <a href="#" class="social-link" aria-label="Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="Twitter">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="social-link" aria-label="LinkedIn">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -42,37 +26,6 @@
     .footer-brand {
         font-weight: 600;
         color: var(--primary-color);
-    }
-    
-    .social-links {
-        display: flex;
-        justify-content: flex-end;
-        gap: 15px;
-    }
-    
-    .social-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: var(--primary-gradient);
-        color: white;
-        transition: var(--transition);
-    }
-    
-    .social-link:hover {
-        transform: translateY(-3px);
-        color: white;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    @media (max-width: 768px) {
-        .social-links {
-            justify-content: center;
-            margin-top: 1rem;
-        }
     }
 </style>
 
@@ -91,6 +44,9 @@
         });
     });
 </script>
+
+<!-- Script principal -->
+<script src="/js/main.js"></script>
 
 <!-- Script para confirmar ações de exclusão -->
 <script>

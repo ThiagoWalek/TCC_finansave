@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Extrato de Gastos - Finansave</title>
+</head>
+<body class="bg-light">
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <!-- Cabeçalho com Total de Gastos -->
+        <div class="expenses-header text-center">
+            <h1 class="h3 mb-4">
+                <i class="fas fa-receipt"></i> Extrato de Gastos
+            </h1>
+            <p class="mb-2">Total de Gastos</p>
+            <div class="total-expenses">
+                <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalGastos) %>
+            </div>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <!-- Filtros -->
+        <div class="filters-card">
+            <h5 class="mb-3"><i class="fas fa-filter"></i> Filtros</h5>
+            <form method="GET" action="/gastos/extrato" class="filter-form">
+                <div class="filter-group">
+                    <label for="mes" class="form-label">Mês</label>
+                    <select name="mes" id="mes" class="form-select">
+                        <option value="">Todos os meses</option>
+                        <% for(let i = 1; i <= 12; i++) { %>
+                            <option value="<%= i %>" <%= filtros.mes == i ? 'selected' : '' %>>
+                                <%= new Date(2023, i-1, 1).toLocaleDateString('pt-BR', { month: 'long' }) %>
+                            </option>
+                        <% } %>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="ano" class="form-label">Ano</label>
+                    <select name="ano" id="ano" class="form-select">
+                        <option value="">Todos os anos</option>
+                        <% for(let ano = new Date().getFullYear(); ano >= 2020; ano--) { %>
+                            <option value="<%= ano %>" <%= filtros.ano == ano ? 'selected' : '' %>><%= ano %></option>
+                        <% } %>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="categoria" class="form-label">Categoria</label>
+                    <select name="categoria" id="categoria" class="form-select">
+                        <option value="">Todas as categorias</option>
+                        <option value="alimentacao" <%= filtros.categoria === 'alimentacao' ? 'selected' : '' %>>Alimentação</option>
+                        <option value="transporte" <%= filtros.categoria === 'transporte' ? 'selected' : '' %>>Transporte</option>
+                        <option value="saude" <%= filtros.categoria === 'saude' ? 'selected' : '' %>>Saúde</option>
+                        <option value="educacao" <%= filtros.categoria === 'educacao' ? 'selected' : '' %>>Educação</option>
+                        <option value="lazer" <%= filtros.categoria === 'lazer' ? 'selected' : '' %>>Lazer</option>
+                        <option value="compras" <%= filtros.categoria === 'compras' ? 'selected' : '' %>>Compras</option>
+                        <option value="casa" <%= filtros.categoria === 'casa' ? 'selected' : '' %>>Casa</option>
+                        <option value="outros" <%= filtros.categoria === 'outros' ? 'selected' : '' %>>Outros</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i>Filtrar
+                    </button>
+                    <a href="/gastos/extrato" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Botão Registrar Gasto -->
+        <div class="mb-4 text-end">
+            <a href="/gastos/criar" class="btn btn-danger">
+                <i class="fas fa-plus"></i> Registrar Gasto
+            </a>
+        </div>
+
+        <!-- Lista de Gastos -->
+        <% if(gastos.length === 0) { %>
+            <div class="empty-state">
+                <i class="fas fa-receipt fa-3x mb-3"></i>
+                <h4>Nenhum gasto encontrado</h4>
+                <p>Não há gastos registrados para os filtros selecionados.</p>
+                <a href="/gastos/criar" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus me-2"></i>Registrar Primeiro Gasto
+                </a>
+            </div>
+        <% } else { %>
+            <div class="row">
+                <% gastos.forEach(function(gasto) { %>
+                    <div class="col-12 col-lg-6">
+                        <div class="expense-card card p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1"><%= gasto.descricao %></h6>
+                                    <div class="expense-amount">R$ <%= parseFloat(gasto.valor).toFixed(2).replace('.', ',') %></div>
+                                </div>
+                                <span class="badge expense-category category-<%= gasto.categoria %>">
+                                    <%= gasto.categoria %>
+                                </span>
+                            </div>
+                            
+                            <div class="card-info mb-2">
+                                <i class="fas fa-credit-card"></i>
+                                <%= gasto.conta_nome %>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="expense-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <%= new Date(gasto.data_gasto).toLocaleDateString('pt-BR') %>
+                                </div>
+                                
+                                <form method="POST" action="/gastos/excluir/<%= gasto.gasto_id %>" style="display: inline;" 
+                                      onsubmit="return confirm('Tem certeza que deseja excluir este gasto? O valor será devolvido à conta.')">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            
+                            <% if (gasto.observacoes) { %>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-sticky-note me-1"></i>
+                                        <%= gasto.observacoes %>
+                                    </small>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

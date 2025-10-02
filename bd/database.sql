@@ -1,3 +1,7 @@
+-- Script para criação do banco de dados finansave
+-- Estrutura atualizada conforme especificação do usuário
+
+DROP DATABASE IF EXISTS finansave;
 CREATE DATABASE finansave;
 USE finansave;
 
@@ -64,6 +68,7 @@ CREATE TABLE Transferencias (
 CREATE TABLE Parcelamentos (
     id_parcelamento INT PRIMARY KEY AUTO_INCREMENT,
     usuario_id INT NOT NULL,
+    conta_id INT NOT NULL,
     descricao VARCHAR(255) NOT NULL,
     total_parcelas INT NOT NULL,
     parcela_atual INT NOT NULL DEFAULT 1,
@@ -71,5 +76,20 @@ CREATE TABLE Parcelamentos (
     valor_parcela DECIMAL(10,2) NOT NULL,
     data_inicio DATE NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id),
+    FOREIGN KEY (conta_id) REFERENCES Contas(conta_id)
+);
+
+CREATE TABLE Gastos (
+    gasto_id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT NOT NULL,
+    conta_id INT NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    valor DECIMAL(15,2) NOT NULL,
+    data_gasto DATE NOT NULL,
+    data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    observacoes TEXT,
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id) ON DELETE CASCADE,
+    FOREIGN KEY (conta_id) REFERENCES Contas(conta_id) ON DELETE CASCADE
 );

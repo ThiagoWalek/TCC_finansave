@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Novo Gasto - Finansave</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <div class="form-container">
+            <div class="form-header">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-shopping-cart text-danger"></i>
+                    💸 Novo Gasto
+                </h1>
+                <p class="text-muted mb-0">Registre seus gastos de forma rápida e organizada</p>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/gastos/criar" method="POST" class="needs-validation" novalidate>
+                <!-- Conta -->
+                <div class="mb-3">
+                    <p class="form-question">💳 De qual conta sair o dinheiro?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-credit-card icon-input"></i>
+                        <select class="form-control" id="conta_id" name="conta_id" required>
+                            <option value="" disabled selected>Selecione uma conta</option>
+                            <% contas.forEach(function(conta) { %>
+                                <option value="<%= conta.conta_id %>" 
+                                        data-saldo="<%= conta.saldo_atual %>"
+                                        <%= (typeof req !== 'undefined' && req.body && req.body.conta_id == conta.conta_id) ? 'selected' : '' %>>
+                                    <%= conta.nome %> - Saldo: R$ <%= parseFloat(conta.saldo_atual).toFixed(2).replace('.', ',') %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Informações da conta selecionada -->
+                <div id="contaInfo" class="card-info" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <small class="text-muted">💰 Saldo disponível:</small><br>
+                            <span id="saldoDisponivel" class="text-success"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="mb-3">
+                    <p class="form-question">📝 O que você comprou ou pagou?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-edit icon-input"></i>
+                        <input type="text" class="form-control" id="descricao" name="descricao" 
+                               placeholder="Descreva o gasto" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.descricao) ? req.body.descricao : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Categoria -->
+                <div class="mb-3">
+                    <p class="form-question">🏷️ Qual categoria do gasto?</p>
+                    <div class="categoria-buttons">
+                        <button type="button" class="categoria-btn" data-categoria="Alimentação">
+                            <i class="fas fa-utensils"></i> 🍽️ Alimentação
+                        </button>
+                        <button type="button" class="categoria-btn" data-categoria="Transporte">
+                            <i class="fas fa-car"></i> 🚗 Transporte
+                        </button>
+                        <button type="button" class="categoria-btn" data-categoria="Saúde">
+                            <i class="fas fa-heartbeat"></i> 🏥 Saúde
+                        </button>
+                        <button type="button" class="categoria-btn" data-categoria="Educação">
+                            <i class="fas fa-graduation-cap"></i> 📚 Educação
+                        </button>
+                        <button type="button" class="categoria-btn" data-categoria="Lazer">
+                            <i class="fas fa-gamepad"></i> 🎮 Lazer
+                        </button>
+                        <button type="button" class="categoria-btn" data-categoria="Compras">
+                            <i class="fas fa-shopping-bag"></i> 🛍️ Compras
+                        </button>
+                        <button type="button" class="categoria-btn" data-categoria="Casa">
+                            <i class="fas fa-home"></i> 🏠 Casa
+                        </button>
+                        <button type="button" class="categoria-btn" data-categoria="Outros">
+                            <i class="fas fa-ellipsis-h"></i> 🔧 Outros
+                        </button>
+                    </div>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-tag icon-input"></i>
+                        <input type="text" class="form-control" id="categoria" name="categoria" 
+                               placeholder="Digite uma categoria personalizada" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.categoria) ? req.body.categoria : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Valor -->
+                <div class="mb-3">
+                    <p class="form-question">💰 Quanto você gastou?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-coins icon-input"></i>
+                        <input type="number" class="form-control" id="valor" name="valor" 
+                               step="0.01" placeholder="0,00" min="0.01" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.valor) ? req.body.valor : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Data do Gasto -->
+                <div class="mb-3">
+                    <p class="form-question">📅 Quando foi o gasto?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-calendar-alt icon-input"></i>
+                        <input type="date" class="form-control" id="data_gasto" name="data_gasto" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.data_gasto) ? req.body.data_gasto : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Observações -->
+                <div class="mb-4">
+                    <p class="form-question">📋 Alguma observação adicional? (opcional)</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-sticky-note icon-input"></i>
+                        <textarea class="form-control" id="observacoes" name="observacoes" 
+                                  placeholder="Observações sobre este gasto" style="height: 100px"><%= (typeof req !== 'undefined' && req.body && req.body.observacoes) ? req.body.observacoes : '' %></textarea>
+                    </div>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/gastos/extrato" class="btn btn-outline-secondary me-md-2">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-save"></i> Registrar Gasto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Definir data atual como padrão apenas se não houver valor anterior
+        const dataGastoInput = document.getElementById('data_gasto');
+        if (!dataGastoInput.value) {
+            dataGastoInput.valueAsDate = new Date();
+        }
+
+        // Mostrar informações da conta selecionada
+        document.getElementById('conta_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const contaInfoDiv = document.getElementById('contaInfo');
+            const saldoDisponivel = document.getElementById('saldoDisponivel');
+
+            if (selectedOption.value) {
+                const saldo = parseFloat(selectedOption.dataset.saldo);
+
+                saldoDisponivel.textContent = new Intl.NumberFormat('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                }).format(saldo);
+                
+                contaInfoDiv.style.display = 'block';
+            } else {
+                contaInfoDiv.style.display = 'none';
+            }
+        });
+
+        // Trigger change event se já houver uma conta selecionada (em caso de erro)
+        const contaSelect = document.getElementById('conta_id');
+        if (contaSelect.value) {
+            contaSelect.dispatchEvent(new Event('change'));
+        }
+
+        // Botões de categoria
+        document.querySelectorAll('.categoria-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active de todos os botões
+                document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('active'));
+                
+                // Adiciona active ao botão clicado
+                this.classList.add('active');
+                
+                // Define a categoria no input
+                document.getElementById('categoria').value = this.dataset.categoria;
+            });
+        });
+
+        // Marcar botão de categoria ativo se já houver valor (em caso de erro)
+        const categoriaInput = document.getElementById('categoria');
+        if (categoriaInput.value) {
+            document.querySelectorAll('.categoria-btn').forEach(btn => {
+                if (btn.dataset.categoria === categoriaInput.value) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Validação do valor contra saldo disponível
+        document.getElementById('valor').addEventListener('input', function() {
+            const contaSelect = document.getElementById('conta_id');
+            const selectedOption = contaSelect.options[contaSelect.selectedIndex];
+            
+            if (selectedOption && selectedOption.value) {
+                const saldo = parseFloat(selectedOption.dataset.saldo);
+                const valor = parseFloat(this.value);
+                
+                if (valor > saldo) {
+                    this.setCustomValidity('Valor excede o saldo disponível da conta');
+                } else {
+                    this.setCustomValidity('');
+                }
+            }
+        });
+
+        // Formatação de moeda
+        document.getElementById('valor').addEventListener('blur', function() {
+            if (this.value) {
+                this.value = parseFloat(this.value).toFixed(2);
+            }
+        });
+    </script>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

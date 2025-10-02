@@ -55,29 +55,7 @@ const Transferencia = sequelize.define('Transferencia', {
     }
 }, {
     tableName: 'Transferencias',
-    timestamps: false,
-    hooks: {
-        afterCreate: async (transferencia) => {
-            // Atualiza os saldos das contas após a transferência
-            const contaOrigem = await Conta.findByPk(transferencia.conta_origem_id);
-            await contaOrigem.decrement('saldo_atual', { by: transferencia.valor });
-
-            if (transferencia.conta_destino_id) {
-                const contaDestino = await Conta.findByPk(transferencia.conta_destino_id);
-                await contaDestino.increment('saldo_atual', { by: transferencia.valor });
-            }
-        },
-        beforeDestroy: async (transferencia) => {
-            // Reverte os saldos das contas ao deletar uma transferência
-            const contaOrigem = await Conta.findByPk(transferencia.conta_origem_id);
-            await contaOrigem.increment('saldo_atual', { by: transferencia.valor });
-
-            if (transferencia.conta_destino_id) {
-                const contaDestino = await Conta.findByPk(transferencia.conta_destino_id);
-                await contaDestino.decrement('saldo_atual', { by: transferencia.valor });
-            }
-        }
-    }
+    timestamps: false
 });
 
 // Definindo relacionamentos

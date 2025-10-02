@@ -161,9 +161,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const setupThemeToggle = () => {
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
-            // Verifica se há preferência salva e aplica imediatamente
+            // Define modo escuro como padrão se não houver preferência salva
             const savedTheme = localStorage.getItem('dark-theme');
-            if (savedTheme === 'true') {
+            if (savedTheme === null) {
+                // Primeira visita - define modo escuro como padrão
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('dark-theme', 'true');
+                // Atualiza o ícone para o sol quando estiver no modo escuro
+                const icon = themeToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            } else if (savedTheme === 'true') {
                 document.body.classList.add('dark-theme');
                 // Atualiza o ícone para o sol quando estiver no modo escuro
                 const icon = themeToggle.querySelector('i');
@@ -179,11 +189,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const isDarkTheme = document.body.classList.contains('dark-theme');
                 localStorage.setItem('dark-theme', isDarkTheme);
                 
-                // Atualiza o ícone
+                // Atualiza o ícone - sempre mantém o sol já que o modo escuro é padrão
                 const icon = this.querySelector('i');
                 if (icon) {
-                    icon.classList.toggle('fa-moon');
-                    icon.classList.toggle('fa-sun');
+                    // Remove qualquer classe existente e mantém apenas o sol
+                    icon.classList.remove('fa-moon', 'fa-sun');
+                    icon.classList.add('fa-sun');
                 }
             });
         }

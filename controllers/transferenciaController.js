@@ -11,8 +11,18 @@ const transferenciaController = {
             const transferencias = await Transferencia.findAll({
                 where: { usuario_id: req.session.user.id },
                 include: [
-                    { model: Conta, as: 'contaOrigem', attributes: ['nome'] },
-                    { model: Conta, as: 'contaDestino', attributes: ['nome'] }
+                    { 
+                        model: Conta, 
+                        as: 'contaOrigem', 
+                        attributes: ['nome'],
+                        required: true
+                    },
+                    { 
+                        model: Conta, 
+                        as: 'contaDestino', 
+                        attributes: ['nome'],
+                        required: false
+                    }
                 ],
                 order: [['data_transferencia', 'DESC']]
             });

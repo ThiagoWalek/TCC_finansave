@@ -52,8 +52,8 @@
                         <!-- Conta de Destino -->
                         <div class="mb-3">
                             <label for="conta_destino_id" class="form-label">Conta de Destino</label>
-                            <select class="form-select" id="conta_destino_id" name="conta_destino_id" required>
-                                <option value="">Selecione a conta de destino</option>
+                            <select class="form-select" id="conta_destino_id" name="conta_destino_id">
+                                <option value="">Selecione a conta de destino (opcional)</option>
                                 <% contas.forEach(function(conta) { %>
                                     <option value="<%= conta.conta_id %>" data-saldo="<%= conta.saldo_atual %>">
                                         <%= conta.nome %>
@@ -61,7 +61,7 @@
                                 <% }); %>
                             </select>
                             <div class="account-balance" id="saldo-destino"></div>
-                            <div class="invalid-feedback">Por favor, selecione a conta de destino.</div>
+                            <small class="form-text text-muted">Deixe em branco para transferência para conta externa</small>
                         </div>
 
                         <!-- Valor -->

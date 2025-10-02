@@ -90,71 +90,83 @@
                 </div>
 
                 <!-- Nome do Orçamento -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-file-signature icon-input"></i>
-                    <input type="text" class="form-control" id="nome" name="nome" 
-                           placeholder="Nome do orçamento" required>
-                    <label for="nome">Nome do orçamento</label>
+                <div class="mb-3">
+                    <p class="form-question">📝 Qual é o nome do orçamento?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-file-signature icon-input"></i>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               placeholder="Nome do orçamento" required>
+                    </div>
                 </div>
 
                 <!-- Categoria -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-tag icon-input"></i>
-                    <select class="form-select" id="categoria" name="categoria" required>
-                        <option value="" disabled selected>Selecione uma categoria</option>
-                        <!-- Categorias de Receita -->
-                        <optgroup label="Receitas" class="categoria-receita d-none">
-                            <option value="Salário">Salário</option>
-                            <option value="Investimentos">Investimentos</option>
-                            <option value="Freelance">Freelance</option>
-                            <option value="Vendas">Vendas</option>
-                            <option value="Outras Receitas">Outras Receitas</option>
-                        </optgroup>
-                        <!-- Categorias de Despesa -->
-                        <optgroup label="Despesas" class="categoria-despesa d-none">
-                            <option value="Moradia">Moradia</option>
-                            <option value="Alimentação">Alimentação</option>
-                            <option value="Transporte">Transporte</option>
-                            <option value="Saúde">Saúde</option>
-                            <option value="Educação">Educação</option>
-                            <option value="Lazer">Lazer</option>
-                            <option value="Vestuário">Vestuário</option>
-                            <option value="Utilidades">Utilidades</option>
-                            <option value="Outras Despesas">Outras Despesas</option>
-                        </optgroup>
-                    </select>
-                    <label for="categoria">Categoria</label>
+                <div class="mb-3">
+                    <p class="form-question">🏷️ Qual categoria?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-tag icon-input"></i>
+                        <select class="form-select" id="categoria" name="categoria" required>
+                            <option value="" disabled selected>Selecione uma categoria</option>
+                            <!-- Categorias de Receita -->
+                            <optgroup label="Receitas" class="categoria-receita d-none">
+                                <option value="Salário">Salário</option>
+                                <option value="Investimentos">Investimentos</option>
+                                <option value="Freelance">Freelance</option>
+                                <option value="Vendas">Vendas</option>
+                                <option value="Outras Receitas">Outras Receitas</option>
+                            </optgroup>
+                            <!-- Categorias de Despesa -->
+                            <optgroup label="Despesas" class="categoria-despesa d-none">
+                                <option value="Moradia">Moradia</option>
+                                <option value="Alimentação">Alimentação</option>
+                                <option value="Transporte">Transporte</option>
+                                <option value="Saúde">Saúde</option>
+                                <option value="Educação">Educação</option>
+                                <option value="Lazer">Lazer</option>
+                                <option value="Vestuário">Vestuário</option>
+                                <option value="Utilidades">Utilidades</option>
+                                <option value="Outras Despesas">Outras Despesas</option>
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Mês/Ano -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-alt icon-input"></i>
-                    <input type="month" class="form-control" id="mes_ano" name="mes_ano" required>
-                    <label for="mes_ano">Mês/Ano</label>
+                <div class="mb-3">
+                    <p class="form-question">📅 Para qual mês/ano?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-calendar-alt icon-input"></i>
+                        <input type="month" class="form-control" id="mes_ano" name="mes_ano" required>
+                    </div>
                 </div>
 
                 <!-- Valor Previsto -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-dollar-sign icon-input"></i>
-                    <input type="number" class="form-control" id="valor_previsto" name="valor_previsto" 
-                           step="0.01" placeholder="0.00" required>
-                    <label for="valor_previsto">Valor previsto</label>
+                <div class="mb-3">
+                    <p class="form-question">💰 Qual o valor previsto?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-dollar-sign icon-input"></i>
+                        <input type="number" class="form-control" id="valor_previsto" name="valor_previsto" 
+                               step="0.01" placeholder="0.00" required>
+                    </div>
                 </div>
 
                 <!-- Valor Real -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-coins icon-input"></i>
-                    <input type="number" class="form-control" id="valor_real" name="valor_real" 
-                           step="0.01" placeholder="0.00" value="0" required>
-                    <label for="valor_real">Valor real inicial</label>
+                <div class="mb-3">
+                    <p class="form-question">🪙 Qual o valor real inicial?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-coins icon-input"></i>
+                        <input type="number" class="form-control" id="valor_real" name="valor_real" 
+                               step="0.01" placeholder="0.00" value="0" required>
+                    </div>
                 </div>
 
                 <!-- Descrição -->
-                <div class="form-floating mb-4 position-relative">
-                    <i class="fas fa-align-left icon-input"></i>
-                    <textarea class="form-control" id="descricao" name="descricao" 
-                              placeholder="Descrição" style="height: 100px"></textarea>
-                    <label for="descricao">Descrição (opcional)</label>
+                <div class="mb-4">
+                    <p class="form-question">📋 Alguma descrição? (opcional)</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-align-left icon-input"></i>
+                        <textarea class="form-control" id="descricao" name="descricao" 
+                                  placeholder="Descrição" style="height: 100px"></textarea>
+                    </div>
                 </div>
 
                 <!-- Botões -->

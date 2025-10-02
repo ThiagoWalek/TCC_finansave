@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Usuario = require('./Usuario');
+const Conta = require('./Conta');
 
 const Parcelamento = sequelize.define('Parcelamento', {
     id_parcelamento: {
@@ -15,6 +16,14 @@ const Parcelamento = sequelize.define('Parcelamento', {
         references: {
             model: Usuario,
             key: 'usuario_id'
+        }
+    },
+    conta_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Conta,
+            key: 'conta_id'
         }
     },
     descricao: {
@@ -90,8 +99,11 @@ const Parcelamento = sequelize.define('Parcelamento', {
     }
 });
 
-// Definindo relacionamento
+// Definindo relacionamentos
 Parcelamento.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 Usuario.hasMany(Parcelamento, { foreignKey: 'usuario_id' });
+
+Parcelamento.belongsTo(Conta, { foreignKey: 'conta_id' });
+Conta.hasMany(Parcelamento, { foreignKey: 'conta_id' });
 
 module.exports = Parcelamento;

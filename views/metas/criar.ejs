@@ -56,51 +56,61 @@
 
             <form action="/metas/criar" method="POST" id="formMeta">
                 <!-- Nome da Meta -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-bullseye icon-input"></i>
-                    <input type="text" class="form-control" id="nome" name="nome" 
-                           placeholder="Nome da meta" required>
-                    <label for="nome">Nome da meta</label>
+                <div class="mb-3">
+                    <p class="form-question">🎯 Qual é o seu objetivo?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-star icon-input"></i>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               placeholder="Ex: Viagem para Europa, Carro novo..." required>
+                    </div>
                 </div>
 
                 <!-- Descrição -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-align-left icon-input"></i>
-                    <textarea class="form-control" id="descricao" name="descricao" 
-                              placeholder="Descrição" style="height: 100px"></textarea>
-                    <label for="descricao">Descrição (opcional)</label>
+                <div class="mb-3">
+                    <p class="form-question">📝 Descrição detalhada (opcional)</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-edit icon-input"></i>
+                        <textarea class="form-control" id="descricao" name="descricao" 
+                                  placeholder="Descreva detalhes sobre sua meta..." style="height: 100px"></textarea>
+                    </div>
                 </div>
 
                 <!-- Valor Alvo -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-dollar-sign icon-input"></i>
-                    <input type="number" class="form-control" id="valor_alvo" name="valor_alvo" 
-                           step="0.01" placeholder="0.00" required>
-                    <label for="valor_alvo">Valor alvo</label>
+                <div class="mb-3">
+                    <p class="form-question">🎯 Quanto você quer juntar?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-trophy icon-input"></i>
+                        <input type="number" class="form-control" id="valor_alvo" name="valor_alvo" 
+                               step="0.01" placeholder="Ex: 5000.00" min="0.01" required>
+                    </div>
                 </div>
 
                 <!-- Valor Inicial -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-piggy-bank icon-input"></i>
-                    <input type="number" class="form-control" id="valor_atual" name="valor_atual" 
-                           step="0.01" placeholder="0.00" value="0" required>
-                    <label for="valor_atual">Valor inicial</label>
+                <div class="mb-3">
+                    <p class="form-question">💰 Quanto você já tem?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-coins icon-input"></i>
+                        <input type="number" class="form-control" id="valor_inicial" name="valor_inicial" 
+                               step="0.01" placeholder="Ex: 500.00" min="0" value="0">
+                    </div>
                 </div>
 
                 <!-- Data de Início -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-alt icon-input"></i>
-                    <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
-                           required>
-                    <label for="data_inicio">Data de início</label>
+                <div class="mb-3">
+                    <p class="form-question">📅 Quando você vai começar?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-play-circle icon-input"></i>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+                    </div>
                 </div>
 
                 <!-- Data Limite -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-check icon-input"></i>
-                    <input type="date" class="form-control" id="data_limite" name="data_limite" 
-                           required>
-                    <label for="data_limite">Data limite</label>
+                <div class="mb-3">
+                    <p class="form-question">🏁 Até quando você quer alcançar?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-flag-checkered icon-input"></i>
+                        <input type="date" class="form-control" id="data_limite" name="data_limite" required>
+                    </div>
                 </div>
 
                 <!-- Botões -->

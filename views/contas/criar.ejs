@@ -22,10 +22,10 @@
             margin-bottom: 0.5rem;
         }
         .form-header p {
-            color: #6c757d;
+            color: #000000;
         }
         .input-group-text {
-            background-color: #f8f9fa;
+            background-color: #000000;
         }
         .form-floating > .form-control {
             padding-left: 2.5rem;
@@ -37,7 +37,7 @@
             position: absolute;
             left: 1rem;
             top: 1.25rem;
-            color: #6c757d;
+            color: #000000;
             z-index: 4;
         }
     </style>
@@ -48,63 +48,71 @@
     <div class="container">
         <div class="form-container">
             <div class="form-header">
-                <h1>Nova Conta</h1>
-                <p>Preencha os dados da sua nova conta financeira</p>
+                <h1>💳 Nova Conta</h1>
+                <p>Configure sua nova conta financeira de forma simples e rápida</p>
             </div>
 
             <%- include('../partials/messages') %>
 
             <form action="/contas/criar" method="POST" id="formConta">
                 <!-- Nome da Conta -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-file-signature icon-input"></i>
-                    <input type="text" class="form-control" id="nome" name="nome" 
-                           placeholder="Nome da conta" required>
-                    <label for="nome">Nome da conta</label>
+                <div class="mb-3">
+                    <p class="form-question">💳 Nome da sua conta</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-credit-card icon-input"></i>
+                        <input type="text" class="form-control" id="nome" name="nome" 
+                               placeholder="Como você quer chamar esta conta?" required>
+                    </div>
                 </div>
 
                 <!-- Tipo de Conta -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-wallet icon-input"></i>
-                    <select class="form-select" id="tipo" name="tipo" required>
-                        <option value="" disabled selected>Selecione o tipo</option>
-                        <option value="Corrente">Conta Corrente</option>
-                        <option value="Poupança">Conta Poupança</option>
-                        <option value="Investimento">Conta Investimento</option>
-                        <option value="Carteira">Carteira</option>
-                        <option value="Cartão de Crédito">Cartão de Crédito</option>
-                        <option value="Outro">Outro</option>
-                    </select>
-                    <label for="tipo">Tipo de conta</label>
+                <div class="mb-3">
+                    <p class="form-question">🏷️ Tipo de conta</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-list-alt icon-input"></i>
+                        <select class="form-select" id="tipo" name="tipo" required>
+                            <option value="" disabled selected>Escolha o tipo da conta</option>
+                            <option value="Corrente">💰 Conta Corrente</option>
+                            <option value="Poupança">🏦 Conta Poupança</option>
+                            <option value="Investimento">📈 Conta Investimento</option>
+                            <option value="Carteira">👛 Carteira</option>
+                            <option value="Cartão de Crédito">💳 Cartão de Crédito</option>
+                            <option value="Outro">🔧 Outro</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Saldo Inicial -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-dollar-sign icon-input"></i>
-                    <input type="number" class="form-control" id="saldo_atual" name="saldo_atual" 
-                           step="0.01" placeholder="0.00" required>
-                    <label for="saldo_atual">Saldo inicial</label>
+                <div class="mb-3">
+                    <p class="form-question">💰 Saldo inicial</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-coins icon-input"></i>
+                        <input type="number" class="form-control" id="saldo_atual" name="saldo_atual" 
+                               step="0.01" placeholder="Quanto você tem nesta conta?" required>
+                    </div>
                 </div>
 
                 <!-- Instituição Financeira -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-university icon-input"></i>
-                    <input type="text" class="form-control" id="instituicao" name="instituicao" 
-                           placeholder="Nome da instituição">
-                    <label for="instituicao">Instituição financeira (opcional)</label>
+                <div class="mb-3">
+                    <p class="form-question">🏢 Instituição financeira (opcional)</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-building icon-input"></i>
+                        <input type="text" class="form-control" id="instituicao" name="instituicao" 
+                               placeholder="Ex: Banco do Brasil, Nubank, etc.">
+                    </div>
                 </div>
 
                 <!-- Status da Conta -->
                 <div class="form-check form-switch mb-4">
                     <input class="form-check-input" type="checkbox" id="ativa" name="ativa" 
                            value="true" checked>
-                    <label class="form-check-label" for="ativa">Conta ativa</label>
+                    <label class="form-check-label" for="ativa">✅ Conta ativa e em uso</label>
                 </div>
 
                 <!-- Botões -->
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Criar Conta
+                        <i class="fas fa-plus-circle"></i> Criar Minha Conta
                     </button>
                     <a href="/contas" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left"></i> Voltar
