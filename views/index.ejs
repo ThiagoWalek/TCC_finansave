@@ -6,216 +6,162 @@
 </head>
 <body>
     <%- include('partials/navbar') %>
-
-    <div class="dashboard-header">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h1 class="display-5 fw-bold text-white mb-2 animate__animated animate__fadeInUp">Olá, <%= user.nome.split(' ')[0] %>!</h1>
-                    <p class="text-white-50 mb-4 animate__animated animate__fadeInUp animate__delay-1s">Bem-vindo ao seu painel financeiro. Aqui está o resumo da sua situação atual.</p>
-                </div>
-                <div class="col-md-6 d-none d-md-block text-end">
-                    <img src="/img/dashboard-illustration.svg" alt="Dashboard Illustration" class="dashboard-illustration animate__animated animate__fadeInRight animate__delay-1s">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container dashboard-container">
+    
+    <!-- Dashboard Container Moderno -->
+    <div class="dashboard-container">
         <%- include('partials/messages') %>
 
-        <!-- Painel de Resumo Financeiro -->
-        <div class="row mb-4">
-            <div class="col-md-4 mb-3">
-                <div class="card card-hover animate__animated animate__fadeInUp h-100 bg-gradient-success">
-                    <div class="card-body text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-1">
-                                    <i class="fas fa-arrow-up me-2"></i>Receitas
-                                </h6>
-                                <h3 class="mb-0" id="totalReceitas">R$ 0,00</h3>
+        <!-- Seção Principal do Dashboard -->
+        <section class="dashboard-main-section">
+            <!-- Painel de Resumo Financeiro -->
+            <div class="financial-summary-section mb-5">
+                <div class="section-header mb-4">
+                    <h2 class="section-title gradient-text">Resumo Financeiro</h2>
+                    <p class="section-subtitle">Visão geral da sua situação financeira atual</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-xl-4 col-lg-6 col-md-6">
+                        <div class="financial-card card-success animate__animated animate__fadeInUp">
+                            <div class="financial-card-header">
+                                <div class="financial-card-icon">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div class="financial-card-info">
+                                    <h6 class="financial-card-title">Receitas</h6>
+                                    <p class="financial-card-subtitle">Total de entradas</p>
+                                </div>
                             </div>
-                            <div class="icon-circle bg-white bg-opacity-25">
-                                <i class="fas fa-plus fa-2x"></i>
+                            <div class="financial-card-body">
+                                <h2 class="financial-card-value" id="totalReceitas">R$ 0,00</h2>
+                                <div class="financial-card-trend positive">
+                                    <i class="fas fa-trending-up"></i>
+                                    <span>+12.5% este mês</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-4 col-lg-6 col-md-6">
+                        <div class="financial-card card-danger animate__animated animate__fadeInUp animate__delay-1s">
+                            <div class="financial-card-header">
+                                <div class="financial-card-icon">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="financial-card-info">
+                                    <h6 class="financial-card-title">Despesas</h6>
+                                    <p class="financial-card-subtitle">Total de saídas</p>
+                                </div>
+                            </div>
+                            <div class="financial-card-body">
+                                <h2 class="financial-card-value" id="totalDespesas">R$ 0,00</h2>
+                                <div class="financial-card-trend negative">
+                                    <i class="fas fa-trending-down"></i>
+                                    <span>-8.3% este mês</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-4 col-lg-12 col-md-12">
+                        <div class="financial-card card-primary animate__animated animate__fadeInUp animate__delay-2s">
+                            <div class="financial-card-header">
+                                <div class="financial-card-icon">
+                                    <i class="fas fa-balance-scale"></i>
+                                </div>
+                                <div class="financial-card-info">
+                                    <h6 class="financial-card-title">Saldo Atual</h6>
+                                    <p class="financial-card-subtitle">Balanço geral</p>
+                                </div>
+                            </div>
+                            <div class="financial-card-body">
+                                <h2 class="financial-card-value" id="saldoAtual">R$ 0,00</h2>
+                                <div class="financial-card-trend positive">
+                                    <i class="fas fa-wallet"></i>
+                                    <span>Situação estável</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card card-hover animate__animated animate__fadeInUp animate__delay-1s h-100 bg-gradient-danger">
-                    <div class="card-body text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-1">
-                                    <i class="fas fa-arrow-down me-2"></i>Despesas
-                                </h6>
-                                <h3 class="mb-0" id="totalDespesas">R$ 0,00</h3>
-                            </div>
-                            <div class="icon-circle bg-white bg-opacity-25">
-                                <i class="fas fa-minus fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card card-hover animate__animated animate__fadeInUp animate__delay-2s h-100 bg-gradient-primary">
-                    <div class="card-body text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="card-title mb-1">
-                                    <i class="fas fa-balance-scale me-2"></i>Saldo Atual
-                                </h6>
-                                <h3 class="mb-0" id="saldoAtual">R$ 0,00</h3>
-                            </div>
-                            <div class="icon-circle bg-white bg-opacity-25">
-                                <i class="fas fa-wallet fa-2x"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
 
-        <!-- Gráficos Interativos -->
-        <div class="row mb-4">
-            <div class="col-lg-8 mb-4">
-                <div class="dashboard-card animate__animated animate__fadeInUp">
-                    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-chart-line"></i>Evolução do Saldo
-                        </h5>
-                        <div class="btn-group btn-group-sm" role="group">
-                            <input type="radio" class="btn-check" name="periodoSaldo" id="periodo7d" value="7" checked>
-                            <label class="btn btn-outline-primary" for="periodo7d">7D</label>
-                            <input type="radio" class="btn-check" name="periodoSaldo" id="periodo30d" value="30">
-                            <label class="btn btn-outline-primary" for="periodo30d">30D</label>
-                            <input type="radio" class="btn-check" name="periodoSaldo" id="periodo90d" value="90">
-                            <label class="btn btn-outline-primary" for="periodo90d">90D</label>
+        <!-- Seção de Análises e Gráficos -->
+        <section class="analytics-section">
+            <div class="section-header mb-4">
+                <h2 class="section-title gradient-text">Análises Financeiras</h2>
+                <p class="section-subtitle">Visualize seus dados financeiros de forma inteligente</p>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-xl-8 col-lg-7">
+                    <div class="analytics-card animate__animated animate__fadeInUp">
+                        <div class="analytics-card-header">
+                            <div class="analytics-card-title">
+                                <i class="fas fa-chart-line text-primary"></i>
+                                <h5>Evolução do Saldo</h5>
+                            </div>
+                            <div class="analytics-card-controls">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="radio" class="btn-check" name="periodoSaldo" id="periodo7d" value="7" checked>
+                                    <label class="btn btn-outline-primary" for="periodo7d">7D</label>
+                                    <input type="radio" class="btn-check" name="periodoSaldo" id="periodo30d" value="30">
+                                    <label class="btn btn-outline-primary" for="periodo30d">30D</label>
+                                    <input type="radio" class="btn-check" name="periodoSaldo" id="periodo90d" value="90">
+                                    <label class="btn btn-outline-primary" for="periodo90d">90D</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="analytics-card-body">
+                            <canvas id="saldoChart" height="100"></canvas>
                         </div>
                     </div>
-                    <div class="mt-3">
-                        <canvas id="saldoChart" height="100"></canvas>
+                </div>
+                
+                <div class="col-xl-4 col-lg-5">
+                    <div class="analytics-card animate__animated animate__fadeInUp animate__delay-1s h-100">
+                        <div class="analytics-card-header">
+                            <div class="analytics-card-title">
+                                <i class="fas fa-chart-pie text-success"></i>
+                                <h5>Gastos por Categoria</h5>
+                            </div>
+                        </div>
+                        <div class="analytics-card-body">
+                            <canvas id="categoriaChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 mb-4">
-                <div class="dashboard-card animate__animated animate__fadeInUp animate__delay-1s h-100">
-                    <div class="dashboard-card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-chart-pie"></i>Gastos por Categoria
-                        </h5>
-                    </div>
-                    <div class="mt-3">
-                        <canvas id="categoriaChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </section>
 
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="dashboard-card animate__animated animate__fadeInUp animate__delay-2s">
-                    <div class="dashboard-card-header d-flex justify-content-between align-items-center flex-wrap">
-                        <h5 class="mb-0">
-                            <i class="fas fa-chart-bar"></i>Comparativo Mensal
-                        </h5>
-                        
-                        <!-- Controles de Filtro -->
-                        <div class="d-flex flex-wrap gap-2 align-items-center">
-                            <!-- Seletor de Período -->
-                            <div class="btn-group btn-group-sm" role="group">
-                                <input type="radio" class="btn-check" name="periodoComparativo" id="periodo3m" value="3">
-                                <label class="btn btn-outline-primary" for="periodo3m">3M</label>
-                                <input type="radio" class="btn-check" name="periodoComparativo" id="periodo6m" value="6" checked>
-                                <label class="btn btn-outline-primary" for="periodo6m">6M</label>
-                                <input type="radio" class="btn-check" name="periodoComparativo" id="periodo12m" value="12">
-                                <label class="btn btn-outline-primary" for="periodo12m">12M</label>
-                            </div>
-                            
-                            <!-- Filtro por Categoria -->
-                            <select class="form-select form-select-sm" id="filtroCategoria" style="width: auto; min-width: 120px;">
-                                <option value="">Todas as categorias</option>
-                            </select>
-                            
-                            <!-- Filtro por Conta -->
-                            <select class="form-select form-select-sm" id="filtroConta" style="width: auto; min-width: 120px;">
-                                <option value="">Todas as contas</option>
-                            </select>
-                            
-                            <!-- Tipo de Visualização -->
-                            <div class="btn-group btn-group-sm" role="group">
-                                <input type="radio" class="btn-check" name="tipoComparativo" id="receitasDespesas" value="both" checked>
-                                <label class="btn btn-outline-success" for="receitasDespesas">Receitas vs Despesas</label>
-                                <input type="radio" class="btn-check" name="tipoComparativo" id="gastosReais" value="gastos-reais">
-                                <label class="btn btn-outline-warning" for="gastosReais">Orçado vs Real</label>
-                                <input type="radio" class="btn-check" name="tipoComparativo" id="saldoMensal" value="saldo">
-                                <label class="btn btn-outline-info" for="saldoMensal">Saldo Mensal</label>
-                            </div>
-                        </div>
+        <!-- Seção de Próximas Parcelas -->
+        <section class="upcoming-installments-section">
+            <div class="section-header mb-4">
+                <h2 class="section-title gradient-text" id="upcomingTitle">Próximas Parcelas</h2>
+                <p class="section-subtitle">Acompanhe as próximas cobranças dos seus parcelamentos</p>
+            </div>
+
+            <div class="analytics-card animate__animated animate__fadeInUp animate__delay-2s">
+                <div class="analytics-card-header">
+                    <div class="analytics-card-title">
+                        <i class="fas fa-calendar-check text-info"></i>
+                        <h5>Até 3 próximas parcelas</h5>
                     </div>
-                    
-                    <!-- Indicadores Resumo -->
-                    <div class="row mt-3 mb-3">
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-2 bg-light rounded">
-                                <small class="text-muted d-block">Média Receitas</small>
-                                <strong class="text-success" id="mediaReceitas">R$ 0,00</strong>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-2 bg-light rounded">
-                                <small class="text-muted d-block">Média Despesas</small>
-                                <strong class="text-danger" id="mediaDespesas">R$ 0,00</strong>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-2 bg-light rounded">
-                                <small class="text-muted d-block">Melhor Mês</small>
-                                <strong class="text-primary" id="melhorMes">-</strong>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-2 bg-light rounded">
-                                <small class="text-muted d-block">Variação</small>
-                                <strong id="variacao">0%</strong>
-                            </div>
-                        </div>
+                    <div class="analytics-card-controls">
+                        <a href="/parcelamentos" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-list"></i> Ver todos
+                        </a>
                     </div>
-                    
-                    <!-- Gráfico -->
-                    <div class="mt-3">
-                        <canvas id="comparativoChart" height="80"></canvas>
-                    </div>
-                    
-                    <!-- Tabela de Dados -->
-                    <div class="mt-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="mb-0">Dados Detalhados</h6>
-                            <button class="btn btn-sm btn-outline-primary" id="toggleTabela">
-                                <i class="fas fa-table"></i> Mostrar Tabela
-                            </button>
-                        </div>
-                        <div id="tabelaComparativo" class="table-responsive" style="display: none;">
-                            <table class="table table-sm table-striped">
-                                <thead>
-                                    <tr id="tabelaHeader">
-                                        <th>Mês</th>
-                                        <th>Receitas</th>
-                                        <th>Despesas</th>
-                                        <th>Saldo</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabelaBody">
-                                </tbody>
-                            </table>
-                        </div>
+                </div>
+                <div class="analytics-card-body" role="region" aria-labelledby="upcomingTitle" aria-live="polite">
+                    <div id="upcomingInstallmentsList" class="list-group list-group-flush" role="list"></div>
+                    <div id="upcomingEmptyState" class="text-muted small" style="display: none;">
+                        <i class="fas fa-info-circle" aria-hidden="true"></i> Nenhuma parcela prevista nos próximos dias.
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <%- include('partials/footer') %>

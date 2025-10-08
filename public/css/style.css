@@ -1,281 +1,53 @@
-/* ==========================
-   RESET E BASE
-========================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Estilos base e reset – Fundamento para visual moderno */
+/* Fonte padrão declarada via variável para integração com tema escuro */
+:root {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+/* Reset essencial */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 body {
-    background-color: #ffffff;
-    color: #000000;
-    font-family: 'Poppins', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    line-height: 1.6;
+  margin: 0;
+  font-family: var(--font-sans), sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ==========================
-   TIPOGRAFIA BÁSICA
-========================== */
-h1, h2, h3, h4, h5, h6 {
-    color: #000000;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
+img, svg { display: block; max-width: 100%; height: auto; }
+a { text-decoration: none; }
+button { cursor: pointer; }
 
-p {
-    color: #000000;
-    margin-bottom: 1rem;
-}
+/* Utilitários leves de espaçamento para consistência (complementa Bootstrap) */
+.p-section { padding: 2rem; }
+.mb-section { margin-bottom: 2rem; }
 
-a {
-    color: #000000;
-    text-decoration: none;
-}
+/* Containers utilitários para seções consistentes */
+.section { margin-bottom: 2rem; }
+.section-header { margin-bottom: 1.5rem; }
+.section-title { font-weight: 700; }
+.section-subtitle { opacity: 0.85; }
 
-a:hover {
-    color: #333333;
-    text-decoration: underline;
-}
+/* Cartões utilitários – usados em páginas com estilos inline antigos */
+.card-modern { border-radius: 0.8rem; box-shadow: 0 6px 12px rgba(0,0,0,0.25); border: 1px solid rgba(96, 165, 250, 0.18); }
 
-/* ==========================
-   ELEMENTOS BÁSICOS
-========================== */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
+/* Formulários padrão modernos */
+.form-page { max-width: 720px; margin: 2rem auto; }
+.form-card { background: var(--surface-1, #0f274d); border-radius: 0.8rem; box-shadow: var(--shadow-md, 0 8px 24px rgba(0,0,0,0.35)); border: 1px solid var(--border-1, rgba(255,255,255,0.1)); padding: 2rem; }
+.form-header { text-align: center; margin-bottom: 1.5rem; }
+.form-title { font-weight: 700; font-size: 1.75rem; }
+.form-subtitle { color: var(--text-2, #bcd1ff); }
 
-/* ==========================
-   DASHBOARD
-========================== */
-.dashboard-header h1, p {
-    color: #000000 !important;
-}
-.dashboard-header p {
-    color: #000000 !important;
-}
+/* Entradas com ícone embutido */
+.input-with-icon { position: relative; }
+.input-with-icon .icon-input { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); opacity: 0.9; color: var(--text-2, #bcd1ff); }
+.input-with-icon input.form-control, .input-with-icon select.form-select { padding-left: 2.25rem; }
 
+/* Informações em caixa (ex: account-info, budget-info, goal-info) */
+.info-box { background: var(--surface-2, #102a53); border: 1px solid var(--border-1, rgba(255,255,255,0.1)); border-radius: 0.6rem; padding: 1rem; margin-bottom: 1.5rem; }
+.info-box p { margin-bottom: 0.5rem; color: var(--text-2, #bcd1ff); }
+.info-box p:last-child { margin-bottom: 0; }
 
-.card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.form-control, .form-select {
-    background-color: #ffffff;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    color: #000000;
-    padding: 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus, .form-select:focus {
-    background-color: #ffffff;
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    color: #000000;
-    outline: none;
-}
-
-.form-control::placeholder {
-    color: #666666;
-    opacity: 1;
-}
-
-.form-label {
-    color: #000000;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    display: block;
-}
-
-.form-question {
-    font-weight: 600;
-    color: #000000;
-    margin-bottom: 8px;
-    font-size: 1rem;
-    line-height: 1.4;
-}
-
-/* ==========================
-   NAVBAR
-========================== */
-.navbar {
-    background-color: #ffffff;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.navbar-brand {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #000000 !important;
-    letter-spacing: 1px;
-}
-
-.navbar-nav .nav-link {
-    color: #000000 !important;
-    margin: 0 0.8rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.navbar-nav .nav-link:hover {
-    color: #333333 !important;
-}
-
-/* ==========================
-   BOTÕES (PRESERVADOS)
-========================== */
-.btn-custom {
-    background: linear-gradient(90deg, #3a7bd5, #00d2ff);
-    border: none;
-    border-radius: 50px;
-    color: #fff;
-    padding: 12px 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-custom:hover {
-    background: linear-gradient(90deg, #00d2ff, #3a7bd5);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    color: #ffffff;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    color: #ffffff;
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    color: #ffffff;
-}
-
-.btn-success:hover {
-    background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    color: #ffffff;
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    color: #ffffff;
-}
-
-.btn-danger:hover {
-    background: linear-gradient(135deg, #ff4b2b 0%, #ff416c 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    color: #ffffff;
-}
-
-/* ==========================
-   ÍCONES E INPUTS
-========================== */
-.input-with-icon {
-    position: relative;
-}
-
-.icon-input {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666666;
-    z-index: 2;
-}
-
-.input-with-icon .form-control {
-    padding-left: 45px;
-}
-
-/* ==========================
-   UTILITÁRIOS
-========================== */
-.text-center {
-    text-align: center;
-}
-
-.mb-3 {
-    margin-bottom: 1rem;
-}
-
-.mt-3 {
-    margin-top: 1rem;
-}
-
-.d-flex {
-    display: flex;
-}
-
-.justify-content-center {
-    justify-content: center;
-}
-
-.align-items-center {
-    align-items: center;
-}
-
-/* ==========================
-   RESPONSIVIDADE
-========================== */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 10px;
-    }
-    
-    .card {
-        padding: 1rem;
-    }
-    
-    .navbar {
-        padding: 0.5rem 1rem;
-    }
-}
+/* Perguntas de formulário para UX guiada */
+.form-question { font-weight: 600; margin-bottom: 0.5rem; }

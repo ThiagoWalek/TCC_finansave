@@ -3,61 +3,24 @@
 <head>
     <%- include('../partials/head') %>
     <title>Editar Parcelamento - Finansave</title>
-    <style>
-        .form-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .form-header h1 {
-            color: #0d6efd;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .form-header p {
-            color: #6c757d;
-        }
-        .input-group-text {
-            background-color: #f8f9fa;
-        }
-        .form-floating > .form-control {
-            padding-left: 2.5rem;
-        }
-        .form-floating > .form-label {
-            padding-left: 2.5rem;
-        }
-        .icon-input {
-            position: absolute;
-            left: 1rem;
-            top: 1.25rem;
-            color: #6c757d;
-            z-index: 4;
-        }
-    </style>
+    
 </head>
-<body class="bg-light">
+<body>
     <%- include('../partials/navbar') %>
 
-    <div class="container">
-        <div class="form-container">
+    <div class="container form-page">
+        <div class="form-card animate__animated animate__fadeInUp">
             <div class="form-header">
-                <h1>Editar Parcelamento</h1>
-                <p>Atualize as informações do seu parcelamento</p>
+                <h1 class="form-title gradient-text">Editar Parcelamento</h1>
+                <p class="form-subtitle">Atualize as informações do seu parcelamento</p>
             </div>
 
             <%- include('../partials/messages') %>
 
             <form action="/parcelamentos/editar/<%= parcelamento.id_parcelamento %>" method="POST" id="formParcelamento">
                 <!-- Conta -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-university icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-university icon-input" aria-hidden="true"></i>
                     <select class="form-select" id="conta_id" name="conta_id" required>
                         <option value="" disabled>Selecione a conta</option>
                         <% contas.forEach(function(conta) { %>
@@ -70,40 +33,40 @@
                 </div>
 
                 <!-- Descrição do Parcelamento -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-file-signature icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-file-signature icon-input" aria-hidden="true"></i>
                     <input type="text" class="form-control" id="descricao" name="descricao" 
                            placeholder="Descrição do parcelamento" value="<%= parcelamento.descricao %>" required>
                     <label for="descricao">Descrição do parcelamento</label>
                 </div>
 
                 <!-- Total de Parcelas -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-list-ol icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-list-ol icon-input" aria-hidden="true"></i>
                     <input type="number" class="form-control" id="total_parcelas" name="total_parcelas" 
                            placeholder="Total de parcelas" min="1" value="<%= parcelamento.total_parcelas %>" required>
                     <label for="total_parcelas">Total de parcelas</label>
                 </div>
 
                 <!-- Parcela Atual -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-tasks icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-tasks icon-input" aria-hidden="true"></i>
                     <input type="number" class="form-control" id="parcela_atual" name="parcela_atual" 
                            placeholder="Parcela atual" min="1" max="<%= parcelamento.total_parcelas %>" value="<%= parcelamento.parcela_atual %>" required>
                     <label for="parcela_atual">Parcela atual</label>
                 </div>
 
                 <!-- Valor Total -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-dollar-sign icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-dollar-sign icon-input" aria-hidden="true"></i>
                     <input type="number" class="form-control" id="valor_total" name="valor_total" 
                            placeholder="Valor total" min="0.01" step="0.01" value="<%= parcelamento.valor_total %>" required>
                     <label for="valor_total">Valor total (R$)</label>
                 </div>
 
                 <!-- Data de Início -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-alt icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-calendar-alt icon-input" aria-hidden="true"></i>
                     <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
                            value="<%= new Date(parcelamento.data_inicio).toISOString().split('T')[0] %>" required>
                     <label for="data_inicio">Data de início</label>

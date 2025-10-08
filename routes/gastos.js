@@ -35,6 +35,7 @@ const validacoesGasto = [
 router.use(isAuthenticated);
 
 // Rotas de gastos
+router.get('/', (req, res) => res.redirect('/gastos/extrato'));
 router.get('/extrato', gastoController.extrato);
 router.get('/criar', gastoController.renderCriar);
 router.post('/criar', validacoesGasto, gastoController.criar);

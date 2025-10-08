@@ -16,25 +16,33 @@ const parcelamentoController = {
                 order: [['data_inicio', 'DESC']]
             });
 
+            // Buscar todas as contas do usuário (ativas e inativas) para fallback
+            const contasDoUsuario = await Conta.findAll({
+                where: { usuario_id: req.session.user.id },
+                attributes: ['conta_id', 'nome', 'tipo', 'saldo_atual', 'ativa']
+            });
+            const contasMap = new Map(contasDoUsuario.map(c => [c.conta_id, c]));
+
             // Calcula informações adicionais para cada parcelamento
             const parcelamentosInfo = parcelamentos.map(parcelamento => {
+                const contaAssociada = parcelamento.Conta || contasMap.get(parcelamento.conta_id) || null;
                 const info = {
                     ...parcelamento.toJSON(),
                     progresso: ((parcelamento.parcela_atual / parcelamento.total_parcelas) * 100).toFixed(2),
                     valor_pago: (parcelamento.parcela_atual * parcelamento.valor_parcela).toFixed(2),
                     valor_restante: ((parcelamento.total_parcelas - parcelamento.parcela_atual) * parcelamento.valor_parcela).toFixed(2),
-                    conta_inativa: !parcelamento.Conta || !parcelamento.Conta.ativa
+                    conta_inativa: !contaAssociada || !contaAssociada.ativa
                 };
                 
                 // Se a conta não existe ou está inativa, adiciona informação
-                if (!parcelamento.Conta) {
+                if (!contaAssociada) {
                     info.conta_nome = 'Conta não encontrada';
                     info.conta_status = 'inexistente';
-                } else if (!parcelamento.Conta.ativa) {
-                    info.conta_nome = parcelamento.Conta.nome;
+                } else if (!contaAssociada.ativa) {
+                    info.conta_nome = contaAssociada.nome;
                     info.conta_status = 'inativa';
                 } else {
-                    info.conta_nome = parcelamento.Conta.nome;
+                    info.conta_nome = contaAssociada.nome;
                     info.conta_status = 'ativa';
                 }
                 
@@ -85,11 +93,24 @@ const parcelamentoController = {
             }
 
             const { conta_id, descricao, total_parcelas, valor_total, data_inicio } = req.body;
+            // Validar existência da conta do usuário
+            const contaCriacao = await Conta.findOne({
+                where: {
+                    conta_id: parseInt(conta_id),
+                    usuario_id: req.session.user.id
+                }
+            });
+
+            if (!contaCriacao) {
+                req.session.error = 'Conta selecionada não encontrada.';
+                return res.redirect('/parcelamentos/criar');
+            }
+
             const valor_parcela = parseFloat(valor_total) / parseInt(total_parcelas);
 
             await Parcelamento.create({
                 usuario_id: req.session.user.id,
-                conta_id: conta_id,
+                conta_id: parseInt(conta_id),
                 descricao,
                 total_parcelas: parseInt(total_parcelas),
                 valor_total: parseFloat(valor_total),
@@ -163,6 +184,19 @@ const parcelamentoController = {
                 return res.redirect('/parcelamentos');
             }
 
+            // Validar existência da conta do usuário
+            const contaEdicao = await Conta.findOne({
+                where: {
+                    conta_id: parseInt(conta_id),
+                    usuario_id: req.session.user.id
+                }
+            });
+
+            if (!contaEdicao) {
+                req.session.error = 'Conta selecionada não encontrada.';
+                return res.redirect(`/parcelamentos/editar/${req.params.id}`);
+            }
+
             const valor_parcela = parseFloat(valor_total) / parseInt(total_parcelas);
 
             await parcelamento.update({
@@ -232,29 +266,38 @@ const parcelamentoController = {
                 return res.redirect('/parcelamentos');
             }
 
-            // Verificar se a conta existe
-            if (!parcelamento.Conta) {
+            // Buscar conta associada (associação ou fallback pelo conta_id do usuário)
+            let conta = parcelamento.Conta;
+            if (!conta) {
+                conta = await Conta.findOne({
+                    where: {
+                        conta_id: parcelamento.conta_id,
+                        usuario_id: req.session.user.id
+                    },
+                    attributes: ['conta_id', 'nome', 'saldo_atual', 'ativa']
+                });
+            }
+
+            if (!conta) {
                 console.error('Conta não encontrada para o parcelamento:', parcelamento.id_parcelamento);
                 req.session.error = 'Conta associada ao parcelamento não foi localizada no sistema. Verifique os dados informados e tente novamente.';
                 return res.redirect('/parcelamentos');
             }
 
             // Verificar se a conta está ativa
-            if (!parcelamento.Conta.ativa) {
+            if (!conta.ativa) {
                 console.error('Conta inativa para o parcelamento:', parcelamento.id_parcelamento);
-                req.session.error = `A conta "${parcelamento.Conta.nome}" está inativa. Reative a conta para continuar com o parcelamento.`;
+                req.session.error = `A conta "${conta.nome}" está inativa. Reative a conta para continuar com o parcelamento.`;
                 return res.redirect('/parcelamentos');
             }
 
+            // A parcela_atual representa a próxima parcela a pagar; permitir quitar a última parcela
             const novaParcela = parcelamento.parcela_atual + 1;
-            if (novaParcela > parcelamento.total_parcelas) {
+            if (parcelamento.parcela_atual > parcelamento.total_parcelas) {
                 req.session.error = 'Todas as parcelas já foram pagas.';
                 return res.redirect('/parcelamentos');
             }
 
-            // Verificar se a conta tem saldo suficiente
-            const conta = parcelamento.Conta;
-            
             // Verificação adicional de segurança para saldo_atual
             if (typeof conta.saldo_atual === 'undefined' || conta.saldo_atual === null) {
                 console.error('Saldo atual da conta não definido:', conta);
@@ -284,7 +327,7 @@ const parcelamentoController = {
 
             await parcelamento.update({
                 parcela_atual: novaParcela,
-                ativo: novaParcela < parcelamento.total_parcelas
+                ativo: novaParcela <= parcelamento.total_parcelas ? (novaParcela < parcelamento.total_parcelas) : false
             });
 
             req.session.success = `Parcela ${novaParcela}/${parcelamento.total_parcelas} paga com sucesso! Valor de R$ ${valorParcela.toFixed(2)} descontado da conta ${conta.nome}. Novo saldo: R$ ${novoSaldo.toFixed(2)}.`;

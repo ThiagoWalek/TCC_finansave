@@ -8,7 +8,8 @@
     <%- include('../partials/navbar') %>
 
     <div class="container py-4">
-        <div class="form-container">
+        <div class="form-page">
+            <div class="form-card">
             <div class="form-header">
                 <h1 class="h3 mb-0">
                     <i class="fas fa-shopping-cart text-danger"></i>
@@ -25,7 +26,7 @@
                     <p class="form-question">💳 De qual conta sair o dinheiro?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-credit-card icon-input"></i>
-                        <select class="form-control" id="conta_id" name="conta_id" required>
+                        <select class="form-select" id="conta_id" name="conta_id" required>
                             <option value="" disabled selected>Selecione uma conta</option>
                             <% contas.forEach(function(conta) { %>
                                 <option value="<%= conta.conta_id %>" 
@@ -63,31 +64,15 @@
                 <!-- Categoria -->
                 <div class="mb-3">
                     <p class="form-question">🏷️ Qual categoria do gasto?</p>
-                    <div class="categoria-buttons">
-                        <button type="button" class="categoria-btn" data-categoria="Alimentação">
-                            <i class="fas fa-utensils"></i> 🍽️ Alimentação
-                        </button>
-                        <button type="button" class="categoria-btn" data-categoria="Transporte">
-                            <i class="fas fa-car"></i> 🚗 Transporte
-                        </button>
-                        <button type="button" class="categoria-btn" data-categoria="Saúde">
-                            <i class="fas fa-heartbeat"></i> 🏥 Saúde
-                        </button>
-                        <button type="button" class="categoria-btn" data-categoria="Educação">
-                            <i class="fas fa-graduation-cap"></i> 📚 Educação
-                        </button>
-                        <button type="button" class="categoria-btn" data-categoria="Lazer">
-                            <i class="fas fa-gamepad"></i> 🎮 Lazer
-                        </button>
-                        <button type="button" class="categoria-btn" data-categoria="Compras">
-                            <i class="fas fa-shopping-bag"></i> 🛍️ Compras
-                        </button>
-                        <button type="button" class="categoria-btn" data-categoria="Casa">
-                            <i class="fas fa-home"></i> 🏠 Casa
-                        </button>
-                        <button type="button" class="categoria-btn" data-categoria="Outros">
-                            <i class="fas fa-ellipsis-h"></i> 🔧 Outros
-                        </button>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <button type="button" class="chip" data-categoria="Alimentação"><i class="fas fa-utensils" aria-hidden="true"></i> Alimentação</button>
+                        <button type="button" class="chip" data-categoria="Transporte"><i class="fas fa-car" aria-hidden="true"></i> Transporte</button>
+                        <button type="button" class="chip" data-categoria="Saúde"><i class="fas fa-heartbeat" aria-hidden="true"></i> Saúde</button>
+                        <button type="button" class="chip" data-categoria="Educação"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Educação</button>
+                        <button type="button" class="chip" data-categoria="Lazer"><i class="fas fa-gamepad" aria-hidden="true"></i> Lazer</button>
+                        <button type="button" class="chip" data-categoria="Compras"><i class="fas fa-shopping-bag" aria-hidden="true"></i> Compras</button>
+                        <button type="button" class="chip" data-categoria="Casa"><i class="fas fa-home" aria-hidden="true"></i> Casa</button>
+                        <button type="button" class="chip" data-categoria="Outros"><i class="fas fa-ellipsis-h" aria-hidden="true"></i> Outros</button>
                     </div>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-tag icon-input"></i>
@@ -133,14 +118,15 @@
 
                 <!-- Botões -->
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="/gastos/extrato" class="btn btn-outline-secondary me-md-2">
+                    <a href="/gastos/extrato" class="btn btn-outline-primary me-md-2">
                         <i class="fas fa-arrow-left"></i> Voltar
                     </a>
-                    <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn btn-warning">
                         <i class="fas fa-save"></i> Registrar Gasto
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     </div>
 
@@ -177,11 +163,11 @@
             contaSelect.dispatchEvent(new Event('change'));
         }
 
-        // Botões de categoria
-        document.querySelectorAll('.categoria-btn').forEach(btn => {
+        // Chips de categoria
+        document.querySelectorAll('.chip[data-categoria]').forEach(btn => {
             btn.addEventListener('click', function() {
                 // Remove active de todos os botões
-                document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.chip[data-categoria]').forEach(b => b.classList.remove('active'));
                 
                 // Adiciona active ao botão clicado
                 this.classList.add('active');
@@ -191,10 +177,10 @@
             });
         });
 
-        // Marcar botão de categoria ativo se já houver valor (em caso de erro)
+        // Marcar chip de categoria ativo se já houver valor (em caso de erro)
         const categoriaInput = document.getElementById('categoria');
         if (categoriaInput.value) {
-            document.querySelectorAll('.categoria-btn').forEach(btn => {
+            document.querySelectorAll('.chip[data-categoria]').forEach(btn => {
                 if (btn.dataset.categoria === categoriaInput.value) {
                     btn.classList.add('active');
                 }

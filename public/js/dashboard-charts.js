@@ -3,13 +3,13 @@ class DashboardCharts {
     constructor() {
         this.charts = {};
         this.colors = {
-            primary: '#3a7bd5',
-            success: '#28a745',
-            danger: '#dc3545',
-            warning: '#ffc107',
-            info: '#17a2b8',
+            primary: '#06b6d4', // ciano vibrante
+            success: '#10b981', // verde esmeralda
+            danger: '#ef4444',  // vermelho suave
+            warning: '#f59e0b', // âmbar
+            info: '#0ea5e9',    // azul-ciano
             light: '#f8f9fa',
-            dark: '#343a40'
+            dark: '#0f172a'     // fundo escuro
         };
         this.gradients = {};
         this.init();
@@ -20,7 +20,7 @@ class DashboardCharts {
         this.loadFinancialSummary();
         this.initSaldoChart();
         this.initCategoriaChart();
-        this.initComparativoChart();
+        this.initUpcomingInstallments();
         this.bindEvents();
     }
 
@@ -30,18 +30,18 @@ class DashboardCharts {
         
         // Gradiente para receitas
         this.gradients.success = ctx.createLinearGradient(0, 0, 0, 400);
-        this.gradients.success.addColorStop(0, 'rgba(40, 167, 69, 0.8)');
-        this.gradients.success.addColorStop(1, 'rgba(40, 167, 69, 0.1)');
+        this.gradients.success.addColorStop(0, 'rgba(16, 185, 129, 0.85)');
+        this.gradients.success.addColorStop(1, 'rgba(16, 185, 129, 0.12)');
         
         // Gradiente para despesas
         this.gradients.danger = ctx.createLinearGradient(0, 0, 0, 400);
-        this.gradients.danger.addColorStop(0, 'rgba(220, 53, 69, 0.8)');
-        this.gradients.danger.addColorStop(1, 'rgba(220, 53, 69, 0.1)');
+        this.gradients.danger.addColorStop(0, 'rgba(239, 68, 68, 0.85)');
+        this.gradients.danger.addColorStop(1, 'rgba(239, 68, 68, 0.12)');
         
-        // Gradiente para saldo
+        // Gradiente para saldo (ciano)
         this.gradients.primary = ctx.createLinearGradient(0, 0, 0, 400);
-        this.gradients.primary.addColorStop(0, 'rgba(58, 123, 213, 0.8)');
-        this.gradients.primary.addColorStop(1, 'rgba(58, 123, 213, 0.1)');
+        this.gradients.primary.addColorStop(0, 'rgba(6, 182, 212, 0.85)');
+        this.gradients.primary.addColorStop(1, 'rgba(6, 182, 212, 0.12)');
     }
 
     async loadFinancialSummary() {
@@ -80,12 +80,12 @@ class DashboardCharts {
                         backgroundColor: this.gradients.primary,
                         borderWidth: 3,
                         fill: true,
-                        tension: 0.4,
+                        tension: 0.35,
                         pointBackgroundColor: this.colors.primary,
                         pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
+                        pointBorderWidth: 0,
+                        pointRadius: 0,
+                        pointHoverRadius: 0
                     }]
                 },
                 options: {
@@ -96,7 +96,7 @@ class DashboardCharts {
                             display: false
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
                             titleColor: '#fff',
                             bodyColor: '#fff',
                             borderColor: this.colors.primary,
@@ -115,7 +115,9 @@ class DashboardCharts {
                         y: {
                             beginAtZero: false,
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
+                                color: 'rgba(255, 255, 255, 0.08)',
+                                drawBorder: false,
+                                tickLength: 0
                             },
                             ticks: {
                                 callback: function(value) {
@@ -153,8 +155,8 @@ class DashboardCharts {
             const data = await response.json();
             
             const colors = [
-                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-                '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
+                '#06b6d4', '#10b981', '#f59e0b', '#ef4444',
+                '#8b5cf6', '#14b8a6', '#fb7185', '#22d3ee', '#f97316'
             ];
             
             this.charts.categoria = new Chart(ctx, {
@@ -164,9 +166,8 @@ class DashboardCharts {
                     datasets: [{
                         data: data.valores || [],
                         backgroundColor: colors,
-                        borderWidth: 2,
-                        borderColor: '#fff',
-                        hoverBorderWidth: 3,
+                        borderWidth: 0,
+                        hoverBorderWidth: 2,
                         hoverBorderColor: '#fff'
                     }]
                 },
@@ -185,7 +186,7 @@ class DashboardCharts {
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            backgroundColor: 'rgba(17, 24, 39, 0.9)',
                             titleColor: '#fff',
                             bodyColor: '#fff',
                             callbacks: {
@@ -202,7 +203,7 @@ class DashboardCharts {
                             }
                         }
                     },
-                    cutout: '60%'
+                    cutout: '50%'
                 }
             });
         } catch (error) {
@@ -210,103 +211,71 @@ class DashboardCharts {
         }
     }
 
-    async initComparativoChart() {
-        const ctx = document.getElementById('comparativoChart').getContext('2d');
-        
-        // Carregar opções de filtro
-        await this.loadFilterOptions();
-        
+    async initUpcomingInstallments() {
         try {
-            const response = await fetch('/api/dashboard/comparativo-mensal');
-            const data = await response.json();
-            
-            this.charts.comparativo = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.meses || [],
-                    datasets: [{
-                        label: 'Receitas',
-                        data: data.receitas || [],
-                        backgroundColor: this.colors.success,
-                        borderColor: this.colors.success,
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        borderSkipped: false
-                    }, {
-                        label: 'Despesas',
-                        data: data.despesas || [],
-                        backgroundColor: this.colors.danger,
-                        borderColor: this.colors.danger,
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + 
-                                           new Intl.NumberFormat('pt-BR', { 
-                                               style: 'currency', 
-                                               currency: 'BRL' 
-                                           }).format(context.parsed.y);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)'
-                            },
-                            ticks: {
-                                callback: function(value) {
-                                    return new Intl.NumberFormat('pt-BR', { 
-                                        style: 'currency', 
-                                        currency: 'BRL',
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0
-                                    }).format(value);
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    }
+            const response = await fetch('/api/dashboard/proximas-parcelas');
+            const { proximas = [] } = await response.json();
+
+            const listEl = document.getElementById('upcomingInstallmentsList');
+            const emptyEl = document.getElementById('upcomingEmptyState');
+
+            if (!listEl || !emptyEl) return;
+
+            listEl.innerHTML = '';
+
+            if (proximas.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+
+            emptyEl.style.display = 'none';
+
+            proximas.forEach(p => {
+                const li = document.createElement('div');
+                li.className = 'list-card d-flex justify-content-between align-items-center';
+                li.setAttribute('role', 'listitem');
+
+                const dataFormatada = new Date(p.data_proxima).toLocaleDateString('pt-BR');
+                const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.valor_parcela || 0);
+
+                let contaBadge = '';
+                if (p.conta_status === 'inexistente') {
+                    contaBadge = '<span class="chip chip-danger"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Conta não encontrada</span>';
+                } else if (p.conta_status === 'inativa') {
+                    contaBadge = `<span class="chip chip-warning"><i class="fas fa-pause-circle" aria-hidden="true"></i> ${p.conta_nome} (Inativa)</span>`;
+                } else {
+                    contaBadge = `<span class="chip account-chip"><i class="fas fa-university" aria-hidden="true"></i> ${p.conta_nome}</span>`;
                 }
+
+                const dias = p.dias_restantes;
+                const prazoClass = dias < 0 ? 'text-danger' : (dias <= 3 ? 'text-warning' : 'text-muted');
+                const prazoLabel = dias < 0 ? `Vencida há ${Math.abs(dias)}d` : `Em ${dias}d`;
+
+                const statusChipClass = dias < 0 ? 'chip-danger' : 'chip-warning';
+                const statusChipLabel = dias < 0 ? 'Vencida' : 'Pendente';
+
+                li.innerHTML = `
+                    <div class="d-flex flex-column gap-1">
+                        <div class="list-card-title">${p.descricao || 'Parcelamento'}</div>
+                        <div class="small list-card-muted">Parcela ${p.parcela_atual + 1}/${p.total_parcelas}</div>
+                        <div>${contaBadge}</div>
+                        <div class="chip ${statusChipClass}"><i class="fas fa-info-circle" aria-hidden="true"></i> ${statusChipLabel}</div>
+                    </div>
+                    <div class="text-end" aria-label="Prazo e data da parcela">
+                        <div class="small ${prazoClass}"><i class="fas fa-clock" aria-hidden="true"></i> ${prazoLabel}</div>
+                        <div class="small"><i class="fas fa-calendar-alt" aria-hidden="true"></i> ${dataFormatada}</div>
+                        <div class="fw-bold mt-1">${valorFormatado}</div>
+                    </div>
+                `;
+
+                listEl.appendChild(li);
             });
-            
-            // Atualizar indicadores de resumo
-            this.updateSummaryIndicators(data);
-            
         } catch (error) {
-            console.error('Erro ao carregar gráfico comparativo:', error);
+            console.error('Erro ao carregar próximas parcelas:', error);
         }
     }
 
-    async loadFilterOptions() {
+    /* async loadFilterOptions() {
         try {
             // Carregar categorias
             const categoriasResponse = await fetch('/api/dashboard/categorias', {
@@ -369,9 +338,9 @@ class DashboardCharts {
         } catch (error) {
             console.error('Erro ao carregar opções de filtro:', error);
         }
-    }
+    } */
 
-    updateSummaryIndicators(data) {
+    /* updateSummaryIndicators(data) {
         // Verificar se os dados são válidos
         if (!data || typeof data !== 'object') {
             console.warn('Dados inválidos para indicadores de resumo');
@@ -431,9 +400,9 @@ class DashboardCharts {
             variacaoEl.textContent = variacao.toFixed(1) + '%';
             variacaoEl.className = variacao >= 0 ? 'text-success' : 'text-danger';
         }
-    }
+    } */
 
-    updateComparativoTable(data, tipo) {
+    /* updateComparativoTable(data, tipo) {
         const tabelaBody = document.getElementById('tabelaBody');
         const tabelaHeader = document.getElementById('tabelaHeader');
         
@@ -537,51 +506,14 @@ class DashboardCharts {
             row.innerHTML = `<td colspan="${colSpan}" class="text-center text-muted">Nenhum dado disponível</td>`;
             tabelaBody.appendChild(row);
         }
-    }
+    } */
 
     bindEvents() {
-        // Eventos para filtros de período do gráfico de saldo
+        // Período do gráfico de saldo
         document.querySelectorAll('input[name="periodoSaldo"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 this.updateSaldoChart(e.target.value);
             });
-        });
-
-        // Eventos para filtros do gráfico comparativo
-        document.querySelectorAll('input[name="tipoComparativo"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                this.updateComparativoChart();
-            });
-        });
-
-        // Eventos para filtros de período do comparativo
-        document.querySelectorAll('input[name="periodoComparativo"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                this.updateComparativoChart();
-            });
-        });
-
-        // Eventos para filtros de categoria e conta
-        document.getElementById('filtroCategoria').addEventListener('change', () => {
-            this.updateComparativoChart();
-        });
-
-        document.getElementById('filtroConta').addEventListener('change', () => {
-            this.updateComparativoChart();
-        });
-
-        // Evento para toggle da tabela
-        document.getElementById('toggleTabela').addEventListener('click', () => {
-            const tabela = document.getElementById('tabelaComparativo');
-            const botao = document.getElementById('toggleTabela');
-            
-            if (tabela.style.display === 'none') {
-                tabela.style.display = 'block';
-                botao.innerHTML = '<i class="fas fa-table"></i> Ocultar Tabela';
-            } else {
-                tabela.style.display = 'none';
-                botao.innerHTML = '<i class="fas fa-table"></i> Mostrar Tabela';
-            }
         });
     }
 
@@ -598,124 +530,7 @@ class DashboardCharts {
         }
     }
 
-    async updateComparativoChart() {
-        try {
-            // Coletar parâmetros de filtro
-            const periodo = document.querySelector('input[name="periodoComparativo"]:checked')?.value || '6';
-            const categoria = document.getElementById('filtroCategoria')?.value || '';
-            const conta = document.getElementById('filtroConta')?.value || '';
-            const tipo = document.querySelector('input[name="tipoComparativo"]:checked')?.value || 'both';
-            
-            // Construir URL com parâmetros
-            const params = new URLSearchParams({
-                periodo: periodo,
-                tipo: tipo
-            });
-            
-            if (categoria) params.append('categoria', categoria);
-            if (conta) params.append('conta', conta);
-            
-            const response = await fetch(`/api/dashboard/comparativo-mensal?${params}`, {
-                method: 'GET',
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            // Verificar se os dados são válidos
-            if (!data || typeof data !== 'object') {
-                throw new Error('Dados inválidos recebidos da API');
-            }
-            
-            // Garantir que arrays existam
-            const meses = data.meses || [];
-            const receitas = data.receitas || [];
-            const despesas = data.despesas || [];
-            const saldo = data.saldo || [];
-            const gastosReais = data.gastosReais || [];
-            
-            // Atualizar datasets baseado no tipo
-            if (tipo === 'saldo') {
-                this.charts.comparativo.data.datasets = [{
-                    label: 'Saldo',
-                    data: saldo,
-                    backgroundColor: this.colors.primary,
-                    borderColor: this.colors.primary,
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderSkipped: false
-                }];
-            } else if (tipo === 'gastos-reais') {
-                this.charts.comparativo.data.datasets = [{
-                    label: 'Orçado',
-                    data: despesas,
-                    backgroundColor: this.colors.warning,
-                    borderColor: this.colors.warning,
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderSkipped: false
-                }, {
-                    label: 'Real',
-                    data: gastosReais,
-                    backgroundColor: this.colors.danger,
-                    borderColor: this.colors.danger,
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderSkipped: false
-                }];
-            } else {
-                this.charts.comparativo.data.datasets = [{
-                    label: 'Receitas',
-                    data: receitas,
-                    backgroundColor: this.colors.success,
-                    borderColor: this.colors.success,
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderSkipped: false
-                }, {
-                    label: 'Despesas',
-                    data: despesas,
-                    backgroundColor: this.colors.danger,
-                    borderColor: this.colors.danger,
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    borderSkipped: false
-                }];
-            }
-            
-            this.charts.comparativo.data.labels = meses;
-            this.charts.comparativo.update('active');
-            
-            // Atualizar indicadores de resumo
-            this.updateSummaryIndicators({
-                receitas: receitas,
-                despesas: despesas,
-                saldo: saldo,
-                meses: meses,
-                gastosReais: gastosReais
-            });
-            
-            // Atualizar tabela
-            this.updateComparativoTable({
-                receitas: receitas,
-                despesas: despesas,
-                saldo: saldo,
-                meses: meses,
-                gastosReais: gastosReais
-            }, tipo);
-            
-        } catch (error) {
-            console.error('Erro ao atualizar gráfico comparativo:', error);
-        }
-    }
+    /* async updateComparativoChart() { } */
 }
 
 // Inicializar quando o DOM estiver carregado

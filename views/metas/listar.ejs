@@ -72,12 +72,14 @@
                                         <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_atual || 0) %>
                                     </span>
                                     <span class="goal-target">
-                                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_objetivo) %>
+                                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(meta.valor_alvo) %>
                                     </span>
                                 </div>
                                 <div class="progress">
                                     <% 
-                                        const progresso = Math.min(((meta.valor_atual || 0) / meta.valor_objetivo) * 100, 100);
+                                        const alvo = parseFloat(meta.valor_alvo || 0);
+                                        const atual = parseFloat(meta.valor_atual || 0);
+                                        const progresso = alvo > 0 ? Math.min((atual / alvo) * 100, 100) : 0;
                                         let progressClass = 'bg-danger';
                                         if (progresso >= 75) progressClass = 'bg-success';
                                         else if (progresso >= 50) progressClass = 'bg-warning';

@@ -3,71 +3,19 @@
 <head>
     <%- include('../partials/head') %>
     <title>Editar Conta - Finansave</title>
-    <style>
-        .form-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .form-header h1 {
-            color: #0d6efd;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .form-header p {
-            color: #6c757d;
-        }
-        .input-group-text {
-            background-color: #f8f9fa;
-        }
-        .form-floating > .form-control {
-            padding-left: 2.5rem;
-        }
-        .form-floating > .form-label {
-            padding-left: 2.5rem;
-        }
-        .icon-input {
-            position: absolute;
-            left: 1rem;
-            top: 1.25rem;
-            color: #6c757d;
-            z-index: 4;
-        }
-        .account-info {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        .account-info p {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        .account-info p:last-child {
-            margin-bottom: 0;
-        }
-    </style>
 </head>
-<body class="bg-light">
+<body>
     <%- include('../partials/navbar') %>
 
-    <div class="container">
-        <div class="form-container">
+    <div class="container form-page">
+        <div class="form-card animate__animated animate__fadeInUp">
             <div class="form-header">
-                <h1>Editar Conta</h1>
-                <p>Atualize os dados da sua conta</p>
+                <h1 class="form-title gradient-text">Editar Conta</h1>
+                <p class="form-subtitle">Atualize os dados da sua conta</p>
             </div>
 
             <!-- Informações da Conta -->
-            <div class="account-info">
+            <div class="info-box">
                 <p><strong>ID da Conta:</strong> <%= conta.conta_id %></p>
                 <p><strong>Data de Criação:</strong> <%= new Date(conta.data_criacao).toLocaleDateString('pt-BR') %></p>
                 <p><strong>Saldo Atual:</strong> 
@@ -83,8 +31,8 @@
                 <!-- Nome da Conta -->
                 <div class="mb-3">
                     <p class="form-question">📝 Qual é o nome da conta?</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-file-signature icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-file-signature icon-input" aria-hidden="true"></i>
                         <input type="text" class="form-control" id="nome" name="nome" 
                                value="<%= conta.nome %>" placeholder="Nome da conta" required>
                     </div>
@@ -93,8 +41,8 @@
                 <!-- Tipo de Conta -->
                 <div class="mb-3">
                     <p class="form-question">💳 Qual é o tipo da conta?</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-wallet icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-wallet icon-input" aria-hidden="true"></i>
                         <select class="form-select" id="tipo" name="tipo" required>
                             <option value="Corrente" <%= conta.tipo === 'Corrente' ? 'selected' : '' %>>Conta Corrente</option>
                             <option value="Poupança" <%= conta.tipo === 'Poupança' ? 'selected' : '' %>>Conta Poupança</option>
@@ -109,8 +57,8 @@
                 <!-- Saldo Atual -->
                 <div class="mb-3">
                     <p class="form-question">💰 Qual é o saldo atual?</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-dollar-sign icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-dollar-sign icon-input" aria-hidden="true"></i>
                         <input type="number" step="0.01" class="form-control" id="saldo_atual" name="saldo_atual" 
                                value="<%= conta.saldo_atual %>" placeholder="Saldo atual" required>
                     </div>
@@ -119,8 +67,8 @@
                 <!-- Instituição Financeira -->
                 <div class="mb-3">
                     <p class="form-question">🏦 Qual é a instituição financeira? (opcional)</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-university icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-university icon-input" aria-hidden="true"></i>
                         <input type="text" class="form-control" id="instituicao" name="instituicao" 
                                value="<%= conta.instituicao || '' %>" placeholder="Nome da instituição">
                     </div>

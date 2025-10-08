@@ -48,7 +48,8 @@ const gastoController = {
                 gastos, 
                 totalGastos, 
                 categorias: categorias.map(c => c.categoria),
-                filtros: { mes, ano, categoria }
+                filtros: { mes, ano, categoria },
+                currentPage: 'gastos'
             });
         } catch (error) {
             console.error('Erro ao listar gastos:', error);
@@ -74,7 +75,7 @@ const gastoController = {
                 return res.redirect('/contas/criar');
             }
 
-            res.render('gastos/criar', { contas });
+            res.render('gastos/criar', { contas, currentPage: 'gastos' });
         } catch (error) {
             console.error('Erro ao carregar formulário de gasto:', error);
             console.error('Stack trace:', error.stack);

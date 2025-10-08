@@ -42,7 +42,6 @@ const orcamentosRoutes = require('./routes/orcamentos');
 const transferenciasRoutes = require('./routes/transferencias');
 const parcelamentosRoutes = require('./routes/parcelamentos');
 const gastosRoutes = require('./routes/gastos');
-// const cartoesRoutes = require('./routes/cartoes');
 const apiRoutes = require('./routes/api');
 
 // Uso das rotas
@@ -53,7 +52,6 @@ app.use('/orcamentos', orcamentosRoutes);
 app.use('/transferencias', transferenciasRoutes);
 app.use('/parcelamentos', parcelamentosRoutes);
 app.use('/gastos', gastosRoutes);
-// app.use('/cartoes', cartoesRoutes);
 app.use('/api', apiRoutes);
 
 // Rota principal
@@ -154,7 +152,8 @@ app.get('/', async (req, res) => {
             parcelamentos, 
             gastosDoMes,
             totalGastosDoMes,
-            totalSaldo
+            totalSaldo,
+            currentPage: 'dashboard'
         });
     } catch (error) {
         console.error('Erro ao carregar dashboard:', error);
@@ -166,7 +165,8 @@ app.get('/', async (req, res) => {
             parcelamentos: [],
             gastosDoMes: [],
             totalGastosDoMes: 0,
-            totalSaldo: 0
+            totalSaldo: 0,
+            currentPage: 'dashboard'
         });
     }
 });

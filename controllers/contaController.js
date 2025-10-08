@@ -28,7 +28,6 @@ const contaController = {
         res.render('contas/criar');
     },
 
-    // Cria nova conta
     criar: async (req, res) => {
         try {
             const errors = validationResult(req);

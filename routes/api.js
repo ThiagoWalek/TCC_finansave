@@ -63,7 +63,6 @@ router.get('/dashboard/evolucao-saldo', async (req, res) => {
     try {
         const Conta = require('../models/Conta');
         const Gasto = require('../models/Gasto');
-        // const Cartao = require('../models/Cartao');
         
         const userId = req.session.user.id;
         const periodo = parseInt(req.query.periodo) || 7;
@@ -302,6 +301,89 @@ router.get('/dashboard/comparativo-mensal', async (req, res) => {
         
     } catch (error) {
         console.error('Erro ao buscar comparativo mensal:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+});
+
+// Rota para próximas parcelas a vencer
+router.get('/dashboard/proximas-parcelas', async (req, res) => {
+    try {
+        const Parcelamento = require('../models/Parcelamento');
+        const Conta = require('../models/Conta');
+
+        const userId = req.session.user.id;
+
+        // Buscar parcelamentos ativos do usuário
+        const parcelamentos = await Parcelamento.findAll({
+            where: {
+                usuario_id: userId,
+                ativo: true
+            },
+            include: [{
+                model: Conta,
+                attributes: ['conta_id', 'nome', 'ativa'],
+                required: false
+            }],
+            order: [['data_inicio', 'ASC']]
+        });
+
+        // Buscar todas as contas do usuário para fallback em casos de associação ausente
+        const contasDoUsuario = await Conta.findAll({
+            where: { usuario_id: userId },
+            attributes: ['conta_id', 'nome', 'ativa']
+        });
+        const contasMap = new Map(contasDoUsuario.map(c => [c.conta_id, c]));
+
+        // Função para adicionar meses com cuidado para fim de mês
+        function addMonths(date, months) {
+            const d = new Date(date);
+            const day = d.getDate();
+            d.setMonth(d.getMonth() + months);
+            // Ajuste para meses com menos dias
+            if (d.getDate() < day) {
+                d.setDate(0); // último dia do mês anterior
+            }
+            return d;
+        }
+
+        const hoje = new Date();
+        const proximas = parcelamentos
+            .filter(p => p.parcela_atual <= p.total_parcelas)
+            .map(p => {
+                // Ajuste: a "parcela_atual" representa a próxima parcela a pagar; a data é data_inicio + (parcela_atual - 1) meses
+                const mesesParaAdicionar = Math.max((p.parcela_atual || 1) - 1, 0);
+                const proximaData = addMonths(p.data_inicio, mesesParaAdicionar);
+                const diasRestantes = Math.ceil((proximaData - hoje) / (1000 * 60 * 60 * 24));
+
+                // Fallback de conta: usa associação ou busca no mapa de contas do usuário
+                const contaAssociada = p.Conta || contasMap.get(p.conta_id) || null;
+
+                let contaStatus = 'ativa';
+                let contaNome = contaAssociada ? contaAssociada.nome : 'Conta não encontrada';
+                if (!contaAssociada) {
+                    contaStatus = 'inexistente';
+                } else if (!contaAssociada.ativa) {
+                    contaStatus = 'inativa';
+                }
+
+                return {
+                    id_parcelamento: p.id_parcelamento,
+                    descricao: p.descricao,
+                    parcela_atual: p.parcela_atual,
+                    total_parcelas: p.total_parcelas,
+                    valor_parcela: parseFloat(p.valor_parcela),
+                    data_proxima: proximaData,
+                    dias_restantes: diasRestantes,
+                    conta_nome: contaNome,
+                    conta_status: contaStatus
+                };
+            })
+            .sort((a, b) => new Date(a.data_proxima) - new Date(b.data_proxima))
+            .slice(0, 3); // retornar apenas as 3 mais próximas
+
+        res.json({ proximas });
+    } catch (error) {
+        console.error('Erro ao buscar próximas parcelas:', error);
         res.status(500).json({ error: 'Erro interno do servidor' });
     }
 });

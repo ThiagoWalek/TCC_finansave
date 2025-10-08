@@ -3,97 +3,20 @@
 <head>
     <%- include('../partials/head') %>
     <title>Editar Orçamento - Finansave</title>
-    <style>
-        .form-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .form-header h1 {
-            color: #0d6efd;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .form-header p {
-            color: #6c757d;
-        }
-        .input-group-text {
-            background-color: #f8f9fa;
-        }
-        .form-floating > .form-control {
-            padding-left: 2.5rem;
-        }
-        .form-floating > .form-label {
-            padding-left: 2.5rem;
-        }
-        .icon-input {
-            position: absolute;
-            left: 1rem;
-            top: 1.25rem;
-            color: #6c757d;
-            z-index: 4;
-        }
-        .tipo-toggle {
-            margin-bottom: 1.5rem;
-        }
-        .tipo-toggle .btn {
-            width: 50%;
-            padding: 1rem;
-        }
-        .tipo-toggle .btn-outline-success:hover,
-        .tipo-toggle .btn-outline-success:focus,
-        .tipo-toggle .btn-outline-success:active,
-        .tipo-toggle .btn-outline-success.active {
-            background-color: #198754;
-            color: #fff;
-        }
-        .tipo-toggle .btn-outline-danger:hover,
-        .tipo-toggle .btn-outline-danger:focus,
-        .tipo-toggle .btn-outline-danger:active,
-        .tipo-toggle .btn-outline-danger.active {
-            background-color: #dc3545;
-            color: #fff;
-        }
-        .budget-info {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        .budget-info p {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        .budget-info p:last-child {
-            margin-bottom: 0;
-        }
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-    </style>
+    
 </head>
-<body class="bg-light">
+<body>
     <%- include('../partials/navbar') %>
 
-    <div class="container">
-        <div class="form-container">
+    <div class="container form-page">
+        <div class="form-card animate__animated animate__fadeInUp">
             <div class="form-header">
-                <h1>Editar Orçamento</h1>
-                <p>Atualize os dados do seu orçamento</p>
+                <h1 class="form-title gradient-text">Editar Orçamento</h1>
+                <p class="form-subtitle">Atualize os dados do seu orçamento</p>
             </div>
 
             <!-- Informações do Orçamento -->
-            <div class="budget-info">
+            <div class="info-box">
                 <p><strong>ID do Orçamento:</strong> <%= orcamento.id_orcamento %></p>
                 <p><strong>Status:</strong>
                     <% if(orcamento.status_orcamento === 'Dentro') { %>
@@ -139,16 +62,16 @@
                 </div>
 
                 <!-- Nome do Orçamento -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-file-signature icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-file-signature icon-input" aria-hidden="true"></i>
                     <input type="text" class="form-control" id="nome" name="nome" 
                            value="<%= orcamento.nome %>" placeholder="Nome do orçamento" required>
                     <label for="nome">Nome do orçamento</label>
                 </div>
 
                 <!-- Categoria -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-tag icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-tag icon-input" aria-hidden="true"></i>
                     <select class="form-select" id="categoria" name="categoria" required>
                         <!-- Categorias de Receita -->
                         <optgroup label="Receitas" class="categoria-receita <%= orcamento.tipo !== 'Receita' ? 'd-none' : '' %>">
@@ -175,32 +98,32 @@
                 </div>
 
                 <!-- Mês/Ano -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-calendar-alt icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-calendar-alt icon-input" aria-hidden="true"></i>
                     <input type="month" class="form-control" id="mes_ano" name="mes_ano" 
                            value="<%= orcamento.mes_ano %>" required>
                     <label for="mes_ano">Mês/Ano</label>
                 </div>
 
                 <!-- Valor Previsto -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-dollar-sign icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-dollar-sign icon-input" aria-hidden="true"></i>
                     <input type="number" class="form-control" id="valor_previsto" name="valor_previsto" 
                            value="<%= orcamento.valor_previsto %>" step="0.01" placeholder="0.00" required>
                     <label for="valor_previsto">Valor previsto</label>
                 </div>
 
                 <!-- Valor Real -->
-                <div class="form-floating mb-3 position-relative">
-                    <i class="fas fa-coins icon-input"></i>
+                <div class="form-floating mb-3 input-with-icon">
+                    <i class="fas fa-coins icon-input" aria-hidden="true"></i>
                     <input type="number" class="form-control" id="valor_real" name="valor_real" 
                            value="<%= orcamento.valor_real %>" step="0.01" placeholder="0.00" required>
                     <label for="valor_real">Valor real</label>
                 </div>
 
                 <!-- Descrição -->
-                <div class="form-floating mb-4 position-relative">
-                    <i class="fas fa-align-left icon-input"></i>
+                <div class="form-floating mb-4 input-with-icon">
+                    <i class="fas fa-align-left icon-input" aria-hidden="true"></i>
                     <textarea class="form-control" id="descricao" name="descricao" 
                               placeholder="Descrição" style="height: 100px"><%= orcamento.descricao || '' %></textarea>
                     <label for="descricao">Descrição (opcional)</label>

@@ -3,79 +3,23 @@
 <head>
     <%- include('../partials/head') %>
     <title>Editar Meta - Finansave</title>
-    <style>
-        .form-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .form-header h1 {
-            color: #0d6efd;
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .form-header p {
-            color: #6c757d;
-        }
-        .input-group-text {
-            background-color: #f8f9fa;
-        }
-        .form-floating > .form-control {
-            padding-left: 2.5rem;
-        }
-        .form-floating > .form-label {
-            padding-left: 2.5rem;
-        }
-        .icon-input {
-            position: absolute;
-            left: 1rem;
-            top: 1.25rem;
-            color: #6c757d;
-            z-index: 4;
-        }
-        .goal-info {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        .goal-info p {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        .goal-info p:last-child {
-            margin-bottom: 0;
-        }
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-            margin: 1rem 0;
-        }
-    </style>
+    
 </head>
-<body class="bg-light">
+<body>
     <%- include('../partials/navbar') %>
 
-    <div class="container">
-        <div class="form-container">
+    <div class="container form-page">
+        <div class="form-card animate__animated animate__fadeInUp">
             <div class="form-header">
-                <h1>Editar Meta</h1>
-                <p>Atualize os dados da sua meta</p>
+                <h1 class="form-title gradient-text">Editar Meta</h1>
+                <p class="form-subtitle">Atualize os dados da sua meta</p>
             </div>
 
             <!-- Informações da Meta -->
-            <div class="goal-info">
+            <div class="info-box">
                 <p><strong>ID da Meta:</strong> <%= meta.meta_id %></p>
                 <p><strong>Progresso Atual:</strong></p>
-                <div class="progress">
+                <div class="progress" style="height: 8px;">
                     <% const progresso = (meta.valor_atual / meta.valor_alvo) * 100; %>
                     <div class="progress-bar <%= progresso >= 100 ? 'bg-success' : 'bg-primary' %>" 
                          role="progressbar" style="width: <%= Math.min(progresso, 100) %>%" 
@@ -99,8 +43,8 @@
                 <!-- Nome da Meta -->
                 <div class="mb-3">
                     <p class="form-question">🎯 Qual é o seu objetivo?</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-bullseye icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-bullseye icon-input" aria-hidden="true"></i>
                         <input type="text" class="form-control" id="nome" name="nome" 
                                value="<%= meta.nome %>" placeholder="Nome da meta" required>
                     </div>
@@ -109,8 +53,8 @@
                 <!-- Descrição -->
                 <div class="mb-3">
                     <p class="form-question">📝 Descrição detalhada (opcional)</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-align-left icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-align-left icon-input" aria-hidden="true"></i>
                         <textarea class="form-control" id="descricao" name="descricao" 
                                   placeholder="Descrição" style="height: 100px"><%= meta.descricao || '' %></textarea>
                     </div>
@@ -119,8 +63,8 @@
                 <!-- Valor Atual -->
                 <div class="mb-3">
                     <p class="form-question">💰 Valor atual</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-dollar-sign icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-dollar-sign icon-input" aria-hidden="true"></i>
                         <input type="number" class="form-control" id="valor_atual" name="valor_atual" 
                                value="<%= meta.valor_atual %>" step="0.01" placeholder="0.00" required>
                     </div>
@@ -129,8 +73,8 @@
                 <!-- Valor Alvo -->
                 <div class="mb-3">
                     <p class="form-question">🎯 Valor alvo</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-bullseye icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-bullseye icon-input" aria-hidden="true"></i>
                         <input type="number" class="form-control" id="valor_alvo" name="valor_alvo" 
                                value="<%= meta.valor_alvo %>" step="0.01" placeholder="0.00" required>
                     </div>
@@ -139,8 +83,8 @@
                 <!-- Data de Início -->
                 <div class="mb-3">
                     <p class="form-question">📅 Data de início</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-calendar-alt icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar-alt icon-input" aria-hidden="true"></i>
                         <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
                                value="<%= new Date(meta.data_inicio).toISOString().split('T')[0] %>" required>
                     </div>
@@ -149,8 +93,8 @@
                 <!-- Data Limite -->
                 <div class="mb-3">
                     <p class="form-question">⏰ Data limite</p>
-                    <div class="input-with-icon position-relative">
-                        <i class="fas fa-calendar-check icon-input"></i>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar-check icon-input" aria-hidden="true"></i>
                         <input type="date" class="form-control" id="data_limite" name="data_limite" 
                                value="<%= new Date(meta.data_limite).toISOString().split('T')[0] %>" required>
                     </div>

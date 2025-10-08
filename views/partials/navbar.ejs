@@ -1,72 +1,153 @@
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="/img/logo.svg" alt="Finansave Logo" width="40" height="40" class="me-2">
-            <span>Finansave</span>
+<!-- Navbar moderna e profissional -->
+<% var currentPage = (typeof currentPage !== 'undefined') ? currentPage : ''; %>
+<nav class="navbar navbar-expand-lg navbar-modern fixed-top">
+    <div class="container-fluid">
+        <!-- Brand/Logo -->
+        <a class="navbar-brand brand-modern" href="/">
+            <i class="fas fa-chart-line brand-icon"></i>
+            <span class="brand-text">FinanSave</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+
+        <!-- Mobile toggle button -->
+        <button class="navbar-toggler navbar-toggler-modern" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon-modern">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarMain">
+        <!-- Navigation items -->
+        <div class="collapse navbar-collapse" id="navbarNav">
             <% if (user) { %>
-                <ul class="navbar-nav me-auto">
+                <!-- Main navigation -->
+                <ul class="navbar-nav navbar-nav-modern me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contas"><i class="fas fa-wallet"></i> Contas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/metas"><i class="fas fa-bullseye"></i> Metas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/orcamentos"><i class="fas fa-chart-pie"></i> Orçamentos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/transferencias"><i class="fas fa-exchange-alt"></i> Transferências</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="gastosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-receipt"></i> Gastos
+                        <a class="nav-link nav-link-modern <%= currentPage === 'dashboard' ? 'active' : '' %>" href="/">
+                            <i class="fas fa-tachometer-alt nav-icon"></i>
+                            <span class="nav-text">Dashboard</span>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="gastosDropdown">
-                            <li><a class="dropdown-item" href="/gastos/criar"><i class="fas fa-plus me-2"></i> Registrar Gasto</a></li>
-                            <li><a class="dropdown-item" href="/gastos/extrato"><i class="fas fa-list me-2"></i> Extrato</a></li>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern <%= currentPage === 'contas' ? 'active' : '' %>" href="/contas">
+                            <i class="fas fa-wallet nav-icon"></i>
+                            <span class="nav-text">Contas</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern <%= currentPage === 'metas' ? 'active' : '' %>" href="/metas">
+                            <i class="fas fa-bullseye nav-icon"></i>
+                            <span class="nav-text">Metas</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern <%= currentPage === 'orcamentos' ? 'active' : '' %>" href="/orcamentos">
+                            <i class="fas fa-calculator nav-icon"></i>
+                            <span class="nav-text">Orçamentos</span>
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern <%= currentPage === 'transferencias' ? 'active' : '' %>" href="/transferencias">
+                            <i class="fas fa-exchange-alt nav-icon"></i>
+                            <span class="nav-text">Transferências</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Dropdown para Gastos -->
+                    <li class="nav-item dropdown dropdown-modern">
+                        <a class="nav-link nav-link-modern dropdown-toggle <%= currentPage === 'gastos' ? 'active' : '' %>" href="#" id="gastosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-credit-card nav-icon"></i>
+                            <span class="nav-text">Gastos</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="gastosDropdown">
+                            <li>
+                                <a class="dropdown-item dropdown-item-modern" href="/gastos/criar">
+                                    <i class="fas fa-plus dropdown-icon"></i>
+                                    <span class="dropdown-text">Registrar Gasto</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item dropdown-item-modern" href="/gastos/extrato">
+                                    <i class="fas fa-list dropdown-icon"></i>
+                                    <span class="dropdown-text">Ver Gastos</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
+                    
                     <li class="nav-item">
-                        <a class="nav-link" href="/parcelamentos"><i class="fas fa-clock"></i> Parcelamentos</a>
+                        <a class="nav-link nav-link-modern <%= currentPage === 'parcelamentos' ? 'active' : '' %>" href="/parcelamentos">
+                            <i class="fas fa-calendar-alt nav-icon"></i>
+                            <span class="nav-text">Parcelamentos</span>
+                        </a>
                     </li>
                 </ul>
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="avatar-circle me-2">
-                                <span class="avatar-initials"><%= user.nome.charAt(0).toUpperCase() %></span>
+
+                <!-- User profile dropdown -->
+                <ul class="navbar-nav navbar-nav-modern">
+                    <li class="nav-item dropdown dropdown-modern user-dropdown">
+                        <a class="nav-link nav-link-modern dropdown-toggle user-profile-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="nav-avatar" aria-hidden="true">
+                                <span><%= (user.nome || 'U')[0] %></span>
                             </div>
-                            <span><%= user.nome %></span>
+                            <div class="user-info">
+                                <span class="user-name"><%= user.nome %></span>
+                                <span class="user-email"><%= user.email %></span>
+                            </div>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end animate__animated animate__fadeIn" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/usuarios/perfil"><i class="fas fa-user-cog me-2"></i> Perfil</a></li>
+                        <ul class="dropdown-menu dropdown-menu-modern dropdown-menu-end user-dropdown-menu" aria-labelledby="userDropdown">
+                            <li class="dropdown-header">
+                                <div class="user-profile-header">
+                                    <div class="user-avatar-large nav-avatar" style="width:56px;height:56px; font-size:1rem;">
+                                        <span><%= (user.nome || 'U')[0] %></span>
+                                    </div>
+                                    <div class="user-details">
+                                        <strong><%= user.nome %></strong>
+                                        <small class="text-muted"><%= user.email %></small>
+                                    </div>
+                                </div>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="/usuarios/logout" method="GET" class="d-inline w-100">
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Sair
-                                    </button>
-                                </form>
+                                <a class="dropdown-item dropdown-item-modern" href="/perfil">
+                                    <i class="fas fa-user-cog dropdown-icon"></i>
+                                    <span class="dropdown-text">Meu Perfil</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item dropdown-item-modern" href="/configuracoes">
+                                    <i class="fas fa-cog dropdown-icon"></i>
+                                    <span class="dropdown-text">Configurações</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item dropdown-item-modern text-danger" href="/logout">
+                                    <i class="fas fa-sign-out-alt dropdown-icon"></i>
+                                    <span class="dropdown-text">Sair</span>
+                                </a>
                             </li>
                         </ul>
                     </li>
                 </ul>
             <% } else { %>
-                <ul class="navbar-nav ms-auto align-items-center">
+                <!-- Guest navigation -->
+                <ul class="navbar-nav navbar-nav-modern ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/usuarios/login"><i class="fas fa-sign-in-alt me-1"></i> Entrar</a>
+                        <a class="nav-link nav-link-modern" href="/usuarios/login">
+                            <i class="fas fa-sign-in-alt nav-icon"></i>
+                            <span class="nav-text">Entrar</span>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/usuarios/registro"><i class="fas fa-user-plus me-1"></i> Registrar</a>
+                        <a class="nav-link nav-link-modern btn-outline-primary-modern" href="/usuarios/registro">
+                            <i class="fas fa-user-plus nav-icon"></i>
+                            <span class="nav-text">Cadastrar</span>
+                        </a>
                     </li>
                 </ul>
             <% } %>
@@ -74,21 +155,5 @@
     </div>
 </nav>
 
-<style>
-    .avatar-circle {
-        width: 32px;
-        height: 32px;
-        background-color: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .avatar-initials {
-        color: white;
-        font-size: 16px;
-        font-weight: 500;
-        line-height: 1;
-    }
-</style>
+<!-- Spacer para compensar navbar fixa -->
+<div class="navbar-spacer"></div>

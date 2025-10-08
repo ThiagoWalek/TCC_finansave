@@ -8,7 +8,7 @@
             max-width: 600px;
             margin: 2rem auto;
             padding: 2rem;
-            background-color: #fff;
+            background: var(--surface);
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
@@ -17,15 +17,15 @@
             margin-bottom: 2rem;
         }
         .form-header h1 {
-            color: #0d6efd;
+            color: var(--text-white);
             font-size: 2rem;
             margin-bottom: 0.5rem;
         }
         .form-header p {
-            color: #000000;
+            color: var(--text-secondary);
         }
         .input-group-text {
-            background-color: #000000;
+            background-color: rgba(96, 165, 250, 0.12);
         }
         .form-floating > .form-control {
             padding-left: 2.5rem;
@@ -37,12 +37,12 @@
             position: absolute;
             left: 1rem;
             top: 1.25rem;
-            color: #000000;
+            color: var(--text-secondary);
             z-index: 4;
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
     <%- include('../partials/navbar') %>
 
     <div class="container">

@@ -10,6 +10,10 @@ const validacoesParcelamento = [
         .trim()
         .isLength({ min: 2 })
         .withMessage('A descrição deve ter no mínimo 2 caracteres'),
+    body('conta_id')
+        .isInt({ min: 1 })
+        .withMessage('Selecione uma conta válida')
+        .toInt(),
     body('total_parcelas')
         .isInt({ min: 1 })
         .withMessage('O número de parcelas deve ser maior que zero')
