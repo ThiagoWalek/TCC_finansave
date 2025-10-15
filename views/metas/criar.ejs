@@ -136,8 +136,15 @@
             const dataInicioInput = document.getElementById('data_inicio');
             const dataLimiteInput = document.getElementById('data_limite');
 
-            // Define a data de hoje como data mínima
-            const hoje = new Date().toISOString().split('T')[0];
+            // Define a data de hoje como data mínima (parsing em horário local)
+            function hojeLocal() {
+                const d = new Date();
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            }
+            const hoje = hojeLocal();
             dataInicioInput.value = hoje;
             dataInicioInput.min = hoje;
             dataLimiteInput.min = hoje;

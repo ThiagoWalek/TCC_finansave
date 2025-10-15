@@ -151,7 +151,14 @@
 
             // Define a data atual como padrão
             const dataInput = document.getElementById('data_transferencia');
-            const hoje = new Date().toISOString().split('T')[0];
+            function hojeLocal() {
+                const d = new Date();
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            }
+            const hoje = hojeLocal();
             dataInput.value = hoje;
             dataInput.max = hoje;
         });

@@ -36,15 +36,29 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
         });
         
         let totalReceitas = 0;
-        let totalDespesas = 0;
         
         orcamentos.forEach(orcamento => {
             if (orcamento.tipo === 'Receita') {
                 totalReceitas += parseFloat(orcamento.valor_real || orcamento.valor_previsto || 0);
-            } else if (orcamento.tipo === 'Despesa') {
-                totalDespesas += parseFloat(orcamento.valor_real || orcamento.valor_previsto || 0);
             }
         });
+
+        // Despesas reais do mês a partir de Gastos
+        const gastosMes = await Gasto.findAll({
+            where: {
+                usuario_id: userId,
+                data_gasto: {
+                    [Op.and]: [
+                        { [Op.gte]: new Date(currentYear, currentMonth - 1, 1) },
+                        { [Op.lt]: new Date(currentYear, currentMonth, 1) }
+                    ]
+                }
+            }
+        });
+
+        const totalDespesas = gastosMes.reduce((total, gasto) => {
+            return total + parseFloat(gasto.valor || 0);
+        }, 0);
         
         res.json({
             receitas: totalReceitas,
@@ -445,7 +459,7 @@ router.get('/dashboard/contas', async (req, res) => {
         
         const contas = await Conta.findAll({
             where: { usuario_id: userId },
-            attributes: ['conta_id', 'nome', 'tipo'],
+            attributes: ['conta_id', 'nome', 'tipo', 'saldo_atual'],
             order: [['nome', 'ASC']]
         });
         
@@ -453,6 +467,103 @@ router.get('/dashboard/contas', async (req, res) => {
         
     } catch (error) {
         console.error('Erro ao buscar contas:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+});
+
+// Rota para obter orçamento agregado do mês atual
+router.get('/dashboard/orcamento-mensal', async (req, res) => {
+    try {
+        const { startOfMonth, endOfMonth } = require('../utils/dateRange');
+        const { Op } = require('sequelize');
+        const Orcamento = require('../models/Orcamento');
+        const userId = req.session.user.id;
+
+        const inicioMes = startOfMonth(new Date());
+        const fimMes = endOfMonth(new Date());
+
+        // Somatórios por tipo (Receita/Despesa)
+        const orcamentos = await Orcamento.findAll({
+            where: {
+                usuario_id: userId,
+                mes_ano: { [Op.between]: [inicioMes, fimMes] }
+            },
+            attributes: ['tipo', 'valor_previsto', 'valor_real']
+        });
+
+        let previstoReceitas = 0, realReceitas = 0, previstoDespesas = 0, realDespesas = 0;
+        orcamentos.forEach(o => {
+            if (o.tipo === 'Receita') {
+                previstoReceitas += Number(o.valor_previsto || 0);
+                realReceitas += Number(o.valor_real || 0);
+            } else if (o.tipo === 'Despesa') {
+                previstoDespesas += Number(o.valor_previsto || 0);
+                realDespesas += Number(o.valor_real || 0);
+            }
+        });
+
+        res.json({
+            previstoReceitas,
+            realReceitas,
+            previstoDespesas,
+            realDespesas,
+            totalPrevisto: previstoReceitas - previstoDespesas,
+            totalReal: realReceitas - realDespesas
+        });
+    } catch (error) {
+        console.error('Erro ao obter orçamento mensal:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+});
+
+// Rota para obter parcelas com vencimento no mês atual
+router.get('/dashboard/parcelas-mes', async (req, res) => {
+    try {
+        const { startOfMonth, endOfMonth, diffInDays } = require('../utils/dateRange');
+        const Parcelamento = require('../models/Parcelamento');
+        const { Op } = require('sequelize');
+        const userId = req.session.user.id;
+
+        const inicioMes = startOfMonth(new Date());
+        const fimMes = endOfMonth(new Date());
+
+        const parcelamentos = await Parcelamento.findAll({
+            where: {
+                usuario_id: userId,
+                ativo: true,
+                data_inicio: { [Op.lte]: fimMes }
+            },
+            attributes: ['id_parcelamento', 'descricao', 'parcela_atual', 'total_parcelas', 'valor_parcela', 'data_inicio']
+        });
+
+        const resultados = [];
+        parcelamentos.forEach(p => {
+            const atual = Number(p.parcela_atual || 0);
+            const total = Number(p.total_parcelas || 0);
+            if (atual >= total) return; // já concluído
+
+            // Próxima parcela (parcela_atual + 1)
+            const proximaIndex = atual + 1;
+            const dataInicio = new Date(p.data_inicio);
+            const proximaData = new Date(dataInicio);
+            proximaData.setMonth(dataInicio.getMonth() + (proximaIndex - 1));
+
+            if (proximaData >= inicioMes && proximaData <= fimMes) {
+                resultados.push({
+                    id_parcelamento: p.id_parcelamento,
+                    descricao: p.descricao,
+                    parcela: `${proximaIndex}/${total}`,
+                    valor: Number(p.valor_parcela || 0),
+                    data: proximaData,
+                    dias_restantes: diffInDays(new Date(), proximaData)
+                });
+            }
+        });
+
+        resultados.sort((a, b) => a.data - b.data);
+        res.json(resultados);
+    } catch (error) {
+        console.error('Erro ao obter parcelas do mês:', error);
         res.status(500).json({ error: 'Erro interno do servidor' });
     }
 });

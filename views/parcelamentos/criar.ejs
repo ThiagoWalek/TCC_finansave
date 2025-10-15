@@ -71,13 +71,13 @@
                     </div>
                 </div>
 
-                <!-- Descrição do Parcelamento -->
+                <!-- Nome da Parcela -->
                 <div class="mb-3">
-                    <p class="form-question">📝 Qual é a descrição do parcelamento?</p>
+                    <p class="form-question">🏷️ Qual é o nome da parcela?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-file-signature icon-input"></i>
                         <input type="text" class="form-control" id="descricao" name="descricao" 
-                               placeholder="Descrição do parcelamento" required>
+                               placeholder="Nome da parcela" required>
                     </div>
                 </div>
 
@@ -125,9 +125,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Define a data de hoje como valor padrão para o campo de data
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('data_inicio').value = today;
+            // Define a data de hoje como valor padrão para o campo de data (parsing local)
+            function hojeLocal() {
+                const d = new Date();
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${yyyy}-${mm}-${dd}`;
+            }
+            document.getElementById('data_inicio').value = hojeLocal();
             
             // Calcula o valor da parcela quando o usuário preenche os campos
             const totalParcelasInput = document.getElementById('total_parcelas');

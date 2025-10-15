@@ -96,7 +96,6 @@
                             </div>
                             <div class="user-info">
                                 <span class="user-name"><%= user.nome %></span>
-                                <span class="user-email"><%= user.email %></span>
                             </div>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-modern dropdown-menu-end user-dropdown-menu" aria-labelledby="userDropdown">
@@ -107,13 +106,12 @@
                                     </div>
                                     <div class="user-details">
                                         <strong><%= user.nome %></strong>
-                                        <small class="text-muted"><%= user.email %></small>
                                     </div>
                                 </div>
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a class="dropdown-item dropdown-item-modern" href="/perfil">
+                                <a class="dropdown-item dropdown-item-modern" href="/usuarios/perfil">
                                     <i class="fas fa-user-cog dropdown-icon"></i>
                                     <span class="dropdown-text">Meu Perfil</span>
                                 </a>
@@ -126,7 +124,7 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a class="dropdown-item dropdown-item-modern text-danger" href="/logout">
+                                <a class="dropdown-item dropdown-item-modern text-danger" href="/usuarios/logout">
                                     <i class="fas fa-sign-out-alt dropdown-icon"></i>
                                     <span class="dropdown-text">Sair</span>
                                 </a>

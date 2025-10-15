@@ -26,7 +26,7 @@
   --text-white: #ffffff;
 
   /* Superfícies e divisórias */
-  --bg-primary: var(--blue-950);
+  --bg-primary: #0A0F1F;
   --bg-secondary: var(--blue-900);
   --bg-tertiary: var(--blue-800);
   --surface: rgba(17, 24, 39, 0.85);
@@ -128,6 +128,73 @@ a:hover { color: var(--blue-400); transform: translateY(-1px); }
 .card-dark { background: var(--dark-gradient); color: var(--text-primary); }
 
 .card:hover { box-shadow: var(--shadow-glow); }
+
+/* -------------------------------------------------
+   4.1) Resumo Financeiro – Cards Modernos
+   ------------------------------------------------- */
+.financial-summary-section { margin-top: var(--space-6); }
+.summary-title { color: #00E0FF !important; background: none !important; -webkit-text-fill-color: initial !important; }
+
+.financial-card {
+  background-color: #121829;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  border: 1px solid rgba(14, 165, 233, 0.18);
+}
+.financial-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.financial-card-icon i { color: #00E0FF; font-size: 1.25rem; transition: filter var(--transition-fast), transform var(--transition-fast); }
+.financial-card:hover .financial-card-icon i { filter: drop-shadow(0 0 6px rgba(0, 224, 255, 0.45)); transform: translateY(-1px); }
+.financial-card-info { display: flex; flex-direction: column; }
+.financial-card-title { color: #00E0FF; font-weight: 700; letter-spacing: 0.02em; }
+.financial-card-subtitle { color: rgba(255, 255, 255, 0.72) !important; font-size: 0.925rem; }
+.financial-card-value { font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 800; font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif; }
+.financial-card-trend { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; color: rgba(255, 255, 255, 0.82); }
+.financial-card-trend i { opacity: 0.9; }
+.trend-text { color: rgba(255, 255, 255, 0.72); font-size: 0.95rem; }
+.financial-card-spark { margin-top: 0.75rem; }
+.financial-card-spark canvas { width: 100%; height: 48px; opacity: 0.9; }
+.financial-card-actions { margin-top: 0.75rem; }
+
+/* Indicador de status (verde/amarelo/vermelho) */
+.status-indicator { width: 10px; height: 10px; border-radius: 9999px; display: inline-block; box-shadow: 0 0 0 2px rgba(255,255,255,0.08); }
+.status-green { background-color: #10b981; }
+.status-yellow { background-color: #f59e0b; }
+.status-red { background-color: #ef4444; }
+
+/* Responsividade dos cards */
+@media (max-width: 992px) {
+  .financial-card { padding: 20px; }
+}
+@media (max-width: 576px) {
+  .financial-card { padding: 16px; }
+  .financial-card-value { font-size: clamp(1.5rem, 5vw, 2rem); }
+}
+
+/* -------------------------------------------------
+   4.2) Resumo do Mês – Blocos
+   ------------------------------------------------- */
+.summary-blocks { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+.summary-block { background: rgba(17, 24, 39, 0.45); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 0.75rem 1rem; }
+.summary-block:hover { box-shadow: var(--shadow-md); }
+.summary-block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.summary-block-title { color: #00E0FF; font-weight: 700; letter-spacing: 0.02em; }
+.summary-metric { color: rgba(255,255,255,0.82); font-size: 0.925rem; }
+.summary-value { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; margin-bottom: 0.5rem; }
+.summary-value .label { color: var(--text-secondary); }
+.summary-value .value { font-weight: 700; }
+.summary-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.summary-list-item { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: rgba(255,255,255,0.05); }
+.summary-list-item .name { color: var(--text-secondary); }
+.summary-list-item .value { font-weight: 700; }
+.summary-block-actions { margin-top: 0.5rem; }
+.budget-row { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem; }
+.progress-thin { height: 8px; background: rgba(255,255,255,0.08); border-radius: 9999px; }
+.progress-thin .progress-bar { border-radius: 9999px; }
+
+@media (max-width: 576px) {
+  .summary-block { padding: 0.5rem 0.75rem; }
+}
 
 /* -------------------------------------------------
    5) Formulários
@@ -300,6 +367,10 @@ h6 { font-size: 1rem; font-weight: 600; }
    16) Navbar Avatar Circular
    ------------------------------------------------- */
 .nav-avatar { width: 36px; height: 36px; border-radius: 9999px; background: linear-gradient(135deg, var(--blue-400), #2563eb); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; box-shadow: var(--shadow-sm); border: 1px solid rgba(255,255,255,0.18); }
+
+/* Truncar nome do usuário para evitar rolagem horizontal */
+.user-info { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.user-info .user-name { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Cards e containers: alinhamento e espaçamentos consistentes */
 .card { border-radius: var(--radius-lg); padding: var(--space-5); }

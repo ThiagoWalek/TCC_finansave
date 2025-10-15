@@ -14,71 +14,96 @@
         <!-- Seção Principal do Dashboard -->
         <section class="dashboard-main-section">
             <!-- Painel de Resumo Financeiro -->
-            <div class="financial-summary-section mb-5">
+            <div class="financial-summary-section mb-5" role="region" aria-labelledby="financialSummaryTitle">
                 <div class="section-header mb-4">
-                    <h2 class="section-title gradient-text">Resumo Financeiro</h2>
+                    <h2 class="section-title summary-title" id="financialSummaryTitle">Resumo Financeiro</h2>
                     <p class="section-subtitle">Visão geral da sua situação financeira atual</p>
                 </div>
                 
-                <div class="row g-4">
+                <div class="row g-4 justify-content-center">
                     <div class="col-xl-4 col-lg-6 col-md-6">
-                        <div class="financial-card card-success animate__animated animate__fadeInUp">
+                        <div class="financial-card card card-glass animate__animated animate__fadeInUp" role="region" aria-labelledby="receitasTitle">
                             <div class="financial-card-header">
-                                <div class="financial-card-icon">
+                                <div class="financial-card-icon" aria-hidden="true">
                                     <i class="fas fa-arrow-up"></i>
                                 </div>
                                 <div class="financial-card-info">
-                                    <h6 class="financial-card-title">Receitas</h6>
+                                    <h6 class="financial-card-title" id="receitasTitle">Receitas</h6>
                                     <p class="financial-card-subtitle">Total de entradas</p>
                                 </div>
                             </div>
                             <div class="financial-card-body">
                                 <h2 class="financial-card-value" id="totalReceitas">R$ 0,00</h2>
-                                <div class="financial-card-trend positive">
-                                    <i class="fas fa-trending-up"></i>
-                                    <span>+12.5% este mês</span>
+                                <div class="financial-card-trend positive" aria-label="Variação mensal de receitas">
+                                    <i class="fas fa-trending-up" aria-hidden="true"></i>
+                                    <span class="trend-text">+12.5% este mês</span>
+                                </div>
+                                <div class="financial-card-spark" aria-hidden="true">
+                                    <canvas id="receitasSpark" height="48"></canvas>
+                                </div>
+                                <div class="financial-card-actions text-end">
+                                    <a href="/orcamentos/listar" class="btn btn-outline-primary btn-sm" title="Ver detalhes de receitas">
+                                        Ver detalhes
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="col-xl-4 col-lg-6 col-md-6">
-                        <div class="financial-card card-danger animate__animated animate__fadeInUp animate__delay-1s">
+                        <div class="financial-card card card-glass animate__animated animate__fadeInUp animate__delay-1s" role="region" aria-labelledby="despesasTitle">
                             <div class="financial-card-header">
-                                <div class="financial-card-icon">
+                                <div class="financial-card-icon" aria-hidden="true">
                                     <i class="fas fa-arrow-down"></i>
                                 </div>
                                 <div class="financial-card-info">
-                                    <h6 class="financial-card-title">Despesas</h6>
+                                    <h6 class="financial-card-title" id="despesasTitle">Despesas</h6>
                                     <p class="financial-card-subtitle">Total de saídas</p>
                                 </div>
                             </div>
                             <div class="financial-card-body">
                                 <h2 class="financial-card-value" id="totalDespesas">R$ 0,00</h2>
-                                <div class="financial-card-trend negative">
-                                    <i class="fas fa-trending-down"></i>
-                                    <span>-8.3% este mês</span>
+                                <div class="financial-card-trend negative" aria-label="Variação mensal de despesas">
+                                    <i class="fas fa-trending-down" aria-hidden="true"></i>
+                                    <span class="trend-text">-8.3% este mês</span>
+                                </div>
+                                <div class="financial-card-spark" aria-hidden="true">
+                                    <canvas id="despesasSpark" height="48"></canvas>
+                                </div>
+                                <div class="financial-card-actions text-end">
+                                    <a href="/gastos/extrato" class="btn btn-outline-primary btn-sm" title="Ver detalhes de despesas">
+                                        Ver detalhes
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="col-xl-4 col-lg-12 col-md-12">
-                        <div class="financial-card card-primary animate__animated animate__fadeInUp animate__delay-2s">
+                        <div class="financial-card card card-glass animate__animated animate__fadeInUp animate__delay-2s" role="region" aria-labelledby="saldoTitle">
                             <div class="financial-card-header">
-                                <div class="financial-card-icon">
+                                <div class="financial-card-icon" aria-hidden="true">
                                     <i class="fas fa-balance-scale"></i>
                                 </div>
                                 <div class="financial-card-info">
-                                    <h6 class="financial-card-title">Saldo Atual</h6>
+                                    <h6 class="financial-card-title" id="saldoTitle">Saldo Atual</h6>
                                     <p class="financial-card-subtitle">Balanço geral</p>
                                 </div>
                             </div>
                             <div class="financial-card-body">
                                 <h2 class="financial-card-value" id="saldoAtual">R$ 0,00</h2>
-                                <div class="financial-card-trend positive">
-                                    <i class="fas fa-wallet"></i>
-                                    <span>Situação estável</span>
+                                <div class="financial-card-trend positive" aria-label="Situação financeira">
+                                    <span class="status-indicator status-green" aria-hidden="true"></span>
+                                    <i class="fas fa-wallet" aria-hidden="true"></i>
+                                    <span class="trend-text">Situação estável</span>
+                                </div>
+                                <div class="financial-card-spark" aria-hidden="true">
+                                    <canvas id="saldoSpark" height="48"></canvas>
+                                </div>
+                                <div class="financial-card-actions text-end">
+                                    <a href="/contas/listar" class="btn btn-outline-primary btn-sm" title="Ver detalhes do saldo e contas">
+                                        Ver detalhes
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -99,22 +124,80 @@
                     <div class="analytics-card animate__animated animate__fadeInUp">
                         <div class="analytics-card-header">
                             <div class="analytics-card-title">
-                                <i class="fas fa-chart-line text-primary"></i>
-                                <h5>Evolução do Saldo</h5>
-                            </div>
-                            <div class="analytics-card-controls">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <input type="radio" class="btn-check" name="periodoSaldo" id="periodo7d" value="7" checked>
-                                    <label class="btn btn-outline-primary" for="periodo7d">7D</label>
-                                    <input type="radio" class="btn-check" name="periodoSaldo" id="periodo30d" value="30">
-                                    <label class="btn btn-outline-primary" for="periodo30d">30D</label>
-                                    <input type="radio" class="btn-check" name="periodoSaldo" id="periodo90d" value="90">
-                                    <label class="btn btn-outline-primary" for="periodo90d">90D</label>
-                                </div>
+                                <i class="fas fa-calendar-alt text-primary"></i>
+                                <h5>Resumo do Mês</h5>
                             </div>
                         </div>
                         <div class="analytics-card-body">
-                            <canvas id="saldoChart" height="100"></canvas>
+                            <div class="summary-blocks">
+                                <!-- Contas -->
+                                <div class="summary-block" role="region" aria-labelledby="summaryContasTitle">
+                                    <div class="summary-block-header">
+                                        <h6 id="summaryContasTitle" class="summary-block-title">Contas</h6>
+                                        <span id="summaryContasCount" class="summary-metric">0 contas</span>
+                                    </div>
+                                    <div class="summary-block-body">
+                                        <div class="summary-value">
+                                            <span class="label">Saldo total</span>
+                                            <span id="summaryContasSaldo" class="value">R$ 0,00</span>
+                                        </div>
+                                        <ul id="summaryContasTop" class="summary-list" role="list"></ul>
+                                    </div>
+                                    <div class="summary-block-actions text-end">
+                                        <a href="/contas/listar" class="btn btn-outline-primary btn-sm">Ver contas</a>
+                                    </div>
+                                </div>
+
+                                <!-- Parcelas do mês -->
+                                <div class="summary-block" role="region" aria-labelledby="summaryParcelasTitle">
+                                    <div class="summary-block-header">
+                                        <h6 id="summaryParcelasTitle" class="summary-block-title">Parcelas do mês</h6>
+                                        <span id="summaryParcelasCount" class="summary-metric">0 parcelas</span>
+                                    </div>
+                                    <div class="summary-block-body">
+                                        <ul id="summaryParcelasList" class="summary-list" role="list"></ul>
+                                        <div id="summaryParcelasEmpty" class="text-muted small" style="display: none;">
+                                            <i class="fas fa-info-circle" aria-hidden="true"></i> Nenhuma parcela neste mês.
+                                        </div>
+                                    </div>
+                                    <div class="summary-block-actions text-end">
+                                        <a href="/parcelamentos" class="btn btn-outline-primary btn-sm">Ver parcelamentos</a>
+                                    </div>
+                                </div>
+
+                                <!-- Orçamento do mês -->
+                                <div class="summary-block" role="region" aria-labelledby="summaryOrcamentoTitle">
+                                    <div class="summary-block-header">
+                                        <h6 id="summaryOrcamentoTitle" class="summary-block-title">Orçamento do mês</h6>
+                                        <span id="summaryOrcamentoStatus" class="summary-metric">Atualizado</span>
+                                    </div>
+                                    <div class="summary-block-body">
+                                        <div class="budget-row">
+                                            <span class="label">Receitas</span>
+                                            <div class="progress progress-thin" role="progressbar" aria-label="Progresso de receitas">
+                                                <div id="budgetReceitasProgress" class="progress-bar bg-success" style="width:0%"></div>
+                                            </div>
+                                            <div class="values">
+                                                <span id="budgetReceitasPrevisto" class="small text-muted">Previsto: R$ 0,00</span>
+                                                <span id="budgetReceitasReal" class="small text-muted">Real: R$ 0,00</span>
+                                            </div>
+                                        </div>
+                                        <div class="budget-row">
+                                            <span class="label">Despesas</span>
+                                            <div class="progress progress-thin" role="progressbar" aria-label="Progresso de despesas">
+                                                <div id="budgetDespesasProgress" class="progress-bar bg-danger" style="width:0%"></div>
+                                            </div>
+                                            <div class="values">
+                                                <span id="budgetDespesasPrevisto" class="small text-muted">Previsto: R$ 0,00</span>
+                                                <span id="budgetDespesasReal" class="small text-muted">Real: R$ 0,00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="summary-block-actions text-end">
+                                        <a href="/orcamentos/listar" class="btn btn-outline-primary btn-sm">Ver orçamentos</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

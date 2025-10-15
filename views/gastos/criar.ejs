@@ -134,7 +134,12 @@
         // Definir data atual como padrão apenas se não houver valor anterior
         const dataGastoInput = document.getElementById('data_gasto');
         if (!dataGastoInput.value) {
-            dataGastoInput.valueAsDate = new Date();
+            const now = new Date();
+            // Ajuste para timezone garantindo data local em YYYY-MM-DD
+            const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000))
+                .toISOString()
+                .split('T')[0];
+            dataGastoInput.value = localDate;
         }
 
         // Mostrar informações da conta selecionada

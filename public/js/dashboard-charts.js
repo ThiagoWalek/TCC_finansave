@@ -18,7 +18,8 @@ class DashboardCharts {
     init() {
         this.createGradients();
         this.loadFinancialSummary();
-        this.initSaldoChart();
+        this.initSummarySparklines();
+        this.initMonthlySummary();
         this.initCategoriaChart();
         this.initUpcomingInstallments();
         this.bindEvents();
@@ -63,7 +64,9 @@ class DashboardCharts {
     }
 
     async initSaldoChart() {
-        const ctx = document.getElementById('saldoChart').getContext('2d');
+        const canvas = document.getElementById('saldoChart');
+        if (!canvas) return; // gráfico removido do layout
+        const ctx = canvas.getContext('2d');
         
         try {
             const response = await fetch('/api/dashboard/evolucao-saldo?periodo=7');
@@ -78,14 +81,14 @@ class DashboardCharts {
                         data: data.valores || [],
                         borderColor: this.colors.primary,
                         backgroundColor: this.gradients.primary,
-                        borderWidth: 3,
+                        borderWidth: 2,
                         fill: true,
-                        tension: 0.35,
+                        tension: 0.3,
                         pointBackgroundColor: this.colors.primary,
                         pointBorderColor: '#fff',
                         pointBorderWidth: 0,
-                        pointRadius: 0,
-                        pointHoverRadius: 0
+                        pointRadius: 2,
+                        pointHoverRadius: 4
                     }]
                 },
                 options: {
@@ -139,6 +142,10 @@ class DashboardCharts {
                     interaction: {
                         intersect: false,
                         mode: 'index'
+                    },
+                    animation: {
+                        duration: 500,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
@@ -154,18 +161,32 @@ class DashboardCharts {
             const response = await fetch('/api/dashboard/gastos-categoria');
             const data = await response.json();
             
-            const colors = [
-                '#06b6d4', '#10b981', '#f59e0b', '#ef4444',
-                '#8b5cf6', '#14b8a6', '#fb7185', '#22d3ee', '#f97316'
-            ];
+            const colors = ['#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#14b8a6', '#fb7185', '#22d3ee', '#f97316'];
+
+            // Ordenar por valor desc e agregar "Outros" após top 6; fallback "Sem dados"
+            const labels = (data.categorias || []).slice();
+            const values = (data.valores || []).slice();
+            let pares = labels.map((l, i) => ({ label: l, value: Number(values[i] || 0) }));
+            const total = pares.reduce((s, p) => s + p.value, 0);
+            if (total === 0 || pares.length === 0) {
+                pares = [{ label: 'Sem dados', value: 1 }];
+            } else {
+                pares.sort((a, b) => b.value - a.value);
+                if (pares.length > 6) {
+                    const top = pares.slice(0, 6);
+                    const outrosValue = pares.slice(6).reduce((s, p) => s + p.value, 0);
+                    if (outrosValue > 0) top.push({ label: 'Outros', value: outrosValue });
+                    pares = top;
+                }
+            }
             
             this.charts.categoria = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: data.categorias || [],
+                    labels: pares.map(p => p.label),
                     datasets: [{
-                        data: data.valores || [],
-                        backgroundColor: colors,
+                        data: pares.map(p => p.value),
+                        backgroundColor: colors.slice(0, Math.max(1, pares.length)),
                         borderWidth: 0,
                         hoverBorderWidth: 2,
                         hoverBorderColor: '#fff'
@@ -191,7 +212,7 @@ class DashboardCharts {
                             bodyColor: '#fff',
                             callbacks: {
                                 label: function(context) {
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0) || 1;
                                     const percentage = ((context.parsed / total) * 100).toFixed(1);
                                     return context.label + ': ' + 
                                            new Intl.NumberFormat('pt-BR', { 
@@ -208,6 +229,84 @@ class DashboardCharts {
             });
         } catch (error) {
             console.error('Erro ao carregar gráfico de categorias:', error);
+        }
+    }
+
+    async initSummarySparklines() {
+        try {
+            const response = await fetch('/api/dashboard/comparativo-mensal');
+            const data = await response.json();
+
+            const meses = data.meses || [];
+            const receitas = data.receitas || [];
+            const despesas = data.despesas || [];
+            const saldo = (data.saldo && Array.isArray(data.saldo)) ? data.saldo : receitas.map((v, i) => v - (despesas[i] || 0));
+
+            const makeSpark = (canvasId, series, color, bgGradient) => {
+                const el = document.getElementById(canvasId);
+                if (!el) return null;
+                const ctx = el.getContext('2d');
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: meses,
+                        datasets: [{
+                            data: series,
+                            borderColor: color,
+                            backgroundColor: bgGradient,
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: { x: { display: false }, y: { display: false } }
+                    }
+                });
+            };
+
+            this.charts.receitasSpark = makeSpark('receitasSpark', receitas, this.colors.success, this.gradients.success);
+            this.charts.despesasSpark = makeSpark('despesasSpark', despesas, this.colors.danger, this.gradients.danger);
+            this.charts.saldoSpark = makeSpark('saldoSpark', saldo, this.colors.primary, this.gradients.primary);
+
+            const setTrend = (cardSelector, arr) => {
+                const el = document.querySelector(cardSelector);
+                if (!el || arr.length < 2) return;
+                const prev = Number(arr[arr.length - 2] || 0);
+                const curr = Number(arr[arr.length - 1] || 0);
+                const diffPct = prev === 0 ? (curr === 0 ? 0 : 100) : ((curr - prev) / Math.abs(prev)) * 100;
+                const text = (diffPct >= 0 ? '+' : '') + diffPct.toFixed(1) + '% este mês';
+                const span = el.querySelector('.trend-text');
+                if (span) span.textContent = text;
+                el.classList.remove('positive', 'negative');
+                el.classList.add(diffPct >= 0 ? 'positive' : 'negative');
+            };
+
+            setTrend('.financial-card[aria-labelledby="receitasTitle"] .financial-card-trend', receitas);
+            setTrend('.financial-card[aria-labelledby="despesasTitle"] .financial-card-trend', despesas);
+
+            const saldoTrendEl = document.querySelector('.financial-card[aria-labelledby="saldoTitle"] .financial-card-trend');
+            if (saldoTrendEl && saldo.length >= 2) {
+                const prev = Number(saldo[saldo.length - 2] || 0);
+                const curr = Number(saldo[saldo.length - 1] || 0);
+                const diff = curr - prev;
+                const indicator = saldoTrendEl.querySelector('.status-indicator');
+                if (indicator) {
+                    indicator.classList.remove('status-green', 'status-yellow', 'status-red');
+                    let cls = 'status-green';
+                    if (diff < 0) {
+                        const threshold = prev === 0 ? Math.abs(diff) : Math.abs(prev) * 0.05; // 5% do saldo anterior
+                        cls = Math.abs(diff) < threshold ? 'status-yellow' : 'status-red';
+                    }
+                    indicator.classList.add(cls);
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao carregar micro gráficos do resumo:', error);
         }
     }
 
@@ -272,6 +371,97 @@ class DashboardCharts {
             });
         } catch (error) {
             console.error('Erro ao carregar próximas parcelas:', error);
+        }
+    }
+
+    async initMonthlySummary() {
+        const fmtBRL = (n) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(n || 0));
+        const el = {
+            contasCount: document.getElementById('summaryContasCount'),
+            contasSaldo: document.getElementById('summaryContasSaldo'),
+            contasTop: document.getElementById('summaryContasTop'),
+            parcelasCount: document.getElementById('summaryParcelasCount'),
+            parcelasList: document.getElementById('summaryParcelasList'),
+            parcelasEmpty: document.getElementById('summaryParcelasEmpty'),
+            recPrev: document.getElementById('budgetReceitasPrevisto'),
+            recReal: document.getElementById('budgetReceitasReal'),
+            recProg: document.getElementById('budgetReceitasProgress'),
+            desPrev: document.getElementById('budgetDespesasPrevisto'),
+            desReal: document.getElementById('budgetDespesasReal'),
+            desProg: document.getElementById('budgetDespesasProgress')
+        };
+
+        try {
+            // Contas
+            const contasResp = await fetch('/api/dashboard/contas');
+            const contas = await contasResp.json();
+            const ativos = Array.isArray(contas) ? contas.filter(c => c) : [];
+            const totalSaldo = ativos.reduce((s, c) => s + Number(c.saldo_atual || 0), 0);
+            const top = ativos
+                .slice()
+                .sort((a, b) => Number(b.saldo_atual || 0) - Number(a.saldo_atual || 0))
+                .slice(0, 3);
+
+            if (el.contasCount) el.contasCount.textContent = `${ativos.length} ${ativos.length === 1 ? 'conta' : 'contas'}`;
+            if (el.contasSaldo) el.contasSaldo.textContent = fmtBRL(totalSaldo);
+            if (el.contasTop) {
+                el.contasTop.innerHTML = '';
+                top.forEach(c => {
+                    const li = document.createElement('li');
+                    li.className = 'summary-list-item';
+                    li.innerHTML = `
+                        <span class="name"><i class="fas fa-university" aria-hidden="true"></i> ${c.nome}</span>
+                        <span class="value">${fmtBRL(c.saldo_atual || 0)}</span>
+                    `;
+                    el.contasTop.appendChild(li);
+                });
+            }
+
+            // Parcelas do mês
+            const parResp = await fetch('/api/dashboard/parcelas-mes');
+            const parcelas = await parResp.json();
+            if (el.parcelasCount) el.parcelasCount.textContent = `${parcelas.length} ${parcelas.length === 1 ? 'parcela' : 'parcelas'}`;
+            if (el.parcelasList && el.parcelasEmpty) {
+                el.parcelasList.innerHTML = '';
+                if (parcelas.length === 0) {
+                    el.parcelasEmpty.style.display = 'block';
+                } else {
+                    el.parcelasEmpty.style.display = 'none';
+                    parcelas.slice(0, 5).forEach(p => {
+                        const li = document.createElement('li');
+                        li.className = 'summary-list-item';
+                        const data = new Date(p.data);
+                        const dataStr = data.toLocaleDateString('pt-BR');
+                        li.innerHTML = `
+                            <span class="name"><i class="fas fa-file-invoice" aria-hidden="true"></i> ${p.descricao} <span class="small text-muted">(${p.parcela})</span></span>
+                            <span class="value">${fmtBRL(p.valor)} <span class="small text-muted">${dataStr}</span></span>
+                        `;
+                        el.parcelasList.appendChild(li);
+                    });
+                }
+            }
+
+            // Orçamento mensal
+            const orcResp = await fetch('/api/dashboard/orcamento-mensal');
+            const orc = await orcResp.json();
+            const recPrevisto = Number(orc.previstoReceitas || 0);
+            const recReal = Number(orc.realReceitas || 0);
+            const desPrevisto = Number(orc.previstoDespesas || 0);
+            const desReal = Number(orc.realDespesas || 0);
+            if (el.recPrev) el.recPrev.textContent = `Previsto: ${fmtBRL(recPrevisto)}`;
+            if (el.recReal) el.recReal.textContent = `Real: ${fmtBRL(recReal)}`;
+            if (el.desPrev) el.desPrev.textContent = `Previsto: ${fmtBRL(desPrevisto)}`;
+            if (el.desReal) el.desReal.textContent = `Real: ${fmtBRL(desReal)}`;
+
+            const pct = (real, prev) => {
+                if (!prev || prev <= 0) return 0;
+                const v = Math.min(100, Math.round((real / prev) * 100));
+                return isFinite(v) ? v : 0;
+            };
+            if (el.recProg) el.recProg.style.width = pct(recReal, recPrevisto) + '%';
+            if (el.desProg) el.desProg.style.width = pct(desReal, desPrevisto) + '%';
+        } catch (error) {
+            console.error('Erro ao carregar resumo do mês:', error);
         }
     }
 
