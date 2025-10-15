@@ -10,17 +10,11 @@ const validacoesTransferencia = [
         .isInt({ min: 1 })
         .withMessage('Conta de origem inválida')
         .toInt(),
-    body('conta_destino_id')
-        .optional({ nullable: true })
-        .isInt({ min: 1 })
-        .withMessage('Conta de destino inválida')
-        .toInt()
-        .custom((value, { req }) => {
-            if (value === req.body.conta_origem_id) {
-                throw new Error('A conta de destino deve ser diferente da conta de origem');
-            }
-            return true;
-        }),
+    body('nome_conta_destino')
+        .optional({ checkFalsy: true })
+        .trim()
+        .isLength({ max: 50 })
+        .withMessage('O nome do destino deve ter no máximo 50 caracteres'),
     body('valor')
         .isFloat({ min: 0.01 })
         .withMessage('O valor deve ser maior que zero')

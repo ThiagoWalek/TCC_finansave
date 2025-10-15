@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Configurações - Finansave</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">Configurações</h1>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Aparência</h5>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="themeToggle">
+                            <label class="form-check-label" for="themeToggle">Tema escuro</label>
+                        </div>
+                        <p class="text-muted small mt-2">Alterna entre tema claro e escuro.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Preferências</h5>
+                        <p class="text-muted small">Mais opções serão adicionadas futuramente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="/" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+    </div>
+
+    <%- include('../partials/footer') %>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Persistir preferência de tema no localStorage
+        const toggle = document.getElementById('themeToggle');
+        const prefersDark = localStorage.getItem('theme') === 'dark';
+        toggle.checked = prefersDark;
+        if (prefersDark) document.body.classList.add('dark-theme');
+
+        toggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    });
+    </script>
+</body>
+<html>

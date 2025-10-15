@@ -86,7 +86,7 @@
                     <div class="input-with-icon">
                         <i class="fas fa-calendar-alt icon-input" aria-hidden="true"></i>
                         <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
-                               value="<%= new Date(meta.data_inicio).toISOString().split('T')[0] %>" required>
+                               value="<%= meta.data_inicio ? String(meta.data_inicio).slice(0,10) : '' %>" required>
                     </div>
                 </div>
 
@@ -96,7 +96,7 @@
                     <div class="input-with-icon">
                         <i class="fas fa-calendar-check icon-input" aria-hidden="true"></i>
                         <input type="date" class="form-control" id="data_limite" name="data_limite" 
-                               value="<%= new Date(meta.data_limite).toISOString().split('T')[0] %>" required>
+                               value="<%= meta.data_limite ? String(meta.data_limite).slice(0,10) : '' %>" required>
                     </div>
                 </div>
 

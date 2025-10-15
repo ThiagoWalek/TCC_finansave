@@ -16,12 +16,6 @@ const transferenciaController = {
                         as: 'contaOrigem', 
                         attributes: ['nome'],
                         required: true
-                    },
-                    { 
-                        model: Conta, 
-                        as: 'contaDestino', 
-                        attributes: ['nome'],
-                        required: false
                     }
                 ],
                 order: [['data_transferencia', 'DESC']]
@@ -71,7 +65,7 @@ const transferenciaController = {
                 return res.redirect('/transferencias/criar');
             }
 
-            const { conta_origem_id, conta_destino_id, valor, data_transferencia, descricao } = req.body;
+            const { conta_origem_id, nome_conta_destino, valor, data_transferencia, descricao } = req.body;
 
             // Verifica se as contas pertencem ao usuário
             const contaOrigem = await Conta.findOne({
@@ -92,27 +86,13 @@ const transferenciaController = {
                 return res.redirect('/transferencias/criar');
             }
 
-            let contaDestino = null;
-            if (conta_destino_id) {
-                contaDestino = await Conta.findOne({
-                    where: {
-                        conta_id: conta_destino_id,
-                        usuario_id: req.session.user.id,
-                        ativa: true
-                    }
-                });
-
-                if (!contaDestino) {
-                    req.session.error = 'Conta de destino inválida.';
-                    return res.redirect('/transferencias/criar');
-                }
-            }
+            // Para transferências externas, usamos apenas o nome do destino (opcional)
 
             // Cria a transferência e atualiza os saldos
             await Transferencia.create({
                 usuario_id: req.session.user.id,
                 conta_origem_id,
-                conta_destino_id,
+                nome_conta_destino,
                 valor,
                 data_transferencia,
                 descricao
@@ -123,12 +103,7 @@ const transferenciaController = {
                 saldo_atual: parseFloat(contaOrigem.saldo_atual) - parseFloat(valor)
             }, { transaction });
 
-            // Atualiza saldo da conta de destino se existir
-            if (contaDestino) {
-                await contaDestino.update({
-                    saldo_atual: parseFloat(contaDestino.saldo_atual) + parseFloat(valor)
-                }, { transaction });
-            }
+            // Não atualizamos saldo de conta destino (destino externo opcional)
 
             await transaction.commit();
             req.session.success = 'Transferência realizada com sucesso!';
@@ -150,8 +125,7 @@ const transferenciaController = {
                     usuario_id: req.session.user.id
                 },
                 include: [
-                    { model: Conta, as: 'contaOrigem', attributes: ['nome'] },
-                    { model: Conta, as: 'contaDestino', attributes: ['nome'] }
+                    { model: Conta, as: 'contaOrigem', attributes: ['nome'] }
                 ]
             });
 
@@ -191,13 +165,7 @@ const transferenciaController = {
                 transaction 
             });
 
-            if (transferencia.conta_destino_id) {
-                const contaDestino = await Conta.findByPk(transferencia.conta_destino_id);
-                await contaDestino.decrement('saldo_atual', { 
-                    by: transferencia.valor,
-                    transaction 
-                });
-            }
+            // Sem conta de destino associada, nada a reverter
 
             await transferencia.destroy({ transaction });
             await transaction.commit();

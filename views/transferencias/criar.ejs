@@ -49,19 +49,11 @@
                             <div class="invalid-feedback">Por favor, selecione a conta de origem.</div>
                         </div>
 
-                        <!-- Conta de Destino -->
+                        <!-- Nome do Destino (opcional) -->
                         <div class="mb-3">
-                            <label for="conta_destino_id" class="form-label">Conta de Destino</label>
-                            <select class="form-select" id="conta_destino_id" name="conta_destino_id">
-                                <option value="">Selecione a conta de destino (opcional)</option>
-                                <% contas.forEach(function(conta) { %>
-                                    <option value="<%= conta.conta_id %>" data-saldo="<%= conta.saldo_atual %>">
-                                        <%= conta.nome %>
-                                    </option>
-                                <% }); %>
-                            </select>
-                            <div class="account-balance" id="saldo-destino"></div>
-                            <small class="form-text text-muted">Deixe em branco para transferência para conta externa</small>
+                            <label for="nome_conta_destino" class="form-label">Nome do Destino (opcional)</label>
+                            <input type="text" class="form-control" id="nome_conta_destino" name="nome_conta_destino" maxlength="50" placeholder="Ex: Carteira, Banco X, João" />
+                            <small class="form-text text-muted">Preencha com o nome para onde foi transferido (se desejar).</small>
                         </div>
 
                         <!-- Valor -->
@@ -105,10 +97,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('.needs-validation');
             const contaOrigemSelect = document.getElementById('conta_origem_id');
-            const contaDestinoSelect = document.getElementById('conta_destino_id');
+            const nomeDestinoInput = document.getElementById('nome_conta_destino');
             const valorInput = document.getElementById('valor');
             const saldoOrigemDiv = document.getElementById('saldo-origem');
-            const saldoDestinoDiv = document.getElementById('saldo-destino');
 
             // Atualiza o saldo exibido quando a conta é selecionada
             function atualizarSaldoExibido(select, saldoDiv) {
@@ -125,9 +116,7 @@
                 atualizarSaldoExibido(contaOrigemSelect, saldoOrigemDiv);
             });
 
-            contaDestinoSelect.addEventListener('change', () => {
-                atualizarSaldoExibido(contaDestinoSelect, saldoDestinoDiv);
-            });
+            // Campo de nome do destino não possui saldo
 
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
@@ -136,18 +125,22 @@
                 } else {
                     // Validações adicionais
                     const contaOrigem = contaOrigemSelect.value;
-                    const contaDestino = contaDestinoSelect.value;
+                    const destinoNome = nomeDestinoInput.value.trim();
                     const valor = parseFloat(valorInput.value);
                     const saldoOrigem = parseFloat(contaOrigemSelect.options[contaOrigemSelect.selectedIndex].dataset.saldo);
 
-                    if (contaOrigem === contaDestino) {
-                        alert('A conta de origem e destino não podem ser a mesma.');
+                    if (valor > saldoOrigem) {
+                        alert('O valor da transferência não pode ser maior que o saldo disponível na conta de origem.');
                         event.preventDefault();
                         return;
                     }
 
-                    if (valor > saldoOrigem) {
-                        alert('O valor da transferência não pode ser maior que o saldo disponível na conta de origem.');
+                    // Confirmação antes de enviar
+                    const origemNome = contaOrigemSelect.options[contaOrigemSelect.selectedIndex].textContent.trim();
+                    const valorFmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+                    const destinoFmt = destinoNome || 'Destino não informado';
+                    const confirmar = confirm(`Confirmar transferência de ${valorFmt}\nDe: ${origemNome}\nPara: ${destinoFmt}?`);
+                    if (!confirmar) {
                         event.preventDefault();
                         return;
                     }

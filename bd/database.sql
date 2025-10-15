@@ -58,7 +58,7 @@ CREATE TABLE Transferencias (
     transferencia_id INT PRIMARY KEY AUTO_INCREMENT,
     usuario_id INT NOT NULL,
     conta_origem_id INT NOT NULL,
-    conta_destino_id INT,
+    nome_conta_destino VARCHAR(50),
     valor DECIMAL(15,2) NOT NULL,
     data_transferencia DATE NOT NULL,
     descricao VARCHAR(255),

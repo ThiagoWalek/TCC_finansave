@@ -336,7 +336,14 @@ router.get('/dashboard/proximas-parcelas', async (req, res) => {
 
         // Função para adicionar meses com cuidado para fim de mês
         function addMonths(date, months) {
-            const d = new Date(date);
+            let d;
+            if (typeof date === 'string') {
+                // Parse seguro em local time para evitar deslocamento de dia
+                const parts = date.slice(0,10).split('-').map(Number);
+                d = new Date(parts[0], parts[1] - 1, parts[2]);
+            } else {
+                d = new Date(date);
+            }
             const day = d.getDate();
             d.setMonth(d.getMonth() + months);
             // Ajuste para meses com menos dias

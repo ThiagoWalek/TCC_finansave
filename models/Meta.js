@@ -42,11 +42,11 @@ const Meta = sequelize.define('Meta', {
         }
     },
     data_inicio: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true
     },
     data_limite: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
         validate: {
             isAfterDataInicio(value) {

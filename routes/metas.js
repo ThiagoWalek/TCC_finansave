@@ -14,6 +14,12 @@ const validacoesMeta = [
         .isFloat({ min: 0.01 })
         .withMessage('O valor alvo deve ser maior que zero')
         .toFloat(),
+    // Permite validar tanto valor_inicial (na criação) quanto valor_atual (na edição)
+    body('valor_inicial')
+        .optional({ nullable: true })
+        .isFloat({ min: 0 })
+        .withMessage('O valor inicial deve ser um número positivo')
+        .toFloat(),
     body('valor_atual')
         .optional({ nullable: true })
         .isFloat({ min: 0 })
@@ -48,6 +54,14 @@ const validacaoProgresso = [
         .toFloat()
 ];
 
+// Validação para adicionar valor (somar)
+const validacaoAdicionarValor = [
+    body('valor')
+        .isFloat({ min: 0.01 })
+        .withMessage('O valor a adicionar deve ser maior que zero')
+        .toFloat()
+];
+
 // Todas as rotas requerem autenticação
 router.use(isAuthenticated);
 
@@ -59,5 +73,6 @@ router.get('/editar/:id', metaController.renderEditar);
 router.post('/editar/:id', validacoesMeta, metaController.atualizar);
 router.post('/excluir/:id', metaController.excluir);
 router.post('/progresso/:id', validacaoProgresso, metaController.atualizarProgresso);
+router.post('/:id/adicionar-valor', validacaoAdicionarValor, metaController.adicionarValor);
 
 module.exports = router;

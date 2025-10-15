@@ -26,7 +26,7 @@
                                 <div>
                                     <h5 class="mb-1"><%= parcelamento.descricao %></h5>
                                     <div class="text-muted small">
-                                        Parcela <%= parcelamento.parcela_atual %>/<%= parcelamento.total_parcelas %>
+                                        Pagas <%= parcelamento.parcela_atual %>/<%= parcelamento.total_parcelas %>
                                         • Valor da Parcela: <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(parcelamento.valor_parcela) %>
                                     </div>
                                     <div class="mt-2">
@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
                                 <div class="text-end">
-                                    <% const podePagar = parcelamento.conta_status === 'ativa' && parcelamento.parcela_atual <= parcelamento.total_parcelas; %>
+                                    <% const podePagar = parcelamento.conta_status === 'ativa' && parcelamento.parcela_atual < parcelamento.total_parcelas; %>
                                     <% if (parcelamento.conta_status !== 'ativa') { %>
                                         <span class="chip chip-neutral" title="Conta inativa ou inexistente" aria-disabled="true">
                                             <i class="fas fa-ban" aria-hidden="true"></i> <%= parcelamento.conta_status === 'inexistente' ? 'Conta Inexistente' : 'Conta Inativa' %>
@@ -101,7 +101,7 @@
                             </div>
 
                             <div class="text-muted small mt-3">
-                                <i class="far fa-calendar-alt"></i> Início: <%= new Date(parcelamento.data_inicio).toLocaleDateString('pt-BR') %>
+                                <i class="far fa-calendar-alt"></i> Início: <%= String(parcelamento.data_inicio).slice(0,10).split('-').reverse().join('/') %>
                             </div>
                         </div>
                     </div>

@@ -65,7 +65,7 @@
                                             <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(transferencia.valor) %>
                                         </span>
                                         <div class="transfer-date">
-                                            <%= new Date(transferencia.data_transferencia).toLocaleDateString('pt-BR') %>
+                                            <%= String(transferencia.data_transferencia).slice(0,10).split('-').reverse().join('/') %>
                                         </div>
                                     </div>
                                     <div class="transfer-actions">
@@ -79,11 +79,7 @@
                                 <div class="transfer-accounts">
                                     <i class="fas fa-arrow-right text-muted"></i>
                                     De: <strong><%= transferencia.contaOrigem ? transferencia.contaOrigem.nome : 'Conta não encontrada' %></strong>
-                                    <% if (transferencia.contaDestino) { %>
-                                        Para: <strong><%= transferencia.contaDestino.nome %></strong>
-                                    <% } else { %>
-                                        Para: <strong>Conta Externa</strong>
-                                    <% } %>
+                                    Para: <strong><%= transferencia.nome_conta_destino ? transferencia.nome_conta_destino : 'Conta Externa' %></strong>
                                 </div>
                                 <% if (transferencia.descricao) { %>
                                     <div class="transfer-description">

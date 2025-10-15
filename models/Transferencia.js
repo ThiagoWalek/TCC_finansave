@@ -26,12 +26,11 @@ const Transferencia = sequelize.define('Transferencia', {
             key: 'conta_id'
         }
     },
-    conta_destino_id: {
-        type: DataTypes.INTEGER,
+    nome_conta_destino: {
+        type: DataTypes.STRING(50),
         allowNull: true,
-        references: {
-            model: Conta,
-            key: 'conta_id'
+        validate: {
+            len: [0, 50]
         }
     },
     valor: {
@@ -43,7 +42,7 @@ const Transferencia = sequelize.define('Transferencia', {
         }
     },
     data_transferencia: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
             isDate: true
@@ -61,10 +60,8 @@ const Transferencia = sequelize.define('Transferencia', {
 // Definindo relacionamentos
 Transferencia.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 Transferencia.belongsTo(Conta, { as: 'contaOrigem', foreignKey: 'conta_origem_id' });
-Transferencia.belongsTo(Conta, { as: 'contaDestino', foreignKey: 'conta_destino_id' });
 
 Usuario.hasMany(Transferencia, { foreignKey: 'usuario_id' });
 Conta.hasMany(Transferencia, { as: 'transferenciasOrigem', foreignKey: 'conta_origem_id' });
-Conta.hasMany(Transferencia, { as: 'transferenciasDestino', foreignKey: 'conta_destino_id' });
 
 module.exports = Transferencia;

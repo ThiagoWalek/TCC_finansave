@@ -27,8 +27,8 @@ const validacoesParcelamento = [
         .withMessage('Data de início inválida'),
     body('parcela_atual')
         .optional({ nullable: true })
-        .isInt({ min: 1 })
-        .withMessage('A parcela atual deve ser maior que zero')
+        .isInt({ min: 0 })
+        .withMessage('A parcela atual deve ser maior ou igual a zero')
         .toInt()
         .custom((value, { req }) => {
             if (value > parseInt(req.body.total_parcelas)) {

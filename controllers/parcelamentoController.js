@@ -116,7 +116,7 @@ const parcelamentoController = {
                 valor_total: parseFloat(valor_total),
                 valor_parcela,
                 data_inicio,
-                parcela_atual: 1
+                parcela_atual: 0
             });
 
             req.session.success = 'Parcelamento criado com sucesso!';
@@ -207,7 +207,7 @@ const parcelamentoController = {
                 valor_parcela,
                 data_inicio,
                 conta_id: parseInt(conta_id),
-                ativo: parseInt(parcela_atual) <= parseInt(total_parcelas)
+                ativo: parseInt(parcela_atual) < parseInt(total_parcelas)
             });
 
             req.session.success = 'Parcelamento atualizado com sucesso!';
@@ -293,7 +293,7 @@ const parcelamentoController = {
 
             // A parcela_atual representa a próxima parcela a pagar; permitir quitar a última parcela
             const novaParcela = parcelamento.parcela_atual + 1;
-            if (parcelamento.parcela_atual > parcelamento.total_parcelas) {
+            if (parcelamento.parcela_atual >= parcelamento.total_parcelas) {
                 req.session.error = 'Todas as parcelas já foram pagas.';
                 return res.redirect('/parcelamentos');
             }
@@ -327,7 +327,7 @@ const parcelamentoController = {
 
             await parcelamento.update({
                 parcela_atual: novaParcela,
-                ativo: novaParcela <= parcelamento.total_parcelas ? (novaParcela < parcelamento.total_parcelas) : false
+                ativo: novaParcela < parcelamento.total_parcelas
             });
 
             req.session.success = `Parcela ${novaParcela}/${parcelamento.total_parcelas} paga com sucesso! Valor de R$ ${valorParcela.toFixed(2)} descontado da conta ${conta.nome}. Novo saldo: R$ ${novoSaldo.toFixed(2)}.`;

@@ -43,6 +43,7 @@ const transferenciasRoutes = require('./routes/transferencias');
 const parcelamentosRoutes = require('./routes/parcelamentos');
 const gastosRoutes = require('./routes/gastos');
 const apiRoutes = require('./routes/api');
+const configuracoesRoutes = require('./routes/configuracoes');
 
 // Uso das rotas
 app.use('/usuarios', usuariosRoutes);
@@ -53,6 +54,7 @@ app.use('/transferencias', transferenciasRoutes);
 app.use('/parcelamentos', parcelamentosRoutes);
 app.use('/gastos', gastosRoutes);
 app.use('/api', apiRoutes);
+app.use('/configuracoes', configuracoesRoutes);
 
 // Rota principal
 app.get('/', async (req, res) => {

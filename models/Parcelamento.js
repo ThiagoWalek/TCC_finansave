@@ -43,9 +43,9 @@ const Parcelamento = sequelize.define('Parcelamento', {
     parcela_atual: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 1,
+        defaultValue: 0,
         validate: {
-            min: 1,
+            min: 0,
             maxParcelaAtual(value) {
                 if (value > this.total_parcelas) {
                     throw new Error('A parcela atual não pode ser maior que o total de parcelas');
@@ -70,7 +70,7 @@ const Parcelamento = sequelize.define('Parcelamento', {
         }
     },
     data_inicio: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
         validate: {
             isDate: true
@@ -91,8 +91,8 @@ const Parcelamento = sequelize.define('Parcelamento', {
             }
         },
         beforeUpdate: (parcelamento) => {
-            // Atualiza o status ativo quando todas as parcelas forem pagas
-            if (parcelamento.parcela_atual > parcelamento.total_parcelas) {
+            // Atualiza o status ativo quando todas as parcelas forem pagas (contagem iniciando em 0)
+            if (parcelamento.parcela_atual >= parcelamento.total_parcelas) {
                 parcelamento.ativo = false;
             }
         }

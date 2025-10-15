@@ -68,7 +68,7 @@
                 <div class="form-floating mb-3 input-with-icon">
                     <i class="fas fa-calendar-alt icon-input" aria-hidden="true"></i>
                     <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
-                           value="<%= new Date(parcelamento.data_inicio).toISOString().split('T')[0] %>" required>
+                           value="<%= String(parcelamento.data_inicio).slice(0,10) %>" required>
                     <label for="data_inicio">Data de início</label>
                 </div>
 

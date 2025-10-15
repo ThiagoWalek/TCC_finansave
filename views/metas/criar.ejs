@@ -132,7 +132,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('formMeta');
             const valorAlvoInput = document.getElementById('valor_alvo');
-            const valorAtualInput = document.getElementById('valor_atual');
+            const valorInicialInput = document.getElementById('valor_inicial');
             const dataInicioInput = document.getElementById('data_inicio');
             const dataLimiteInput = document.getElementById('data_limite');
 
@@ -143,7 +143,7 @@
             dataLimiteInput.min = hoje;
 
             // Formata os campos de valor para exibir sempre duas casas decimais
-            [valorAlvoInput, valorAtualInput].forEach(input => {
+            [valorAlvoInput, valorInicialInput].forEach(input => {
                 input.addEventListener('change', function() {
                     if (this.value) {
                         this.value = parseFloat(this.value).toFixed(2);
@@ -162,7 +162,7 @@
             form.addEventListener('submit', function(event) {
                 const nome = document.getElementById('nome').value.trim();
                 const valorAlvo = parseFloat(valorAlvoInput.value);
-                const valorAtual = parseFloat(valorAtualInput.value);
+                const valorInicial = parseFloat(valorInicialInput.value);
                 const dataInicio = new Date(dataInicioInput.value);
                 const dataLimite = new Date(dataLimiteInput.value);
                 
@@ -178,13 +178,13 @@
                     return;
                 }
 
-                if (isNaN(valorAtual) || valorAtual < 0) {
+                if (isNaN(valorInicial) || valorInicial < 0) {
                     event.preventDefault();
                     alert('O valor inicial não pode ser negativo!');
                     return;
                 }
 
-                if (valorAtual > valorAlvo) {
+                if (valorInicial > valorAlvo) {
                     event.preventDefault();
                     alert('O valor inicial não pode ser maior que o valor alvo!');
                     return;

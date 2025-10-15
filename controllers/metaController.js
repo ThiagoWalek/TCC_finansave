@@ -10,11 +10,20 @@ const metaController = {
                 order: [['data_limite', 'ASC']]
             });
 
-            // Calcula progresso geral
-            const metasComProgresso = metas.map(meta => ({
-                ...meta.toJSON(),
-                progresso: ((meta.valor_atual / meta.valor_alvo) * 100).toFixed(2)
-            }));
+            // Calcula progresso geral e status
+            const metasComProgresso = metas.map(meta => {
+                const alvo = parseFloat(meta.valor_alvo || 0);
+                const atual = parseFloat(meta.valor_atual || 0);
+                const progresso = alvo > 0 ? ((atual / alvo) * 100).toFixed(2) : '0.00';
+                const status = meta.concluida
+                    ? 'Concluída'
+                    : (atual > 0 ? 'Em Progresso' : 'Pausada');
+                return {
+                    ...meta.toJSON(),
+                    progresso,
+                    status
+                };
+            });
 
             res.render('metas/listar', { metas: metasComProgresso });
         } catch (error) {
@@ -38,12 +47,12 @@ const metaController = {
                 return res.redirect('/metas/criar');
             }
 
-            const { nome, valor_alvo, valor_atual, data_inicio, data_limite, descricao } = req.body;
+            const { nome, valor_alvo, valor_inicial, data_inicio, data_limite, descricao } = req.body;
             await Meta.create({
                 usuario_id: req.session.user.id,
                 nome,
                 valor_alvo,
-                valor_atual: valor_atual || 0,
+                valor_atual: valor_inicial || 0,
                 data_inicio,
                 data_limite,
                 descricao
@@ -177,6 +186,45 @@ const metaController = {
         } catch (error) {
             console.error('Erro ao atualizar progresso:', error);
             req.session.error = 'Erro ao atualizar progresso.';
+            res.redirect('/metas');
+        }
+    },
+
+    // Adiciona valor à meta (somatório)
+    adicionarValor: async (req, res) => {
+        try {
+            const { valor } = req.body;
+            const meta = await Meta.findOne({
+                where: {
+                    meta_id: req.params.id,
+                    usuario_id: req.session.user.id
+                }
+            });
+
+            if (!meta) {
+                req.session.error = 'Meta não encontrada.';
+                return res.redirect('/metas');
+            }
+
+            const valorAdicionar = parseFloat(valor);
+            if (isNaN(valorAdicionar) || valorAdicionar <= 0) {
+                req.session.error = 'Valor a adicionar inválido.';
+                return res.redirect('/metas');
+            }
+
+            const novoValorAtual = parseFloat(meta.valor_atual || 0) + valorAdicionar;
+            const concluida = novoValorAtual >= parseFloat(meta.valor_alvo || 0);
+
+            await meta.update({
+                valor_atual: novoValorAtual,
+                concluida
+            });
+
+            req.session.success = 'Valor adicionado com sucesso!';
+            res.redirect('/metas');
+        } catch (error) {
+            console.error('Erro ao adicionar valor à meta:', error);
+            req.session.error = 'Erro ao adicionar valor.';
             res.redirect('/metas');
         }
     }
