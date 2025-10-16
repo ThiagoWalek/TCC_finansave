@@ -21,7 +21,6 @@ class DashboardCharts {
         this.initSummarySparklines();
         this.initMonthlySummary();
         this.initCategoriaChart();
-        this.initUpcomingInstallments();
         this.bindEvents();
     }
 
@@ -310,69 +309,6 @@ class DashboardCharts {
         }
     }
 
-    async initUpcomingInstallments() {
-        try {
-            const response = await fetch('/api/dashboard/proximas-parcelas');
-            const { proximas = [] } = await response.json();
-
-            const listEl = document.getElementById('upcomingInstallmentsList');
-            const emptyEl = document.getElementById('upcomingEmptyState');
-
-            if (!listEl || !emptyEl) return;
-
-            listEl.innerHTML = '';
-
-            if (proximas.length === 0) {
-                emptyEl.style.display = 'block';
-                return;
-            }
-
-            emptyEl.style.display = 'none';
-
-            proximas.forEach(p => {
-                const li = document.createElement('div');
-                li.className = 'list-card d-flex justify-content-between align-items-center';
-                li.setAttribute('role', 'listitem');
-
-                const dataFormatada = new Date(p.data_proxima).toLocaleDateString('pt-BR');
-                const valorFormatado = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(p.valor_parcela || 0);
-
-                let contaBadge = '';
-                if (p.conta_status === 'inexistente') {
-                    contaBadge = '<span class="chip chip-danger"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> Conta não encontrada</span>';
-                } else if (p.conta_status === 'inativa') {
-                    contaBadge = `<span class="chip chip-warning"><i class="fas fa-pause-circle" aria-hidden="true"></i> ${p.conta_nome} (Inativa)</span>`;
-                } else {
-                    contaBadge = `<span class="chip account-chip"><i class="fas fa-university" aria-hidden="true"></i> ${p.conta_nome}</span>`;
-                }
-
-                const dias = p.dias_restantes;
-                const prazoClass = dias < 0 ? 'text-danger' : (dias <= 3 ? 'text-warning' : 'text-muted');
-                const prazoLabel = dias < 0 ? `Vencida há ${Math.abs(dias)}d` : `Em ${dias}d`;
-
-                const statusChipClass = dias < 0 ? 'chip-danger' : 'chip-warning';
-                const statusChipLabel = dias < 0 ? 'Vencida' : 'Pendente';
-
-                li.innerHTML = `
-                    <div class="d-flex flex-column gap-1">
-                        <div class="list-card-title">${p.descricao || 'Parcelamento'}</div>
-                        <div class="small list-card-muted">Parcela ${p.parcela_atual + 1}/${p.total_parcelas}</div>
-                        <div>${contaBadge}</div>
-                        <div class="chip ${statusChipClass}"><i class="fas fa-info-circle" aria-hidden="true"></i> ${statusChipLabel}</div>
-                    </div>
-                    <div class="text-end" aria-label="Prazo e data da parcela">
-                        <div class="small ${prazoClass}"><i class="fas fa-clock" aria-hidden="true"></i> ${prazoLabel}</div>
-                        <div class="small"><i class="fas fa-calendar-alt" aria-hidden="true"></i> ${dataFormatada}</div>
-                        <div class="fw-bold mt-1">${valorFormatado}</div>
-                    </div>
-                `;
-
-                listEl.appendChild(li);
-            });
-        } catch (error) {
-            console.error('Erro ao carregar próximas parcelas:', error);
-        }
-    }
 
     async initMonthlySummary() {
         const fmtBRL = (n) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(n || 0));
@@ -433,8 +369,13 @@ class DashboardCharts {
                         const data = new Date(p.data);
                         const dataStr = data.toLocaleDateString('pt-BR');
                         li.innerHTML = `
-                            <span class="name"><i class="fas fa-file-invoice" aria-hidden="true"></i> ${p.descricao} <span class="small text-muted">(${p.parcela})</span></span>
-                            <span class="value">${fmtBRL(p.valor)} <span class="small text-muted">${dataStr}</span></span>
+                            <div class="left">
+                                <span class="name"><i class="fas fa-file-invoice" aria-hidden="true"></i> ${p.descricao} <span class="small text-muted">(${p.parcela})</span></span>
+                                <span class="date"><i class="fas fa-calendar-alt" aria-hidden="true"></i> ${dataStr}</span>
+                            </div>
+                            <div class="right">
+                                <span class="value">${fmtBRL(p.valor)}</span>
+                            </div>
                         `;
                         el.parcelasList.appendChild(li);
                     });
@@ -458,8 +399,30 @@ class DashboardCharts {
                 const v = Math.min(100, Math.round((real / prev) * 100));
                 return isFinite(v) ? v : 0;
             };
-            if (el.recProg) el.recProg.style.width = pct(recReal, recPrevisto) + '%';
-            if (el.desProg) el.desProg.style.width = pct(desReal, desPrevisto) + '%';
+            const pctRec = pct(recReal, recPrevisto);
+            const pctDes = pct(desReal, desPrevisto);
+            if (el.recProg) {
+                el.recProg.style.width = pctRec + '%';
+                if (el.recProg.parentElement) {
+                    el.recProg.parentElement.setAttribute('aria-valuenow', pctRec);
+                    el.recProg.parentElement.setAttribute('aria-valuemin', 0);
+                    el.recProg.parentElement.setAttribute('aria-valuemax', 100);
+                }
+            }
+            if (el.desProg) {
+                el.desProg.style.width = pctDes + '%';
+                if (el.desProg.parentElement) {
+                    el.desProg.parentElement.setAttribute('aria-valuenow', pctDes);
+                    el.desProg.parentElement.setAttribute('aria-valuemin', 0);
+                    el.desProg.parentElement.setAttribute('aria-valuemax', 100);
+                }
+            }
+            if (document.getElementById('budgetReceitasPct')) {
+                document.getElementById('budgetReceitasPct').textContent = `${pctRec}%`;
+            }
+            if (document.getElementById('budgetDespesasPct')) {
+                document.getElementById('budgetDespesasPct').textContent = `${pctDes}%`;
+            }
         } catch (error) {
             console.error('Erro ao carregar resumo do mês:', error);
         }

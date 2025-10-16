@@ -180,6 +180,7 @@
                                             <div class="values">
                                                 <span id="budgetReceitasPrevisto" class="small text-muted">Previsto: R$ 0,00</span>
                                                 <span id="budgetReceitasReal" class="small text-muted">Real: R$ 0,00</span>
+                                                <span id="budgetReceitasPct" class="small text-muted">0%</span>
                                             </div>
                                         </div>
                                         <div class="budget-row">
@@ -190,6 +191,7 @@
                                             <div class="values">
                                                 <span id="budgetDespesasPrevisto" class="small text-muted">Previsto: R$ 0,00</span>
                                                 <span id="budgetDespesasReal" class="small text-muted">Real: R$ 0,00</span>
+                                                <span id="budgetDespesasPct" class="small text-muted">0%</span>
                                             </div>
                                         </div>
                                     </div>
@@ -218,33 +220,7 @@
             </div>
         </section>
 
-        <!-- Seção de Próximas Parcelas -->
-        <section class="upcoming-installments-section">
-            <div class="section-header mb-4">
-                <h2 class="section-title gradient-text" id="upcomingTitle">Próximas Parcelas</h2>
-                <p class="section-subtitle">Acompanhe as próximas cobranças dos seus parcelamentos</p>
-            </div>
-
-            <div class="analytics-card animate__animated animate__fadeInUp animate__delay-2s">
-                <div class="analytics-card-header">
-                    <div class="analytics-card-title">
-                        <i class="fas fa-calendar-check text-info"></i>
-                        <h5>Até 3 próximas parcelas</h5>
-                    </div>
-                    <div class="analytics-card-controls">
-                        <a href="/parcelamentos" class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-list"></i> Ver todos
-                        </a>
-                    </div>
-                </div>
-                <div class="analytics-card-body" role="region" aria-labelledby="upcomingTitle" aria-live="polite">
-                    <div id="upcomingInstallmentsList" class="list-group list-group-flush" role="list"></div>
-                    <div id="upcomingEmptyState" class="text-muted small" style="display: none;">
-                        <i class="fas fa-info-circle" aria-hidden="true"></i> Nenhuma parcela prevista nos próximos dias.
-                    </div>
-                </div>
-            </div>
-        </section>
+        
     </div>
 
     <%- include('partials/footer') %>

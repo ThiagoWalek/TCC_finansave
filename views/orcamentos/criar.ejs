@@ -8,7 +8,7 @@
             max-width: 600px;
             margin: 2rem auto;
             padding: 2rem;
-            background-color: #fff;
+            background: var(--surface);
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
@@ -22,10 +22,10 @@
             margin-bottom: 0.5rem;
         }
         .form-header p {
-            color: #6c757d;
+            color: var(--text-secondary);
         }
         .input-group-text {
-            background-color: #f8f9fa;
+            background-color: rgba(96, 165, 250, 0.12);
         }
         .form-floating > .form-control {
             padding-left: 2.5rem;
@@ -37,7 +37,7 @@
             position: absolute;
             left: 1rem;
             top: 1.25rem;
-            color: #6c757d;
+            color: var(--text-secondary);
             z-index: 4;
         }
         .tipo-toggle {
@@ -91,7 +91,7 @@
 
                 <!-- Nome do Orçamento -->
                 <div class="mb-3">
-                    <p class="form-question">📝 Qual é o nome do orçamento?</p>
+                    <p class="form-question">Qual é o nome do orçamento?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-file-signature icon-input"></i>
                         <input type="text" class="form-control" id="nome" name="nome" 
@@ -101,7 +101,7 @@
 
                 <!-- Categoria -->
                 <div class="mb-3">
-                    <p class="form-question">🏷️ Qual categoria?</p>
+                    <p class="form-question">Qual categoria?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-tag icon-input"></i>
                         <select class="form-select" id="categoria" name="categoria" required>
@@ -132,7 +132,7 @@
 
                 <!-- Mês/Ano -->
                 <div class="mb-3">
-                    <p class="form-question">📅 Para qual mês/ano?</p>
+                    <p class="form-question">Para qual mês/ano?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-calendar-alt icon-input"></i>
                         <input type="month" class="form-control" id="mes_ano" name="mes_ano" required>
@@ -141,7 +141,7 @@
 
                 <!-- Valor Previsto -->
                 <div class="mb-3">
-                    <p class="form-question">💰 Qual o valor previsto?</p>
+                    <p class="form-question">Qual o valor previsto?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-dollar-sign icon-input"></i>
                         <input type="number" class="form-control" id="valor_previsto" name="valor_previsto" 
@@ -151,7 +151,7 @@
 
                 <!-- Valor Real -->
                 <div class="mb-3">
-                    <p class="form-question">🪙 Qual o valor real inicial?</p>
+                    <p class="form-question">Qual o valor real inicial?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-coins icon-input"></i>
                         <input type="number" class="form-control" id="valor_real" name="valor_real" 
@@ -161,7 +161,7 @@
 
                 <!-- Descrição -->
                 <div class="mb-4">
-                    <p class="form-question">📋 Alguma descrição? (opcional)</p>
+                    <p class="form-question">Alguma descrição? (opcional)</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-align-left icon-input"></i>
                         <textarea class="form-control" id="descricao" name="descricao" 

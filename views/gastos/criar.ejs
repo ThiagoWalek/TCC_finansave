@@ -12,8 +12,7 @@
             <div class="form-card">
             <div class="form-header">
                 <h1 class="h3 mb-0">
-                    <i class="fas fa-shopping-cart text-danger"></i>
-                    💸 Novo Gasto
+                    Novo Gasto
                 </h1>
                 <p class="text-muted mb-0">Registre seus gastos de forma rápida e organizada</p>
             </div>
@@ -23,7 +22,7 @@
             <form action="/gastos/criar" method="POST" class="needs-validation" novalidate>
                 <!-- Conta -->
                 <div class="mb-3">
-                    <p class="form-question">💳 De qual conta sair o dinheiro?</p>
+                    <p class="form-question">De qual conta sair o dinheiro?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-credit-card icon-input"></i>
                         <select class="form-select" id="conta_id" name="conta_id" required>
@@ -43,7 +42,7 @@
                 <div id="contaInfo" class="card-info" style="display: none;">
                     <div class="row">
                         <div class="col-md-12">
-                            <small class="text-muted">💰 Saldo disponível:</small><br>
+                            <small class="text-muted">Saldo disponível:</small><br>
                             <span id="saldoDisponivel" class="text-success"></span>
                         </div>
                     </div>
@@ -51,7 +50,7 @@
 
                 <!-- Descrição -->
                 <div class="mb-3">
-                    <p class="form-question">📝 O que você comprou ou pagou?</p>
+                    <p class="form-question">O que você comprou ou pagou?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-edit icon-input"></i>
                         <input type="text" class="form-control" id="descricao" name="descricao" 
@@ -63,7 +62,7 @@
 
                 <!-- Categoria -->
                 <div class="mb-3">
-                    <p class="form-question">🏷️ Qual categoria do gasto?</p>
+                    <p class="form-question">Qual categoria do gasto?</p>
                     <div class="d-flex flex-wrap gap-2 mb-2">
                         <button type="button" class="chip" data-categoria="Alimentação"><i class="fas fa-utensils" aria-hidden="true"></i> Alimentação</button>
                         <button type="button" class="chip" data-categoria="Transporte"><i class="fas fa-car" aria-hidden="true"></i> Transporte</button>
@@ -85,7 +84,7 @@
 
                 <!-- Valor -->
                 <div class="mb-3">
-                    <p class="form-question">💰 Quanto você gastou?</p>
+                    <p class="form-question">Quanto você gastou?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-coins icon-input"></i>
                         <input type="number" class="form-control" id="valor" name="valor" 
@@ -97,7 +96,7 @@
 
                 <!-- Data do Gasto -->
                 <div class="mb-3">
-                    <p class="form-question">📅 Quando foi o gasto?</p>
+                    <p class="form-question">Quando foi o gasto?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-calendar-alt icon-input"></i>
                         <input type="date" class="form-control" id="data_gasto" name="data_gasto" 
@@ -108,7 +107,7 @@
 
                 <!-- Observações -->
                 <div class="mb-4">
-                    <p class="form-question">📋 Alguma observação adicional? (opcional)</p>
+                    <p class="form-question">Alguma observação adicional? (opcional)</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-sticky-note icon-input"></i>
                         <textarea class="form-control" id="observacoes" name="observacoes" 

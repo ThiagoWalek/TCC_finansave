@@ -187,10 +187,15 @@ a:hover { color: var(--blue-400); transform: translateY(-1px); }
 .summary-list-item { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: rgba(255,255,255,0.05); }
 .summary-list-item .name { color: var(--text-secondary); }
 .summary-list-item .value { font-weight: 700; }
+ .summary-list-item .left { display: flex; flex-direction: column; gap: 0.25rem; }
+ .summary-list-item .right { display: flex; flex-direction: column; align-items: flex-end; }
+ .summary-list-item .date { color: var(--text-muted); font-size: 0.85rem; }
 .summary-block-actions { margin-top: 0.5rem; }
 .budget-row { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem; }
 .progress-thin { height: 8px; background: rgba(255,255,255,0.08); border-radius: 9999px; }
 .progress-thin .progress-bar { border-radius: 9999px; }
+ .budget-row .values { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+ #budgetReceitasPct, #budgetDespesasPct { font-weight: 600; }
 
 @media (max-width: 576px) {
   .summary-block { padding: 0.5rem 0.75rem; }

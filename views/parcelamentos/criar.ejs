@@ -8,7 +8,7 @@
             max-width: 600px;
             margin: 2rem auto;
             padding: 2rem;
-            background-color: #fff;
+            background: var(--surface);
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
@@ -17,15 +17,15 @@
             margin-bottom: 2rem;
         }
         .form-header h1 {
-            color: #0d6efd;
+            color: var(--text-white);
             font-size: 2rem;
             margin-bottom: 0.5rem;
         }
         .form-header p {
-            color: #6c757d;
+            color: var(--text-secondary);
         }
         .input-group-text {
-            background-color: #f8f9fa;
+            background-color: rgba(96, 165, 250, 0.12);
         }
         .form-floating > .form-control {
             padding-left: 2.5rem;
@@ -37,7 +37,7 @@
             position: absolute;
             left: 1rem;
             top: 1.25rem;
-            color: #6c757d;
+            color: var(--text-secondary);
             z-index: 4;
         }
     </style>
@@ -57,7 +57,7 @@
             <form action="/parcelamentos/criar" method="POST" id="formParcelamento">
                 <!-- Conta -->
                 <div class="mb-3">
-                    <p class="form-question">🏦 Qual conta será debitada?</p>
+                    <p class="form-question">Qual conta será debitada?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-university icon-input"></i>
                         <select class="form-select" id="conta_id" name="conta_id" required>
@@ -73,7 +73,7 @@
 
                 <!-- Nome da Parcela -->
                 <div class="mb-3">
-                    <p class="form-question">🏷️ Qual é o nome da parcela?</p>
+                    <p class="form-question">Qual é o nome da parcela?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-file-signature icon-input"></i>
                         <input type="text" class="form-control" id="descricao" name="descricao" 
@@ -83,7 +83,7 @@
 
                 <!-- Total de Parcelas -->
                 <div class="mb-3">
-                    <p class="form-question">🔢 Quantas parcelas?</p>
+                    <p class="form-question">Quantas parcelas?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-list-ol icon-input"></i>
                         <input type="number" class="form-control" id="total_parcelas" name="total_parcelas" 
@@ -93,7 +93,7 @@
 
                 <!-- Valor Total -->
                 <div class="mb-3">
-                    <p class="form-question">💰 Qual o valor total?</p>
+                    <p class="form-question">Qual o valor total?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-dollar-sign icon-input"></i>
                         <input type="number" class="form-control" id="valor_total" name="valor_total" 
@@ -103,7 +103,7 @@
 
                 <!-- Data de Início -->
                 <div class="mb-3">
-                    <p class="form-question">📅 Quando inicia o parcelamento?</p>
+                    <p class="form-question">Quando inicia o parcelamento?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-calendar-alt icon-input"></i>
                         <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>

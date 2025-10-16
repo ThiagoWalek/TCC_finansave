@@ -3,12 +3,12 @@
 <head>
     <%- include('../partials/head') %>
     <title>Nova Meta - Finansave</title>
-    <style>
+        <style>
         .form-container {
             max-width: 600px;
             margin: 2rem auto;
             padding: 2rem;
-            background-color: #fff;
+            background: var(--surface);
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
@@ -17,15 +17,15 @@
             margin-bottom: 2rem;
         }
         .form-header h1 {
-            color: #0d6efd;
+            color: var(--text-white);
             font-size: 2rem;
             margin-bottom: 0.5rem;
         }
         .form-header p {
-            color: #6c757d;
+            color: var(--text-secondary);
         }
         .input-group-text {
-            background-color: #f8f9fa;
+            background-color: rgba(96, 165, 250, 0.12);
         }
         .form-floating > .form-control {
             padding-left: 2.5rem;
@@ -37,7 +37,7 @@
             position: absolute;
             left: 1rem;
             top: 1.25rem;
-            color: #6c757d;
+            color: var(--text-secondary);
             z-index: 4;
         }
     </style>
@@ -57,7 +57,7 @@
             <form action="/metas/criar" method="POST" id="formMeta">
                 <!-- Nome da Meta -->
                 <div class="mb-3">
-                    <p class="form-question">🎯 Qual é o seu objetivo?</p>
+                    <p class="form-question">Qual é o seu objetivo?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-star icon-input"></i>
                         <input type="text" class="form-control" id="nome" name="nome" 
@@ -67,7 +67,7 @@
 
                 <!-- Descrição -->
                 <div class="mb-3">
-                    <p class="form-question">📝 Descrição detalhada (opcional)</p>
+                    <p class="form-question">Descrição detalhada (opcional)</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-edit icon-input"></i>
                         <textarea class="form-control" id="descricao" name="descricao" 
@@ -77,7 +77,7 @@
 
                 <!-- Valor Alvo -->
                 <div class="mb-3">
-                    <p class="form-question">🎯 Quanto você quer juntar?</p>
+                    <p class="form-question">Quanto você quer juntar?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-trophy icon-input"></i>
                         <input type="number" class="form-control" id="valor_alvo" name="valor_alvo" 
@@ -87,7 +87,7 @@
 
                 <!-- Valor Inicial -->
                 <div class="mb-3">
-                    <p class="form-question">💰 Quanto você já tem?</p>
+                    <p class="form-question">Quanto você já tem?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-coins icon-input"></i>
                         <input type="number" class="form-control" id="valor_inicial" name="valor_inicial" 
@@ -97,7 +97,7 @@
 
                 <!-- Data de Início -->
                 <div class="mb-3">
-                    <p class="form-question">📅 Quando você vai começar?</p>
+                    <p class="form-question">Quando você vai começar?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-play-circle icon-input"></i>
                         <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
@@ -106,7 +106,7 @@
 
                 <!-- Data Limite -->
                 <div class="mb-3">
-                    <p class="form-question">🏁 Até quando você quer alcançar?</p>
+                    <p class="form-question">Até quando você quer alcançar?</p>
                     <div class="input-with-icon position-relative">
                         <i class="fas fa-flag-checkered icon-input"></i>
                         <input type="date" class="form-control" id="data_limite" name="data_limite" required>
