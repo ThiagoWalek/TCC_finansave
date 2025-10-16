@@ -79,6 +79,28 @@
                         </ul>
                     </li>
                     
+                    <!-- Dropdown para Receitas -->
+                    <li class="nav-item dropdown dropdown-modern">
+                        <a class="nav-link nav-link-modern dropdown-toggle <%= currentPage === 'receitas' ? 'active' : '' %>" href="#" id="receitasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-money-bill-wave nav-icon"></i>
+                            <span class="nav-text">Receitas</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="receitasDropdown">
+                            <li>
+                                <a class="dropdown-item dropdown-item-modern" href="/receitas/criar">
+                                    <i class="fas fa-plus dropdown-icon"></i>
+                                    <span class="dropdown-text">Registrar Receita</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item dropdown-item-modern" href="/receitas/extrato">
+                                    <i class="fas fa-list dropdown-icon"></i>
+                                    <span class="dropdown-text">Ver Receitas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link nav-link-modern <%= currentPage === 'parcelamentos' ? 'active' : '' %>" href="/parcelamentos">
                             <i class="fas fa-calendar-alt nav-icon"></i>

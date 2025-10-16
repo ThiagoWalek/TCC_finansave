@@ -42,6 +42,7 @@ const orcamentosRoutes = require('./routes/orcamentos');
 const transferenciasRoutes = require('./routes/transferencias');
 const parcelamentosRoutes = require('./routes/parcelamentos');
 const gastosRoutes = require('./routes/gastos');
+const receitasRoutes = require('./routes/receitas');
 const apiRoutes = require('./routes/api');
 const configuracoesRoutes = require('./routes/configuracoes');
 
@@ -53,6 +54,7 @@ app.use('/orcamentos', orcamentosRoutes);
 app.use('/transferencias', transferenciasRoutes);
 app.use('/parcelamentos', parcelamentosRoutes);
 app.use('/gastos', gastosRoutes);
+app.use('/receitas', receitasRoutes);
 app.use('/api', apiRoutes);
 app.use('/configuracoes', configuracoesRoutes);
 

@@ -31,6 +31,21 @@ const gastoController = {
                 order: [['data_gasto', 'DESC']]
             });
 
+            // Fallback robusto: buscar todas as contas do usuário para garantir nome da conta
+            const contasDoUsuario = await Conta.findAll({
+                where: { usuario_id: req.session.user.id },
+                attributes: ['conta_id', 'nome', 'ativa']
+            });
+            const contasMap = new Map(contasDoUsuario.map(c => [c.conta_id, c]));
+
+            // Decorar com nome da conta para exibição nas views, usando associação ou fallback
+            const gastosDecorados = gastos.map(g => {
+                const contaAssoc = g.Conta;
+                const contaPeloId = contasMap.get(g.conta_id);
+                g.conta_nome = contaAssoc ? contaAssoc.nome : (contaPeloId ? contaPeloId.nome : 'Conta não encontrada');
+                return g;
+            });
+
             // Calcula total de gastos
             const totalGastos = gastos.reduce((total, gasto) => {
                 return total + parseFloat(gasto.valor);
@@ -45,7 +60,7 @@ const gastoController = {
             });
 
             res.render('gastos/extrato', { 
-                gastos, 
+                gastos: gastosDecorados, 
                 totalGastos, 
                 categorias: categorias.map(c => c.categoria),
                 filtros: { mes, ano, categoria },

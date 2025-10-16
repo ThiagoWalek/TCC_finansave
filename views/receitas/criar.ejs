@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Nova Receita - Finansave</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <div class="form-page">
+            <div class="form-card">
+            <div class="form-header">
+                <h1 class="h3 mb-0">
+                    Nova Receita
+                </h1>
+                <p class="text-muted mb-0">Registre suas receitas de forma rápida e organizada</p>
+            </div>
+
+            <%- include('../partials/messages') %>
+
+            <form action="/receitas/criar" method="POST" class="needs-validation" novalidate>
+                <!-- Conta -->
+                <div class="mb-3">
+                    <p class="form-question">Em qual conta entrará o dinheiro?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-credit-card icon-input"></i>
+                        <select class="form-select" id="conta_id" name="conta_id" required>
+                            <option value="" disabled selected>Selecione uma conta</option>
+                            <% contas.forEach(function(conta) { %>
+                                <option value="<%= conta.conta_id %>" 
+                                        data-saldo="<%= conta.saldo_atual %>"
+                                        <%= (typeof req !== 'undefined' && req.body && req.body.conta_id == conta.conta_id) ? 'selected' : '' %>>
+                                    <%= conta.nome %> - Saldo: R$ <%= parseFloat(conta.saldo_atual).toFixed(2).replace('.', ',') %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Informações da conta selecionada -->
+                <div id="contaInfo" class="card-info" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <small class="text-muted">Saldo atual da conta:</small><br>
+                            <span id="saldoDisponivel" class="text-success"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descrição -->
+                <div class="mb-3">
+                    <p class="form-question">Qual a origem desta receita?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-edit icon-input"></i>
+                        <input type="text" class="form-control" id="descricao" name="descricao" 
+                               placeholder="Descreva a receita" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.descricao) ? req.body.descricao : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Categoria -->
+                <div class="mb-3">
+                    <p class="form-question">Qual a categoria da receita?</p>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <button type="button" class="chip" data-categoria="Salário"><i class="fas fa-money-bill" aria-hidden="true"></i> Salário</button>
+                        <button type="button" class="chip" data-categoria="Freelance"><i class="fas fa-briefcase" aria-hidden="true"></i> Freelance</button>
+                        <button type="button" class="chip" data-categoria="Vendas"><i class="fas fa-shopping-bag" aria-hidden="true"></i> Vendas</button>
+                        <button type="button" class="chip" data-categoria="Investimentos"><i class="fas fa-chart-line" aria-hidden="true"></i> Investimentos</button>
+                        <button type="button" class="chip" data-categoria="Reembolsos"><i class="fas fa-undo" aria-hidden="true"></i> Reembolsos</button>
+                        <button type="button" class="chip" data-categoria="Dividendos"><i class="fas fa-coins" aria-hidden="true"></i> Dividendos</button>
+                        <button type="button" class="chip" data-categoria="Outros"><i class="fas fa-ellipsis-h" aria-hidden="true"></i> Outros</button>
+                    </div>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-tag icon-input"></i>
+                        <input type="text" class="form-control" id="categoria" name="categoria" 
+                               placeholder="Digite uma categoria personalizada" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.categoria) ? req.body.categoria : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Valor -->
+                <div class="mb-3">
+                    <p class="form-question">Qual o valor da receita?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-coins icon-input"></i>
+                        <input type="number" class="form-control" id="valor" name="valor" 
+                               step="0.01" placeholder="0,00" min="0.01" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.valor) ? req.body.valor : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Data da Receita -->
+                <div class="mb-3">
+                    <p class="form-question">Quando foi recebida?</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-calendar-alt icon-input"></i>
+                        <input type="date" class="form-control" id="data_receita" name="data_receita" 
+                               value="<%= (typeof req !== 'undefined' && req.body && req.body.data_receita) ? req.body.data_receita : '' %>" 
+                               required>
+                    </div>
+                </div>
+
+                <!-- Observações -->
+                <div class="mb-4">
+                    <p class="form-question">Alguma observação adicional? (opcional)</p>
+                    <div class="input-with-icon position-relative">
+                        <i class="fas fa-sticky-note icon-input"></i>
+                        <textarea class="form-control" id="observacoes" name="observacoes" 
+                                  placeholder="Observações sobre esta receita" style="height: 100px"><%= (typeof req !== 'undefined' && req.body && req.body.observacoes) ? req.body.observacoes : '' %></textarea>
+                    </div>
+                </div>
+
+                <!-- Botões -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/receitas/extrato" class="btn btn-outline-primary me-md-2">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Registrar Receita
+                    </button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Definir data atual como padrão apenas se não houver valor anterior
+        const dataReceitaInput = document.getElementById('data_receita');
+        if (!dataReceitaInput.value) {
+            const now = new Date();
+            const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000))
+                .toISOString()
+                .split('T')[0];
+            dataReceitaInput.value = localDate;
+        }
+
+        // Mostrar informações da conta selecionada
+        document.getElementById('conta_id').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const contaInfoDiv = document.getElementById('contaInfo');
+            const saldoDisponivel = document.getElementById('saldoDisponivel');
+
+            if (selectedOption.value) {
+                const saldo = parseFloat(selectedOption.dataset.saldo);
+
+                saldoDisponivel.textContent = new Intl.NumberFormat('pt-BR', { 
+                    style: 'currency', 
+                    currency: 'BRL' 
+                }).format(saldo);
+                
+                contaInfoDiv.style.display = 'block';
+            } else {
+                contaInfoDiv.style.display = 'none';
+            }
+        });
+
+        // Trigger change event se já houver uma conta selecionada (em caso de erro)
+        const contaSelect = document.getElementById('conta_id');
+        if (contaSelect.value) {
+            contaSelect.dispatchEvent(new Event('change'));
+        }
+
+        // Chips de categoria
+        document.querySelectorAll('.chip[data-categoria]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.chip[data-categoria]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('categoria').value = this.dataset.categoria;
+            });
+        });
+
+        // Marcar chip de categoria ativo se já houver valor (em caso de erro)
+        const categoriaInput = document.getElementById('categoria');
+        if (categoriaInput.value) {
+            document.querySelectorAll('.chip[data-categoria]').forEach(btn => {
+                if (btn.dataset.categoria === categoriaInput.value) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Formatação de moeda
+        document.getElementById('valor').addEventListener('blur', function() {
+            if (this.value) {
+                this.value = parseFloat(this.value).toFixed(2);
+            }
+        });
+    </script>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

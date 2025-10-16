@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <%- include('../partials/head') %>
+    <title>Extrato de Receitas - Finansave</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+
+    <div class="container py-4">
+        <!-- Cabeçalho com Total de Receitas -->
+        <div class="expenses-header text-center">
+            <h1 class="h3 mb-4">
+                <i class="fas fa-file-invoice-dollar"></i> Extrato de Receitas
+            </h1>
+            <p class="mb-2">Total de Receitas</p>
+            <div class="total-expenses">
+                <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalReceitas) %>
+            </div>
+        </div>
+
+        <%- include('../partials/messages') %>
+
+        <!-- Filtros -->
+        <div class="filters-card">
+            <h5 class="mb-3"><i class="fas fa-filter"></i> Filtros</h5>
+            <form method="GET" action="/receitas/extrato" class="filter-form">
+                <div class="filter-group">
+                    <label for="mes" class="form-label">Mês</label>
+                    <select name="mes" id="mes" class="form-select">
+                        <option value="">Todos os meses</option>
+                        <% for(let i = 1; i <= 12; i++) { %>
+                            <option value="<%= i %>" <%= filtros.mes == i ? 'selected' : '' %>>
+                                <%= new Date(2023, i-1, 1).toLocaleDateString('pt-BR', { month: 'long' }) %>
+                            </option>
+                        <% } %>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="ano" class="form-label">Ano</label>
+                    <select name="ano" id="ano" class="form-select">
+                        <option value="">Todos os anos</option>
+                        <% for(let ano = new Date().getFullYear(); ano >= 2020; ano--) { %>
+                            <option value="<%= ano %>" <%= filtros.ano == ano ? 'selected' : '' %>><%= ano %></option>
+                        <% } %>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="categoria" class="form-label">Categoria</label>
+                    <select name="categoria" id="categoria" class="form-select">
+                        <option value="">Todas as categorias</option>
+                        <% categorias.forEach(function(cat) { %>
+                            <option value="<%= cat %>" <%= filtros.categoria === cat ? 'selected' : '' %>><%= cat %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                
+                <div class="filter-group d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-filter me-2"></i>Filtrar
+                    </button>
+                    <a href="/receitas/extrato" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Botão Registrar Receita -->
+        <div class="mb-4 text-end">
+            <a href="/receitas/criar" class="btn btn-success">
+                <i class="fas fa-plus"></i> Registrar Receita
+            </a>
+        </div>
+
+        <!-- Lista de Receitas -->
+        <% if(receitas.length === 0) { %>
+            <div class="empty-state">
+                <i class="fas fa-file-invoice-dollar fa-3x mb-3"></i>
+                <h4>Nenhuma receita encontrada</h4>
+                <p>Não há receitas registradas para os filtros selecionados.</p>
+                <a href="/receitas/criar" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus me-2"></i>Registrar Primeira Receita
+                </a>
+            </div>
+        <% } else { %>
+            <div class="row">
+                <% receitas.forEach(function(receita) { %>
+                    <div class="col-12 col-lg-6">
+                        <div class="expense-card card p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1"><%= receita.descricao %></h6>
+                                    <div class="expense-amount">R$ <%= parseFloat(receita.valor).toFixed(2).replace('.', ',') %></div>
+                                </div>
+                                <span class="badge expense-category category-<%= receita.categoria %>">
+                                    <%= receita.categoria %>
+                                </span>
+                            </div>
+                            
+                            <div class="card-info mb-2">
+                                <i class="fas fa-credit-card"></i>
+                                <%= receita.conta_nome %>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="expense-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <%= new Date(receita.data_receita).toLocaleDateString('pt-BR') %>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="/receitas/detalhe/<%= receita.receita_id %>" class="btn btn-outline-primary btn-sm" title="Detalhar">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="/receitas/editar/<%= receita.receita_id %>" class="btn btn-outline-secondary btn-sm" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="POST" action="/receitas/excluir/<%= receita.receita_id %>" style="display: inline;" 
+                                          onsubmit="return confirm('Tem certeza que deseja excluir esta receita? O valor será removido da conta.')">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <% if (receita.observacoes) { %>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-sticky-note me-1"></i>
+                                        <%= receita.observacoes %>
+                                    </small>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

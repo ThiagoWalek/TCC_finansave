@@ -93,3 +93,17 @@ CREATE TABLE Gastos (
     FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id) ON DELETE CASCADE,
     FOREIGN KEY (conta_id) REFERENCES Contas(conta_id) ON DELETE CASCADE
 );
+
+CREATE TABLE Receitas (
+    receita_id INT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id INT NOT NULL,
+    conta_id INT NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    categoria VARCHAR(50) NOT NULL,
+    valor DECIMAL(15,2) NOT NULL,
+    data_receita DATE NOT NULL,
+    data_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    observacoes TEXT,
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id) ON DELETE CASCADE,
+    FOREIGN KEY (conta_id) REFERENCES Contas(conta_id) ON DELETE CASCADE
+);

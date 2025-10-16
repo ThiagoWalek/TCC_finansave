@@ -12,6 +12,7 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
         const Conta = require('../models/Conta');
         const Gasto = require('../models/Gasto');
         const Orcamento = require('../models/Orcamento');
+        const Receita = require('../models/Receita');
         
         const userId = req.session.user.id;
         const currentDate = new Date();
@@ -27,21 +28,22 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
             return total + parseFloat(conta.saldo_atual || 0);
         }, 0);
         
-        // Buscar orçamentos do mês atual
-        const orcamentos = await Orcamento.findAll({
+        // Receitas reais do mês a partir de Receitas
+        const receitasMes = await Receita.findAll({
             where: {
                 usuario_id: userId,
-                mes_ano: `${currentYear}-${currentMonth.toString().padStart(2, '0')}`
+                data_receita: {
+                    [Op.and]: [
+                        { [Op.gte]: new Date(currentYear, currentMonth - 1, 1) },
+                        { [Op.lt]: new Date(currentYear, currentMonth, 1) }
+                    ]
+                }
             }
         });
-        
-        let totalReceitas = 0;
-        
-        orcamentos.forEach(orcamento => {
-            if (orcamento.tipo === 'Receita') {
-                totalReceitas += parseFloat(orcamento.valor_real || orcamento.valor_previsto || 0);
-            }
-        });
+
+        const totalReceitas = receitasMes.reduce((total, receita) => {
+            return total + parseFloat(receita.valor || 0);
+        }, 0);
 
         // Despesas reais do mês a partir de Gastos
         const gastosMes = await Gasto.findAll({
@@ -205,6 +207,7 @@ router.get('/dashboard/comparativo-mensal', async (req, res) => {
         const Orcamento = require('../models/Orcamento');
         const Gasto = require('../models/Gasto');
         const Conta = require('../models/Conta');
+        const Receita = require('../models/Receita');
         
         const userId = req.session.user.id;
         const tipo = req.query.tipo || 'both';
@@ -233,32 +236,26 @@ router.get('/dashboard/comparativo-mensal', async (req, res) => {
                 year: '2-digit'
             }));
             
-            // Buscar orçamentos do mês
-            let whereOrcamento = {
+            // Receitas reais do mês (Receitas)
+            let whereReceita = {
                 usuario_id: userId,
-                mes_ano: mesAno
-            };
-            
-            if (categoria) {
-                whereOrcamento.categoria = categoria;
-            }
-            
-            const orcamentosDoMes = await Orcamento.findAll({
-                where: whereOrcamento
-            });
-            
-            let receitasMes = 0;
-            let despesasMes = 0;
-            
-            orcamentosDoMes.forEach(orcamento => {
-                // Priorizar valor_real se existir, senão usar valor_previsto
-                const valor = parseFloat(orcamento.valor_real || orcamento.valor_previsto || 0);
-                if (orcamento.tipo === 'Receita') {
-                    receitasMes += valor;
-                } else if (orcamento.tipo === 'Despesa') {
-                    despesasMes += valor;
+                data_receita: {
+                    [Op.and]: [
+                        { [Op.gte]: new Date(ano, mes - 1, 1) },
+                        { [Op.lt]: new Date(ano, mes, 1) }
+                    ]
                 }
+            };
+            if (categoria) {
+                whereReceita.categoria = categoria;
+            }
+            if (conta) {
+                whereReceita.conta_id = conta;
+            }
+            const receitasDoMes = await Receita.findAll({
+                where: whereReceita
             });
+            let receitasMes = receitasDoMes.reduce((total, r) => total + parseFloat(r.valor || 0), 0);
             
             // Buscar gastos reais do mês
             let whereGasto = {
@@ -286,12 +283,15 @@ router.get('/dashboard/comparativo-mensal', async (req, res) => {
             const totalGastosReais = gastosDoMes.reduce((total, gasto) => {
                 return total + parseFloat(gasto.valor || 0);
             }, 0);
-            
+
+            const despesasMes = totalGastosReais;
+            const saldoMes = receitasMes - despesasMes;
+
             receitas.push(receitasMes);
             despesas.push(despesasMes);
-            saldos.push(receitasMes - despesasMes);
-            gastosReais.push(totalGastosReais);
-            receitasReais.push(receitasMes); // Para receitas, usamos os valores dos orçamentos
+            saldos.push(saldoMes);
+            gastosReais.push(despesasMes);
+            receitasReais.push(receitasMes);
         }
         
         const response = {
