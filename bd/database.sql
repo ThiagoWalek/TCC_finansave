@@ -61,6 +61,7 @@ CREATE TABLE Transferencias (
     nome_conta_destino VARCHAR(50),
     valor DECIMAL(15,2) NOT NULL,
     data_transferencia DATE NOT NULL,
+    tipo ENUM("Envio", "Recebimento"),
     descricao VARCHAR(255),
     FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
 );
