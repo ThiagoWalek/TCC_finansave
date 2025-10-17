@@ -77,9 +77,10 @@
                                     </div>
                                 </div>
                                 <div class="transfer-accounts">
+                                    <span class="badge bg-secondary me-2"><%= transferencia.tipo %></span>
                                     <i class="fas fa-arrow-right text-muted"></i>
-                                    De: <strong><%= transferencia.contaOrigem ? transferencia.contaOrigem.nome : 'Conta não encontrada' %></strong>
-                                    Para: <strong><%= transferencia.nome_conta_destino ? transferencia.nome_conta_destino : 'Conta Externa' %></strong>
+                                    De: <strong><%= transferencia.deNome %></strong>
+                                    Para: <strong><%= transferencia.paraNome %></strong>
                                 </div>
                                 <% if (transferencia.descricao) { %>
                                     <div class="transfer-description">

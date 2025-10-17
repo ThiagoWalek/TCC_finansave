@@ -104,6 +104,24 @@ a:hover { color: var(--blue-400); transform: translateY(-1px); }
 .nav-link:hover { color: var(--text-white); }
 .nav-link.active { background: rgba(96, 165, 250, 0.15); color: var(--text-white); }
 
+/* Estados de clique/ativo em azul para melhor feedback e consistência */
+.nav-link-modern {
+  transition: color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+.nav-link-modern:active,
+.nav-link-modern:focus,
+.nav-link-modern.active {
+  color: #3b82f6 !important; /* azul acessível */
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+.nav-link-modern:active .nav-icon,
+.nav-link-modern:focus .nav-icon,
+.nav-link-modern.active .nav-icon {
+  color: #3b82f6 !important;
+}
+
 /* -------------------------------------------------
    4) Cards e Containers
    - Superfícies escuras com bordas e brilho leves

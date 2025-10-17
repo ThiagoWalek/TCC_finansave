@@ -32,12 +32,18 @@
                 <div class="form-container">
                     <h2 class="form-title text-center">Nova Transferência</h2>
 
+                    <div class="d-flex justify-content-center mb-3" role="tablist" aria-label="Tipo de transferência">
+                        <button type="button" id="btnEnvio" class="btn btn-outline-primary me-2" aria-selected="true">Enviar</button>
+                        <button type="button" id="btnRecebimento" class="btn btn-outline-success">Receber</button>
+                    </div>
+
                     <%- include('../partials/messages') %>
 
                     <form action="/transferencias/criar" method="POST" class="needs-validation" novalidate>
+                        <input type="hidden" id="direcao" name="direcao" value="<%= initialDirecao %>">
                         <!-- Conta de Origem -->
                         <div class="mb-3">
-                            <label for="conta_origem_id" class="form-label">Conta de Origem</label>
+                            <label for="conta_origem_id" class="form-label" id="labelConta">Conta de Origem</label>
                             <select class="form-select" id="conta_origem_id" name="conta_origem_id" required>
                                 <option value="">Selecione a conta de origem</option>
                                 <% contas.forEach(function(conta) { %>
@@ -52,9 +58,9 @@
 
                         <!-- Nome do Destino (opcional) -->
                         <div class="mb-3">
-                            <label for="nome_conta_destino" class="form-label">Nome do Destino (opcional)</label>
+                            <label for="nome_conta_destino" class="form-label" id="labelNomeDestino">Nome do Destino (opcional)</label>
                             <input type="text" class="form-control" id="nome_conta_destino" name="nome_conta_destino" maxlength="50" placeholder="Ex: Carteira, Banco X, João" />
-                            <small class="form-text text-muted">Preencha com o nome para onde foi transferido (se desejar).</small>
+                            <small class="form-text text-muted" id="hintNome">Preencha com o nome para onde foi transferido (se desejar).</small>
                         </div>
 
                         <!-- Valor -->
@@ -83,7 +89,7 @@
                         <!-- Botões -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="/transferencias" class="btn btn-outline-secondary me-md-2">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Criar Transferência</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Criar Transferência</button>
                         </div>
                     </form>
                 </div>
@@ -101,6 +107,13 @@
             const nomeDestinoInput = document.getElementById('nome_conta_destino');
             const valorInput = document.getElementById('valor');
             const saldoOrigemDiv = document.getElementById('saldo-origem');
+            const direcaoInput = document.getElementById('direcao');
+            const btnEnvio = document.getElementById('btnEnvio');
+            const btnRecebimento = document.getElementById('btnRecebimento');
+            const labelConta = document.getElementById('labelConta');
+            const labelNomeDestino = document.getElementById('labelNomeDestino');
+            const hintNome = document.getElementById('hintNome');
+            const submitBtn = document.getElementById('submitBtn');
 
             // Atualiza o saldo exibido quando a conta é selecionada
             function atualizarSaldoExibido(select, saldoDiv) {
@@ -130,17 +143,21 @@
                     const valor = parseFloat(valorInput.value);
                     const saldoOrigem = parseFloat(contaOrigemSelect.options[contaOrigemSelect.selectedIndex].dataset.saldo);
 
-                    if (valor > saldoOrigem) {
-                        alert('O valor da transferência não pode ser maior que o saldo disponível na conta de origem.');
-                        event.preventDefault();
-                        return;
+                    if (direcaoInput.value !== 'recebimento') {
+                        if (valor > saldoOrigem) {
+                            alert('O valor da transferência não pode ser maior que o saldo disponível na conta de origem.');
+                            event.preventDefault();
+                            return;
+                        }
                     }
 
                     // Confirmação antes de enviar
                     const origemNome = contaOrigemSelect.options[contaOrigemSelect.selectedIndex].textContent.trim();
                     const valorFmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-                    const destinoFmt = destinoNome || 'Destino não informado';
-                    const confirmar = confirm(`Confirmar transferência de ${valorFmt}\nDe: ${origemNome}\nPara: ${destinoFmt}?`);
+                    const destinoFmt = destinoNome || (direcaoInput.value === 'recebimento' ? 'Remetente não informado' : 'Destino não informado');
+                    const confirmar = (direcaoInput.value === 'recebimento')
+                        ? confirm(`Confirmar recebimento de ${valorFmt}\nPara: ${origemNome}\nDe: ${destinoFmt}?`)
+                        : confirm(`Confirmar transferência de ${valorFmt}\nDe: ${origemNome}\nPara: ${destinoFmt}?`);
                     if (!confirmar) {
                         event.preventDefault();
                         return;
@@ -162,6 +179,38 @@
             const hoje = hojeLocal();
             dataInput.value = hoje;
             dataInput.max = hoje;
+
+            // Alternância Enviar/Receber
+            function setDirecao(tipo) {
+                direcaoInput.value = tipo;
+                if (tipo === 'recebimento') {
+                    btnEnvio.classList.remove('btn-primary');
+                    btnEnvio.classList.add('btn-outline-primary');
+                    btnRecebimento.classList.remove('btn-outline-success');
+                    btnRecebimento.classList.add('btn-success');
+                    labelConta.textContent = 'Conta de Destino';
+                    labelNomeDestino.textContent = 'Nome do Remetente (opcional)';
+                    hintNome.textContent = 'Quem enviou (ex.: Banco X, João)';
+                    submitBtn.textContent = 'Registrar Recebimento';
+                } else {
+                    btnRecebimento.classList.remove('btn-success');
+                    btnRecebimento.classList.add('btn-outline-success');
+                    btnEnvio.classList.remove('btn-outline-primary');
+                    btnEnvio.classList.add('btn-primary');
+                    labelConta.textContent = 'Conta de Origem';
+                    labelNomeDestino.textContent = 'Nome do Destino (opcional)';
+                    hintNome.textContent = 'Para onde foi transferido (ex.: Carteira, Banco X)';
+                    submitBtn.textContent = 'Criar Transferência';
+                }
+                atualizarSaldoExibido(contaOrigemSelect, saldoOrigemDiv);
+            }
+
+            // Inicializa direcao a partir do query param
+            const initial = direcaoInput.value === 'recebimento' ? 'recebimento' : 'envio';
+            setDirecao(initial);
+
+            btnEnvio.addEventListener('click', () => setDirecao('envio'));
+            btnRecebimento.addEventListener('click', () => setDirecao('recebimento'));
         });
     </script>
 </body>

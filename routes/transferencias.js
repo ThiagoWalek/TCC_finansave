@@ -26,7 +26,11 @@ const validacoesTransferencia = [
         .optional({ checkFalsy: true })
         .trim()
         .isLength({ max: 255 })
-        .withMessage('A descrição deve ter no máximo 255 caracteres')
+        .withMessage('A descrição deve ter no máximo 255 caracteres'),
+    body('direcao')
+        .isIn(['envio', 'recebimento'])
+        .withMessage('Direção inválida')
+        .trim()
 ];
 
 // Todas as rotas requerem autenticação
