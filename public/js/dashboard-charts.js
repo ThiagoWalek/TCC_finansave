@@ -233,7 +233,8 @@ class DashboardCharts {
 
     async initSummarySparklines() {
         try {
-            const response = await fetch('/api/dashboard/comparativo-mensal');
+            // Exibir apenas dados do mês atual nos micrográficos
+            const response = await fetch('/api/dashboard/comparativo-mensal?periodo=1');
             const data = await response.json();
 
             const meses = data.meses || [];
@@ -277,12 +278,11 @@ class DashboardCharts {
                 if (!el || arr.length < 2) return;
                 const prev = Number(arr[arr.length - 2] || 0);
                 const curr = Number(arr[arr.length - 1] || 0);
-                const diffPct = prev === 0 ? (curr === 0 ? 0 : 100) : ((curr - prev) / Math.abs(prev)) * 100;
-                const text = (diffPct >= 0 ? '+' : '') + diffPct.toFixed(1) + '% este mês';
+                const diff = curr - prev;
                 const span = el.querySelector('.trend-text');
-                if (span) span.textContent = text;
+                if (span) span.textContent = '';
                 el.classList.remove('positive', 'negative');
-                el.classList.add(diffPct >= 0 ? 'positive' : 'negative');
+                el.classList.add(diff >= 0 ? 'positive' : 'negative');
             };
 
             setTrend('.financial-card[aria-labelledby="receitasTitle"] .financial-card-trend', receitas);
@@ -331,7 +331,7 @@ class DashboardCharts {
             // Contas
             const contasResp = await fetch('/api/dashboard/contas');
             const contas = await contasResp.json();
-            const ativos = Array.isArray(contas) ? contas.filter(c => c) : [];
+            const ativos = Array.isArray(contas) ? contas.filter(c => c && c.ativa) : [];
             const totalSaldo = ativos.reduce((s, c) => s + Number(c.saldo_atual || 0), 0);
             const top = ativos
                 .slice()

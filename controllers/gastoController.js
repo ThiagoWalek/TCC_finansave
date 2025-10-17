@@ -224,10 +224,27 @@ const gastoController = {
                 return res.redirect('/gastos/extrato');
             }
 
-            // Restaura o saldo da conta
-            await gasto.Conta.update({
-                saldo_atual: parseFloat(gasto.Conta.saldo_atual) + parseFloat(gasto.valor)
-            });
+            // Restaura o saldo da conta (com fallback caso a associação não esteja disponível)
+            const valorGasto = parseFloat(gasto.valor || 0);
+            if (gasto.Conta) {
+                await gasto.Conta.update({
+                    saldo_atual: parseFloat(gasto.Conta.saldo_atual || 0) + valorGasto
+                });
+            } else {
+                const conta = await Conta.findOne({
+                    where: {
+                        conta_id: gasto.conta_id,
+                        usuario_id: req.session.user.id
+                    }
+                });
+                if (conta) {
+                    await conta.update({
+                        saldo_atual: parseFloat(conta.saldo_atual || 0) + valorGasto
+                    });
+                } else {
+                    console.warn(`Conta não encontrada para gasto ${gasto.gasto_id}; saldo não ajustado.`);
+                }
+            }
 
             await gasto.destroy();
 

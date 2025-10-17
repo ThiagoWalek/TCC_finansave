@@ -1,0 +1,77 @@
+INSERT INTO Contas (usuario_id, nome, tipo, saldo_atual, instituicao) VALUES
+(1, 'Conta Corrente Itaú', 'Corrente', 2500.00, 'Itaú'),
+(1, 'Poupança Caixa', 'Poupança', 4200.00, 'Caixa'),
+(1, 'Investimento XP', 'Investimento', 15000.00, 'XP Investimentos'),
+(1, 'Carteira Digital', 'Carteira', 500.00, 'PicPay'),
+(1, 'Cartão Nubank', 'Cartão de Crédito', -1200.00, 'Nubank'),
+(1, 'Conta Bradesco', 'Corrente', 1850.00, 'Bradesco'),
+(1, 'Conta Inter', 'Corrente', 3200.00, 'Inter'),
+(1, 'Carteira Mercado Pago', 'Carteira', 90.00, 'Mercado Pago'),
+(1, 'Poupança BB', 'Poupança', 7600.00, 'Banco do Brasil'),
+(1, 'Investimento C6', 'Investimento', 9000.00, 'C6 Bank');
+INSERT INTO Metas (usuario_id, nome, valor_alvo, valor_atual, data_inicio, data_limite, descricao) VALUES
+(1, 'Comprar Notebook', 5000.00, 2500.00, '2025-01-10', '2025-06-10', 'Meta para novo notebook'),
+(1, 'Viagem ao Nordeste', 7000.00, 1200.00, '2025-03-01', '2025-12-01', 'Viagem de férias'),
+(1, 'Reserva de Emergência', 10000.00, 7500.00, '2024-10-01', '2025-10-01', 'Reserva financeira'),
+(1, 'Carro Novo', 45000.00, 8000.00, '2025-01-15', '2026-06-15', 'Entrada de um carro'),
+(1, 'Reforma da Casa', 20000.00, 5000.00, '2025-04-01', '2025-12-30', 'Reforma e móveis novos'),
+(1, 'Curso de Inglês', 3000.00, 1000.00, '2025-02-01', '2025-08-01', 'Curso online'),
+(1, 'Câmera Profissional', 8000.00, 4000.00, '2025-05-10', '2026-01-10', 'Equipamento fotográfico'),
+(1, 'Moto 0km', 25000.00, 6000.00, '2025-03-01', '2026-03-01', 'Compra de moto'),
+(1, 'Casamento', 30000.00, 9000.00, '2025-02-14', '2026-02-14', 'Festa e cerimônia'),
+(1, 'Notebook Novo', 6000.00, 1500.00, '2025-01-01', '2025-09-01', 'Equipamento de estudos');
+INSERT INTO Orcamentos (usuario_id, nome, mes_ano, tipo, categoria, descricao, valor_previsto, valor_real) VALUES
+(1, 'Orçamento Janeiro', '2025-01-01', 'Despesa', 'Moradia', 'Aluguel e contas', 2000.00, 2100.00),
+(1, 'Orçamento Fevereiro', '2025-02-01', 'Receita', 'Salário', 'Salário mensal', 3200.00, 3200.00),
+(1, 'Orçamento Março', '2025-03-01', 'Despesa', 'Alimentação', 'Supermercado e refeições', 800.00, 750.00),
+(1, 'Orçamento Abril', '2025-04-01', 'Receita', 'Investimentos', 'Rendimentos', 1200.00, 1250.00),
+(1, 'Orçamento Maio', '2025-05-01', 'Despesa', 'Transporte', 'Combustível e manutenção', 600.00, 580.00),
+(1, 'Orçamento Junho', '2025-06-01', 'Receita', 'Freelance', 'Projetos externos', 2000.00, 2200.00),
+(1, 'Orçamento Julho', '2025-07-01', 'Despesa', 'Lazer', 'Cinema e passeios', 400.00, 350.00),
+(1, 'Orçamento Agosto', '2025-08-01', 'Receita', 'Salário', 'Emprego fixo', 3500.00, 3500.00),
+(1, 'Orçamento Setembro', '2025-09-01', 'Despesa', 'Educação', 'Mensalidade e livros', 700.00, 680.00),
+(1, 'Orçamento Outubro', '2025-10-01', 'Receita', 'Rendimentos', 'Dividendos', 950.00, 970.00);
+INSERT INTO Transferencias (usuario_id, conta_origem_id, nome_conta_destino, valor, data_transferencia, tipo, descricao) VALUES
+(1, 1, 'Carteira Digital', 200.00, '2025-02-01', 'Envio', 'Envio para PicPay'),
+(1, 1, 'Poupança Caixa', 500.00, '2025-03-05', 'Envio', 'Transferência para poupança'),
+(1, 2, 'Conta Corrente Itaú', 150.00, '2025-04-10', 'Recebimento', 'Reembolso de amigo'),
+(1, 3, 'Conta Inter', 300.00, '2025-05-15', 'Envio', 'Pagamento de serviço'),
+(1, 4, 'Cartão Nubank', 120.00, '2025-06-01', 'Envio', 'Pagamento de fatura'),
+(1, 5, 'Carteira Mercado Pago', 80.00, '2025-07-01', 'Envio', 'Compra online'),
+(1, 6, 'Investimento XP', 1000.00, '2025-08-01', 'Envio', 'Aplicação em ações'),
+(1, 7, 'Conta Bradesco', 400.00, '2025-09-01', 'Recebimento', 'Transferência recebida'),
+(1, 8, 'Poupança BB', 250.00, '2025-10-01', 'Envio', 'Guardar dinheiro'),
+(1, 9, 'Investimento C6', 500.00, '2025-11-01', 'Envio', 'Aplicação de reserva');
+INSERT INTO Parcelamentos (usuario_id, conta_id, descricao, total_parcelas, parcela_atual, valor_total, valor_parcela, data_inicio) VALUES
+(1, 1, 'Celular Samsung', 10, 3, 5000.00, 500.00, '2025-02-01'),
+(1, 2, 'TV 50"', 8, 4, 4000.00, 500.00, '2025-01-10'),
+(1, 3, 'Curso Online', 6, 2, 1200.00, 200.00, '2025-03-05'),
+(1, 4, 'Notebook Dell', 12, 6, 7200.00, 600.00, '2025-02-15'),
+(1, 5, 'Fogão Novo', 10, 5, 2500.00, 250.00, '2025-03-20'),
+(1, 6, 'Assinatura Academia', 6, 2, 600.00, 100.00, '2025-04-01'),
+(1, 7, 'Fone Bluetooth', 4, 2, 800.00, 200.00, '2025-05-10'),
+(1, 8, 'Cadeira Gamer', 10, 7, 3000.00, 300.00, '2025-01-05'),
+(1, 9, 'Curso Fotografia', 5, 3, 1000.00, 200.00, '2025-03-15'),
+(1, 10, 'Geladeira', 10, 6, 5000.00, 500.00, '2025-02-10');
+INSERT INTO Gastos (usuario_id, conta_id, descricao, categoria, valor, data_gasto) VALUES
+(1, 1, 'Supermercado', 'Alimentação', 350.00, '2025-02-05'),
+(1, 2, 'Combustível', 'Transporte', 200.00, '2025-03-08'),
+(1, 3, 'Internet', 'Serviços', 100.00, '2025-04-10'),
+(1, 4, 'Cinema', 'Lazer', 60.00, '2025-04-20'),
+(1, 5, 'Conta de Luz', 'Moradia', 180.00, '2025-05-02'),
+(1, 6, 'Streaming', 'Lazer', 50.00, '2025-06-05'),
+(1, 7, 'Farmácia', 'Saúde', 90.00, '2025-07-10'),
+(1, 8, 'Roupas', 'Pessoal', 250.00, '2025-08-01'),
+(1, 9, 'Livros', 'Educação', 120.00, '2025-09-10'),
+(1, 10, 'Restaurante', 'Alimentação', 150.00, '2025-10-05');
+INSERT INTO Receitas (usuario_id, conta_id, descricao, categoria, valor, data_receita) VALUES
+(1, 1, 'Salário Mensal', 'Trabalho', 3200.00, '2025-02-01'),
+(1, 2, 'Freelance', 'Serviços', 800.00, '2025-03-01'),
+(1, 3, 'Rendimento Poupança', 'Investimentos', 120.00, '2025-04-01'),
+(1, 4, 'Venda de Item', 'Venda', 600.00, '2025-05-10'),
+(1, 5, 'Bônus', 'Trabalho', 500.00, '2025-06-01'),
+(1, 6, 'Freelance Web', 'Serviços', 1500.00, '2025-07-01'),
+(1, 7, 'Comissão', 'Trabalho', 700.00, '2025-08-01'),
+(1, 8, 'Venda Online', 'Comércio', 300.00, '2025-09-01'),
+(1, 9, 'Rendimento', 'Investimentos', 250.00, '2025-10-01'),
+(1, 10, 'Salário Extra', 'Trabalho', 1000.00, '2025-11-01');

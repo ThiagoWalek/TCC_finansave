@@ -21,8 +21,9 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
         
         // Buscar saldo total das contas
         const contas = await Conta.findAll({
-            where: { usuario_id: userId }
+            where: { usuario_id: userId, ativa: true }
         });
+        const contasAtivasIds = contas.map(c => c.conta_id);
         
         const saldoTotal = contas.reduce((total, conta) => {
             return total + parseFloat(conta.saldo_atual || 0);
@@ -32,6 +33,8 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
         const receitasMes = await Receita.findAll({
             where: {
                 usuario_id: userId,
+                // Excluir receitas vinculadas a contas inativas
+                ...(contasAtivasIds.length > 0 ? { conta_id: { [Op.in]: contasAtivasIds } } : { conta_id: -1 }),
                 data_receita: {
                     [Op.and]: [
                         { [Op.gte]: new Date(currentYear, currentMonth - 1, 1) },
@@ -49,6 +52,8 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
         const gastosMes = await Gasto.findAll({
             where: {
                 usuario_id: userId,
+                // Excluir gastos vinculados a contas inativas
+                ...(contasAtivasIds.length > 0 ? { conta_id: { [Op.in]: contasAtivasIds } } : { conta_id: -1 }),
                 data_gasto: {
                     [Op.and]: [
                         { [Op.gte]: new Date(currentYear, currentMonth - 1, 1) },
@@ -88,7 +93,7 @@ router.get('/dashboard/evolucao-saldo', async (req, res) => {
         
         // Buscar saldo atual das contas
         const contas = await Conta.findAll({
-            where: { usuario_id: userId }
+            where: { usuario_id: userId, ativa: true }
         });
         
         const saldoAtual = contas.reduce((total, conta) => {
@@ -459,7 +464,7 @@ router.get('/dashboard/contas', async (req, res) => {
         
         const contas = await Conta.findAll({
             where: { usuario_id: userId },
-            attributes: ['conta_id', 'nome', 'tipo', 'saldo_atual'],
+            attributes: ['conta_id', 'nome', 'tipo', 'saldo_atual', 'ativa'],
             order: [['nome', 'ASC']]
         });
         

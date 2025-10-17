@@ -1,4 +1,8 @@
 const Conta = require('../models/Conta');
+const Gasto = require('../models/Gasto');
+const Receita = require('../models/Receita');
+const Parcelamento = require('../models/Parcelamento');
+const Transferencia = require('../models/Transferencia');
 const { validationResult } = require('express-validator');
 
 const contaController = {
@@ -10,9 +14,10 @@ const contaController = {
                 order: [['nome', 'ASC']]
             });
 
-            // Calcula saldo total
+            // Calcula saldo total apenas de contas ativas
             const saldoTotal = contas.reduce((total, conta) => {
-                return total + parseFloat(conta.saldo_atual);
+                const valor = conta.ativa ? parseFloat(conta.saldo_atual || 0) : 0;
+                return total + valor;
             }, 0);
 
             res.render('contas/listar', { contas, saldoTotal });
@@ -116,7 +121,7 @@ const contaController = {
         }
     },
 
-    // Exclui conta
+    // Exclui conta (com tratamento para relacionamentos)
     excluir: async (req, res) => {
         try {
             const conta = await Conta.findOne({
@@ -131,12 +136,30 @@ const contaController = {
                 return res.redirect('/contas');
             }
 
+            // Verifica vínculos antes de excluir
+            const [gastosCount, receitasCount, parcelamentosCount, transferenciasCount] = await Promise.all([
+                Gasto.count({ where: { conta_id: conta.conta_id, usuario_id: req.session.user.id } }),
+                Receita.count({ where: { conta_id: conta.conta_id, usuario_id: req.session.user.id } }),
+                Parcelamento.count({ where: { conta_id: conta.conta_id, usuario_id: req.session.user.id } }),
+                Transferencia.count({ where: { conta_origem_id: conta.conta_id, usuario_id: req.session.user.id } })
+            ]);
+
+            const relacionados = gastosCount + receitasCount + parcelamentosCount + transferenciasCount;
+
+            if (relacionados > 0) {
+                // Se houver registros vinculados, desativa a conta ao invés de excluir
+                await conta.update({ ativa: false });
+                req.session.success = 'Conta desativada por possuir registros relacionados. Exclua ou transfira os registros antes de remover definitivamente.';
+                return res.redirect('/contas');
+            }
+
+            // Sem vínculos: pode excluir com segurança
             await conta.destroy();
             req.session.success = 'Conta excluída com sucesso!';
             res.redirect('/contas');
         } catch (error) {
             console.error('Erro ao excluir conta:', error);
-            req.session.error = 'Erro ao excluir conta.';
+            req.session.error = 'Erro ao excluir conta. Verifique se há registros relacionados.';
             res.redirect('/contas');
         }
     }
