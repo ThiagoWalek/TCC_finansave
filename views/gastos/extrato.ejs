@@ -51,14 +51,9 @@
                     <label for="categoria" class="form-label">Categoria</label>
                     <select name="categoria" id="categoria" class="form-select">
                         <option value="">Todas as categorias</option>
-                        <option value="alimentacao" <%= filtros.categoria === 'alimentacao' ? 'selected' : '' %>>Alimentação</option>
-                        <option value="transporte" <%= filtros.categoria === 'transporte' ? 'selected' : '' %>>Transporte</option>
-                        <option value="saude" <%= filtros.categoria === 'saude' ? 'selected' : '' %>>Saúde</option>
-                        <option value="educacao" <%= filtros.categoria === 'educacao' ? 'selected' : '' %>>Educação</option>
-                        <option value="lazer" <%= filtros.categoria === 'lazer' ? 'selected' : '' %>>Lazer</option>
-                        <option value="compras" <%= filtros.categoria === 'compras' ? 'selected' : '' %>>Compras</option>
-                        <option value="casa" <%= filtros.categoria === 'casa' ? 'selected' : '' %>>Casa</option>
-                        <option value="outros" <%= filtros.categoria === 'outros' ? 'selected' : '' %>>Outros</option>
+                        <% categorias.forEach(function(cat) { %>
+                            <option value="<%= cat %>" <%= filtros.categoria === cat ? 'selected' : '' %>><%= cat %></option>
+                        <% }) %>
                     </select>
                 </div>
                 

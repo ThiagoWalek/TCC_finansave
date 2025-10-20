@@ -17,6 +17,12 @@ const gastoController = {
                 whereClause.data_gasto = {
                     [Op.between]: [startDate, endDate]
                 };
+            } else if (ano) {
+                const startDate = new Date(ano, 0, 1);
+                const endDate = new Date(ano, 11, 31);
+                whereClause.data_gasto = {
+                    [Op.between]: [startDate, endDate]
+                };
             }
 
             if (categoria) {
@@ -26,14 +32,14 @@ const gastoController = {
             const gastos = await Gasto.findAll({
                 where: whereClause,
                 include: [
-                    { model: Conta, attributes: ['nome', 'tipo', 'saldo_atual'] }
+                    { model: Conta, attributes: ['nome', 'tipo', 'saldo_atual'], where: { ativa: true }, required: true }
                 ],
                 order: [['data_gasto', 'DESC']]
             });
 
             // Fallback robusto: buscar todas as contas do usuário para garantir nome da conta
             const contasDoUsuario = await Conta.findAll({
-                where: { usuario_id: req.session.user.id },
+                where: { usuario_id: req.session.user.id, ativa: true },
                 attributes: ['conta_id', 'nome', 'ativa']
             });
             const contasMap = new Map(contasDoUsuario.map(c => [c.conta_id, c]));
@@ -154,18 +160,7 @@ const gastoController = {
                 return res.render('gastos/criar', { contas });
             }
 
-            // Verifica se há saldo suficiente na conta
-            if (parseFloat(conta.saldo_atual) < parseFloat(valor)) {
-                const contas = await Conta.findAll({
-                    where: { 
-                        usuario_id: req.session.user.id,
-                        ativa: true
-                    },
-                    order: [['nome', 'ASC']]
-                });
-                req.session.error = `Saldo insuficiente na conta. Saldo disponível: R$ ${parseFloat(conta.saldo_atual).toFixed(2).replace('.', ',')}`;
-                return res.render('gastos/criar', { contas });
-            }
+            // Removido bloqueio por saldo insuficiente: permitir saldo negativo
 
             // Cria o gasto
             await Gasto.create({

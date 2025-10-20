@@ -16,6 +16,12 @@ const receitaController = {
                 whereClause.data_receita = {
                     [Op.between]: [startDate, endDate]
                 };
+            } else if (ano) {
+                const startDate = new Date(ano, 0, 1);
+                const endDate = new Date(ano, 11, 31);
+                whereClause.data_receita = {
+                    [Op.between]: [startDate, endDate]
+                };
             }
 
             if (categoria) {
@@ -25,14 +31,14 @@ const receitaController = {
             const receitas = await Receita.findAll({
                 where: whereClause,
                 include: [
-                    { model: Conta, attributes: ['nome', 'tipo', 'saldo_atual'] }
+                    { model: Conta, attributes: ['nome', 'tipo', 'saldo_atual'], where: { ativa: true }, required: true }
                 ],
                 order: [['data_receita', 'DESC']]
             });
 
             // Fallback robusto: mapear contas do usuário para garantir nome da conta
             const contasDoUsuario = await Conta.findAll({
-                where: { usuario_id: req.session.user.id },
+                where: { usuario_id: req.session.user.id, ativa: true },
                 attributes: ['conta_id', 'nome', 'ativa']
             });
             const contasMap = new Map(contasDoUsuario.map(c => [c.conta_id, c]));
@@ -274,6 +280,16 @@ const receitaController = {
             if (!receita) {
                 req.session.error = 'Receita não encontrada.';
                 return res.redirect('/receitas/extrato');
+            }
+
+            // Fallback: se a associação da conta não vier, buscar pelo conta_id
+            if (!receita.Conta) {
+                const conta = await Conta.findOne({
+                    where: { conta_id: receita.conta_id, usuario_id: req.session.user.id }
+                });
+                if (conta) {
+                    receita.setDataValue('Conta', { nome: conta.nome, tipo: conta.tipo });
+                }
             }
 
             res.render('receitas/detalhe', { receita, currentPage: 'receitas' });

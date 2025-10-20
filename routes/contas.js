@@ -14,8 +14,8 @@ const validacoesConta = [
         .isIn(['Corrente', 'Poupança', 'Investimento', 'Carteira', 'Cartão de Crédito', 'Outro'])
         .withMessage('Tipo de conta inválido'),
     body('saldo_atual')
-        .isFloat({ min: 0 })
-        .withMessage('O saldo deve ser um número positivo')
+        .isFloat()
+        .withMessage('Informe um saldo válido')
         .toFloat(),
     body('instituicao')
         .optional({ checkFalsy: true })
