@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { Op } = require('sequelize');
+const { startOfMonth, startOfNextMonth } = require('../utils/dateRange');
 
 // Middleware de autenticação para todas as rotas da API
 router.use(isAuthenticated);
@@ -13,11 +14,12 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
         const Gasto = require('../models/Gasto');
         const Orcamento = require('../models/Orcamento');
         const Receita = require('../models/Receita');
+        // Removido require local de dateRange, já importado no topo
         
         const userId = req.session.user.id;
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth() + 1;
-        const currentYear = currentDate.getFullYear();
+        const agora = new Date();
+        const inicioMes = startOfMonth(agora);
+        const inicioProximoMes = startOfNextMonth(agora);
         
         // Buscar saldo total das contas
         const contas = await Conta.findAll({
@@ -37,8 +39,8 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
                 ...(contasAtivasIds.length > 0 ? { conta_id: { [Op.in]: contasAtivasIds } } : { conta_id: -1 }),
                 data_receita: {
                     [Op.and]: [
-                        { [Op.gte]: new Date(currentYear, currentMonth - 1, 1) },
-                        { [Op.lt]: new Date(currentYear, currentMonth, 1) }
+                        { [Op.gte]: inicioMes },
+                        { [Op.lt]: inicioProximoMes }
                     ]
                 }
             }
@@ -56,8 +58,8 @@ router.get('/dashboard/resumo-financeiro', async (req, res) => {
                 ...(contasAtivasIds.length > 0 ? { conta_id: { [Op.in]: contasAtivasIds } } : { conta_id: -1 }),
                 data_gasto: {
                     [Op.and]: [
-                        { [Op.gte]: new Date(currentYear, currentMonth - 1, 1) },
-                        { [Op.lt]: new Date(currentYear, currentMonth, 1) }
+                        { [Op.gte]: inicioMes },
+                        { [Op.lt]: inicioProximoMes }
                     ]
                 }
             }
@@ -165,9 +167,9 @@ router.get('/dashboard/gastos-categoria', async (req, res) => {
         const Conta = require('../models/Conta');
         
         const userId = req.session.user.id;
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth() + 1;
-        const currentYear = currentDate.getFullYear();
+        const agora = new Date();
+        const inicioMes = startOfMonth(agora);
+        const inicioProximoMes = startOfNextMonth(agora);
         
         // Buscar gastos do mês atual agrupados por categoria
         const gastos = await Gasto.findAll({
@@ -175,8 +177,8 @@ router.get('/dashboard/gastos-categoria', async (req, res) => {
                 usuario_id: userId,
                 data_gasto: {
                     [Op.and]: [
-                        { [Op.gte]: new Date(currentYear, currentMonth - 1, 1) },
-                        { [Op.lt]: new Date(currentYear, currentMonth, 1) }
+                        { [Op.gte]: inicioMes },
+                        { [Op.lt]: inicioProximoMes }
                     ]
                 }
             }
@@ -231,12 +233,13 @@ router.get('/dashboard/comparativo-mensal', async (req, res) => {
         const receitasReais = [];
         
         for (let i = periodo - 1; i >= 0; i--) {
-            const data = new Date(currentYear, currentDate.getMonth() - i, 1);
-            const mes = data.getMonth() + 1;
-            const ano = data.getFullYear();
-            const mesAno = `${ano}-${mes.toString().padStart(2, '0')}`;
+            const base = new Date(currentYear, currentDate.getMonth() - i, 1);
+            const inicioMes = startOfMonth(base);
+            const inicioProximoMes = startOfNextMonth(base);
+            const mes = inicioMes.getMonth() + 1;
+            const ano = inicioMes.getFullYear();
             
-            meses.push(data.toLocaleDateString('pt-BR', { 
+            meses.push(inicioMes.toLocaleDateString('pt-BR', { 
                 month: 'short',
                 year: '2-digit'
             }));
@@ -246,8 +249,8 @@ router.get('/dashboard/comparativo-mensal', async (req, res) => {
                 usuario_id: userId,
                 data_receita: {
                     [Op.and]: [
-                        { [Op.gte]: new Date(ano, mes - 1, 1) },
-                        { [Op.lt]: new Date(ano, mes, 1) }
+                        { [Op.gte]: inicioMes },
+                        { [Op.lt]: inicioProximoMes }
                     ]
                 }
             };
@@ -267,8 +270,8 @@ router.get('/dashboard/comparativo-mensal', async (req, res) => {
                 usuario_id: userId,
                 data_gasto: {
                     [Op.and]: [
-                        { [Op.gte]: new Date(ano, mes - 1, 1) },
-                        { [Op.lt]: new Date(ano, mes, 1) }
+                        { [Op.gte]: inicioMes },
+                        { [Op.lt]: inicioProximoMes }
                     ]
                 }
             };
@@ -353,7 +356,7 @@ router.get('/dashboard/proximas-parcelas', async (req, res) => {
         });
         const contasMap = new Map(contasDoUsuario.map(c => [c.conta_id, c]));
 
-        // Função para adicionar meses com cuidado para fim de mês
+        // Função para adicionar meses com cuidado para fim de mêm
         function addMonths(date, months) {
             let d;
             if (typeof date === 'string') {
@@ -569,6 +572,66 @@ router.get('/dashboard/parcelas-mes', async (req, res) => {
         res.json(resultados);
     } catch (error) {
         console.error('Erro ao obter parcelas do mês:', error);
+        res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+});
+
+// Rota para buscar lista de bancos
+router.get('/bancos', async (req, res) => {
+    try {
+        const { busca } = req.query;
+        
+        // Lista estática de bancos brasileiros mais utilizados
+        const bancos = [
+            { codigo: "001", nome: "Banco do Brasil S.A." },
+            { codigo: "033", nome: "Banco Santander (Brasil) S.A." },
+            { codigo: "104", nome: "Caixa Econômica Federal" },
+            { codigo: "237", nome: "Banco Bradesco S.A." },
+            { codigo: "341", nome: "Itaú Unibanco S.A." },
+            { codigo: "260", nome: "Nu Pagamentos S.A. (Nubank)" },
+            { codigo: "290", nome: "Pagseguro Internet S.A." },
+            { codigo: "323", nome: "Mercado Pago" },
+            { codigo: "077", nome: "Banco Inter S.A." },
+            { codigo: "212", nome: "Banco Original S.A." },
+            { codigo: "336", nome: "Banco C6 S.A." },
+            { codigo: "655", nome: "Banco Votorantim S.A." },
+            { codigo: "041", nome: "Banco do Estado do Rio Grande do Sul S.A." },
+            { codigo: "070", nome: "BRB - Banco de Brasília S.A." },
+            { codigo: "085", nome: "Cooperativa Central Ailos" },
+            { codigo: "136", nome: "Unicred Cooperativa" },
+            { codigo: "748", nome: "Banco Cooperativo Sicredi S.A." },
+            { codigo: "756", nome: "Banco Cooperativo do Brasil S.A. - Bancoob" },
+            { codigo: "021", nome: "Banestes S.A. Banco do Estado do Espírito Santo" },
+            { codigo: "047", nome: "Banco do Estado de Sergipe S.A." },
+            { codigo: "003", nome: "Banco da Amazônia S.A." },
+            { codigo: "004", nome: "Banco do Nordeste do Brasil S.A." },
+            { codigo: "399", nome: "Kirton Bank S.A. - Banco Múltiplo" },
+            { codigo: "422", nome: "Banco Safra S.A." },
+            { codigo: "633", nome: "Banco Rendimento S.A." },
+            { codigo: "652", nome: "Itaú Unibanco Holding S.A." },
+            { codigo: "208", nome: "Banco BTG Pactual S.A." },
+            { codigo: "246", nome: "Banco ABC Brasil S.A." },
+            { codigo: "025", nome: "Banco Alfa S.A." },
+            { codigo: "075", nome: "Banco ABN Amro S.A." }
+        ];
+        
+        let resultado = bancos;
+        
+        // Filtrar por busca se fornecida
+        if (busca && busca.trim()) {
+            const termoBusca = busca.trim().toLowerCase();
+            resultado = bancos.filter(banco => 
+                banco.nome.toLowerCase().includes(termoBusca) ||
+                banco.codigo.includes(termoBusca)
+            );
+        }
+        
+        // Limitar a 20 resultados para performance
+        resultado = resultado.slice(0, 20);
+        
+        res.json(resultado);
+    } catch (error) {
+        console.error('Erro ao buscar bancos:', error);
         res.status(500).json({ error: 'Erro interno do servidor' });
     }
 });

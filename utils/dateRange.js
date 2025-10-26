@@ -13,6 +13,13 @@ function endOfMonth(date) {
   return d;
 }
 
+// Início do próximo mês (exclusivo para intervalos)
+function startOfNextMonth(date) {
+  const d = startOfMonth(date);
+  d.setMonth(d.getMonth() + 1);
+  return d;
+}
+
 function diffInDays(a, b) {
   const msPerDay = 24 * 60 * 60 * 1000;
   const utcA = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
@@ -20,4 +27,4 @@ function diffInDays(a, b) {
   return Math.round((utcB - utcA) / msPerDay);
 }
 
-module.exports = { startOfMonth, endOfMonth, diffInDays };
+module.exports = { startOfMonth, endOfMonth, startOfNextMonth, diffInDays };

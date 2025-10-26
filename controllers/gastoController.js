@@ -2,6 +2,7 @@ const Gasto = require('../models/Gasto');
 const Conta = require('../models/Conta');
 const { validationResult } = require('express-validator');
 const { Op } = require('sequelize');
+const { startOfMonth, startOfNextMonth } = require('../utils/dateRange');
 
 const gastoController = {
     // Lista todos os gastos do usuário (extrato)
@@ -12,16 +13,23 @@ const gastoController = {
 
             // Filtros opcionais
             if (mes && ano) {
-                const startDate = new Date(ano, mes - 1, 1);
-                const endDate = new Date(ano, mes, 0);
+                const base = new Date(ano, mes - 1, 1);
+                const inicioMes = startOfMonth(base);
+                const inicioProximoMes = startOfNextMonth(base);
                 whereClause.data_gasto = {
-                    [Op.between]: [startDate, endDate]
+                    [Op.and]: [
+                        { [Op.gte]: inicioMes },
+                        { [Op.lt]: inicioProximoMes }
+                    ]
                 };
             } else if (ano) {
-                const startDate = new Date(ano, 0, 1);
-                const endDate = new Date(ano, 11, 31);
+                const inicioAno = new Date(ano, 0, 1);
+                const inicioProximoAno = new Date(ano + 1, 0, 1);
                 whereClause.data_gasto = {
-                    [Op.between]: [startDate, endDate]
+                    [Op.and]: [
+                        { [Op.gte]: inicioAno },
+                        { [Op.lt]: inicioProximoAno }
+                    ]
                 };
             }
 
